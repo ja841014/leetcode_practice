@@ -1,0 +1,63 @@
+/*
+Implement next permutation, which rearranges numbers into the lexicographically next greater permutation of numbers.
+
+If such arrangement is not possible, it must rearrange it as the lowest possible order (ie, sorted in ascending order).
+
+The replacement must be in-place and use only constant extra memory.
+
+Here are some examples. Inputs are in the left-hand column and its corresponding outputs are in the right-hand column.
+
+1,2,3 → 1,3,2
+3,2,1 → 1,2,3
+1,1,5 → 1,5,1
+*/
+class Solution {
+    private int findmin(int[] nums, int index) {
+        int min = Integer.MAX_VALUE;
+        int min_index = 0;
+        for(int i = index; i < nums.length; ++i) {
+            if(nums[index - 1] < nums[i] && min > nums[i]) {
+                min_index = i;
+            }
+        }
+        return min_index;
+    }
+    private void swap(int[] nums,int first_index, int second_index) {
+        int tmp = nums[first_index];
+        nums[first_index] = nums[second_index];
+        nums[second_index] = tmp;
+    }
+    
+    /*
+     private static void reverse(int[] nums, int start, int end) {
+        while (start < end) {
+            swap(nums, start, end);
+            start++;
+            end--;
+        }
+    }
+    */
+    private void reverse(int[] nums, int start_index) {
+        int cnt = 0;
+        for(int i = start_index; i <= Math.ceil((start_index + nums.length - 1)/2); ++i) {
+            int tmp = nums[i];
+            nums[i] = nums[nums.length - 1 - cnt];
+            nums[nums.length - 1 - cnt] = tmp;
+            cnt++;
+        }
+    }
+    public void nextPermutation(int[] nums) {
+        int i = nums.length - 1;
+        while(i > 0 && nums[i - 1] >= nums[i]) {
+            i--;// search from the back to head, find the first element which is not in increasing order 
+        }       // e.g. 8465 5 -> 6 -> 4, we found that 4 is not in increasing order. 
+        if(i > 0) {
+            int min = findmin(nums, i); // find the element which is bigger than our target but is the samllest one
+            swap(nums, i - 1, min); // swap our target and the bigger element which is smallest one. e.g. 8465 swap(4,5)
+            reverse(nums, i);// reverse the rest sequence e.g. 8465 -> 8564 -> 8546
+        }
+        else {
+            reverse(nums, i);// id the original order is the maximum one we change it to the smallest one
+        }
+    }
+}

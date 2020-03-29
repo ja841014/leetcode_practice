@@ -1,0 +1,58 @@
+/*
+matrix[0].length 表column的大小
+matrix.length   表row的大小
+*/
+/*
+Given a matrix of m x n elements (m rows, n columns), return all elements of the matrix in spiral order.
+Example 2:
+
+Input:
+[
+  [1, 2, 3, 4],
+  [5, 6, 7, 8],
+  [9,10,11,12]
+]
+Output: [1,2,3,4,8,12,11,10,9,5,6,7]
+*/
+class Solution {
+    public List<Integer> spiralOrder(int[][] matrix) {
+        
+        List<Integer> list = new ArrayList<>();
+        if(matrix.length == 0){
+            return list;
+        }
+        int top = 0;
+        int right = matrix[0].length-1;
+        int bottom = matrix.length-1;
+        int left = 0;
+        while(left<=right && top <=bottom){
+            for(int j = left; j <= right; j++){
+                if(!list.contains(matrix[top][j])){
+                    list.add(matrix[top][j]);
+                }
+            }
+            top++;
+            for(int k = top; k <= bottom; k++){
+                if(!list.contains(matrix[k][right])){
+                    list.add(matrix[k][right]);
+                }
+            }
+            right--;
+            for(int m = right; m >= left; m--){
+                if(!list.contains(matrix[bottom][m])){
+                    list.add(matrix[bottom][m]);
+                }
+            }
+            bottom--;
+            for(int p = bottom; p >= top; p--){
+                if(!list.contains(matrix[p][left])){
+                    list.add(matrix[p][left]);
+                }
+            }
+            left++;
+        }
+        
+        return list;
+        
+    }
+}
