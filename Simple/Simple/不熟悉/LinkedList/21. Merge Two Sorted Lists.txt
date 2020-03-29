@@ -1,0 +1,54 @@
+/*
+ * Merge two sorted linked lists and return it as a new list. 
+ * The new list should be made by splicing together the nodes of the first two lists.
+ * Example:
+ * Input: 1->2->4, 1->3->4
+ * Output: 1->1->2->3->4->4
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+        if( l1 == null && l2 == null){
+            return null;
+        }
+        else if( l1 == null){
+            return l2;
+        }
+        else if( l2 == null){
+            return l1;
+        }
+        
+        //建造出一個空的開頭
+        ListNode result = new ListNode(0);
+        ListNode merge = result;
+        
+        while( l1 != null && l2 != null){
+            if( l1.val <= l2.val){
+                merge.next = l1;
+                l1 = l1.next;
+            }
+            else{
+                merge.next = l2;
+                l2 = l2.next;
+            }
+            merge = merge.next;
+        }
+        if( l1 != null){
+            merge.next = l1;
+            merge = merge.next;
+        }
+        else if( l2 != null){
+            merge.next = l2;
+            merge = merge.next;
+        }
+        // result開頭指向第一個真正的 merge 值
+        return result.next;
+        
+    }
+}

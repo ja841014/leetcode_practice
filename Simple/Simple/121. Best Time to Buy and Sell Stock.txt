@@ -1,0 +1,33 @@
+class Solution {
+    public int maxProfit(int[] prices) {
+ ///////////////////
+ ////solution 1/////
+ ///////////////////
+    // Integer.MAX_VALUE 是整數最大值 -> 限定用法
+        int minimum = Integer.MAX_VALUE;
+        int profit = 0;
+        for( int i = 0; i < prices.length; i++ ){
+            minimum = Math.min( minimum, prices[i]);
+            profit = Math.max( profit, prices[i] - minimum);
+        }
+        return profit;
+        
+  ///////////////////
+ ////solution 2/////
+ ///////////////////       
+ /*    brute force
+         int temp = 0;
+        int result = 0;
+        for( int i = 0; i < prices.length; i++ ){
+            for( int j = i + 1; j < prices.length; j++){
+                if( prices[i] < prices[j]){
+                    temp = prices[j] - prices[i];
+                }
+                if( temp > result){
+                    result = temp;
+                }
+            }
+        }
+        return result;*/
+    }
+} 

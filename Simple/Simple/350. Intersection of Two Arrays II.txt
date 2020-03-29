@@ -1,0 +1,75 @@
+/*
+Given two arrays, write a function to compute their intersection.
+
+Example 1:
+
+Input: nums1 = [1,2,2,1], nums2 = [2,2]
+Output: [2,2]
+
+Arrays.copyOfRange(複製的目標矩陣, 頭, 尾)
+*/
+////////////////////////////
+///////solution one/////////
+////////////////////////////
+
+class Solution {  
+    public int[] intersect(int[] nums1, int[] nums2) {
+        HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+        int[] result = new int[nums1.length];
+        int k=0;
+        //build the nums1 map
+        for( int i = 0; i < nums1.length; i++) {
+            map.put(nums1[i], map.getOrDefault(nums1[i], 0) + 1 );
+        }
+        // 判斷nums2有無nums1的值
+        for( int i = 0; i < nums2.length; i++){
+            // map.get(nums2[i]>0 is very important, 控制他只能輸出同樣都有的字元)
+            if( map.containsKey(nums2[i]) && map.get(nums2[i]) > 0){
+                result[k++] = nums2[i];
+            }
+                // 必須扣掉已經被用掉的
+                map.put(nums2[i], map.getOrDefault(nums2[i], 0) - 1);
+        }
+        return Arrays.copyOfRange(result, 0, k);
+    }
+}
+
+
+////////////////////////////
+///////solution two/////////
+////////////////////////////
+
+class Solution {
+    public int[] intersect(int[] nums1, int[] nums2) {       
+        int[] longer;        
+            if( nums1.length > nums2.length){
+                longer = nums1;
+            }
+            else{
+                longer = nums2;
+            }
+             
+        Arrays.sort(nums1);
+        Arrays.sort(nums2);
+        int[] ans=new int[longer.length];
+        int i=0;
+        int j=0;
+        int k=0;
+
+      
+        while( i < nums2.length && j < nums1.length){
+            if ( nums2[i] < nums1[j]){
+                i++;
+            }
+            else if( nums2[i] > nums1[j]){
+                j++;
+            }
+            else{
+                ans[k++] = nums1[j];
+                i++;
+                j++;
+            }       
+        }
+        return Arrays.copyOfRange(ans, 0, k);
+    }
+}
