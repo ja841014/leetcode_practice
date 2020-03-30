@@ -1,0 +1,63 @@
+{\rtf1\ansi\ansicpg950\cocoartf2511
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset136 PingFangTC-Regular;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 // 
+\f1 \'a8\'cf\'a5\'ce
+\f0 list
+\f1 \'ad\'6e\'aa\'60\'b7\'4e\'a7\'f3\'b0\'ca\'aa\'ba\'b0\'dd\'c3\'44
+\f0 \
+\
+/*\
+Given a set of distinct integers, nums, return all possible subsets (the power set).\
+\
+Note: The solution set must not contain duplicate subsets.\
+\
+Example:\
+\
+Input: nums = [1,2,3]\
+Output:\
+[\
+  [3],\
+  [1],\
+  [2],\
+  [1,2,3],\
+  [1,3],\
+  [2,3],\
+  [1,2],\
+  []\
+]\
+*/\
+class Solution \{\
+    public List<List<Integer>> subsets(int[] nums) \{\
+        List<List<Integer>> list = new ArrayList<List<Integer>>();\
+        List<List<Integer>> list_ = new ArrayList<List<Integer>>();\
+\
+        List<Integer> li = new ArrayList<Integer>();\
+        \
+        \
+        li.add(nums[0]);\
+        list.add(li);\
+        \
+        for(int i = 1; i < nums.length; i++) \{\
+            for(List<Integer> tmp : list) \{\
+                int size = tmp.size();\
+                tmp.add(size, nums[i]);\
+                list_.add(new ArrayList<Integer>(tmp));\
+                tmp.remove(size);\
+            \}\
+            list.addAll(list_);\
+            List<Integer> single = new ArrayList<Integer>();\
+            single.add(nums[i]);\
+            list.add(single);\
+            list_ = new ArrayList<List<Integer>>();\
+        \}\
+        List<Integer> empty_ = new ArrayList<Integer>();\
+        list.add(empty_);\
+        return list;\
+        \
+    \}\
+\}}
