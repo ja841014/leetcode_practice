@@ -1,0 +1,44 @@
+
+/*
+AB是條直線交會圓形於Ｂ點，2 pointer meet as point x.   x+d = 圓周路徑長
+兩個指針同時從直線起點開始，假設在x處第一次匯合，XB之間距離為x，那麼快指針走過的路程為AB+x+d+x,慢指針走過的路程為+x，
+所以AB+x+d+x=2(AB+x),所以AB＝d，所以令快指針從起點開始一次一步，慢指針從x開始，同時前進，則必會在B處相遇
+*/
+/*
+Given an array nums containing n + 1 integers where each integer is between 1 and n (inclusive), prove that at least one duplicate number must exist. Assume that there is only one duplicate number, find the duplicate one.
+
+Example 1:
+
+Input: [1,3,4,2,2]
+Output: 2
+Example 2:
+
+Input: [3,1,3,4,2]
+Output: 3
+*/
+class Solution {
+    public int findDuplicate(int[] nums) {
+        int slow_pointer = nums[0];
+        int fast_pointer = nums[0];
+        
+        // slow pointer move one step each itertion
+        slow_pointer = nums[slow_pointer];
+        //fast pointer move two step each iteration
+        fast_pointer = nums[nums[fast_pointer]];
+        
+        while(slow_pointer != fast_pointer) {
+            slow_pointer = nums[slow_pointer];
+            fast_pointer = nums[nums[fast_pointer]];
+        }
+        int pointer_1 = slow_pointer;
+        int pointer_2 = nums[0];
+        while(pointer_1 != pointer_2 ) {
+            pointer_1 = nums[pointer_1];
+            pointer_2 = nums[pointer_2];
+        }
+        
+        return pointer_1;
+    }
+}
+
+287. Find the Duplicate Number 
