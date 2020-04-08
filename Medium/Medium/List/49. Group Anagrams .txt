@@ -1,0 +1,34 @@
+// map.values()  return 所有的value值
+// String.toCharArray() string to char
+// String.valueOf(Array_type) Array to String
+/*
+Given an array of strings, group anagrams together.
+
+Example:
+
+Input: ["eat", "tea", "tan", "ate", "nat", "bat"],
+Output:
+[
+  ["ate","eat","tea"],
+  ["nat","tan"],
+  ["bat"]
+]
+*/
+class Solution {
+    public List<List<String>> groupAnagrams(String[] strs) {
+        Map<String, List> map = new HashMap<String, List>();
+        for(String s : strs) {
+            //string to array
+            char[] char_arr = s.toCharArray();
+            // sort the array and to see if there exist a key in the map
+            Arrays.sort(char_arr);
+            // array -> String
+            String map_key = String.valueOf(char_arr);
+            if(!map.containsKey(map_key)) {
+                map.put(map_key, new ArrayList<String>());
+            }
+            map.get(map_key).add(s);
+        }
+        return new ArrayList(map.values());
+    }
+}
