@@ -1,0 +1,50 @@
+/*
+String.valueOf(X); 把Ｘ值變成string
+== 當兩個參考指向同一物件時，==運算子的結果才為true
+a.equals(b) 是比較兩個物件是否為相同類型的類別後再比較其內容值是否相同
+
+Given two strings S and T, return if they are equal when both are typed into empty text editors. # means a backspace character.
+
+Note that after backspacing an empty text, the text will continue empty.
+
+Example 1:
+
+Input: S = "ab#c", T = "ad#c"
+Output: true
+Explanation: Both S and T become "ac".
+*/
+class Solution {
+    public boolean backspaceCompare(String S, String T) {
+        Stack<Character> s_s = new Stack<Character>();
+        Stack<Character> s_t = new Stack<Character>();
+        for(int i = 0; i < S.length(); i++) {
+            if(S.charAt(i) == '#') {
+                if(s_s.empty() != true) {
+                    s_s.pop();
+                }
+            }
+            else {
+                s_s.push(S.charAt(i));
+            }
+        }
+        for(int j = 0; j < T.length(); j++) {
+            if(T.charAt(j) == '#') {
+                if(s_t.empty() != true) {
+                    s_t.pop();
+                }
+            }
+            else {
+                s_t.push(T.charAt(j));
+            }
+        }
+        String ans_S = String.valueOf(s_s);
+        String ans_T = String.valueOf(s_t);
+        if(ans_S.equals(ans_T)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+
+    }
+}
