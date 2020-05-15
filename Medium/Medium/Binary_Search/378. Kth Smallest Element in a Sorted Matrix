@@ -20,7 +20,7 @@ k = 8,
 
 return 13.
 */
-
+ 
 class Solution {
     public int kthSmallest(int[][] matrix, int k) {
         int row = matrix.length;
