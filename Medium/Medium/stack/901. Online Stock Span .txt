@@ -1,0 +1,64 @@
+// concise one
+// class StockSpanner {
+//     private final Stack<int[]> stack = new Stack<>();
+//     private int index;
+    
+//     public StockSpanner() {
+//         index = 0;
+//     }
+    
+//     public int next(int price) {
+//         while (!stack.isEmpty() && stack.peek()[1] <= price) stack.pop();
+//         int answer = stack.isEmpty() ? index + 1 : index - stack.peek()[0];
+//         stack.push(new int[] {index++, price});
+//         return answer;
+//     }
+// }
+
+
+class StockSpanner {
+    Stack<Integer> stack = new Stack<>();
+    Stack<Integer> prices = new Stack<>();
+    int index = 1;
+    public StockSpanner() {
+        
+    }
+    
+    public int next(int price) {
+        int result;
+        if(stack.empty() == true) {
+            stack.push(index);
+            prices.push(price);
+            index++;
+            result = 1;
+        }
+        else {
+            while(!prices.empty() && prices.peek() <= price) {
+                stack.pop();
+                prices.pop();
+            }
+            if(prices.empty()) {
+                stack.push(index);
+                prices.push(price);
+                result = index;
+                index++;
+            }
+            else {
+                int pre_top_index = stack.peek();
+                stack.push(index);
+                prices.push(price);
+                index++;
+                result = stack.peek() - pre_top_index; 
+            }
+            
+        }
+        
+        return result;
+    }
+}
+
+/**
+ * Your StockSpanner object will be instantiated and called as such:
+ * StockSpanner obj = new StockSpanner();
+ * int param_1 = obj.next(price);
+ */
