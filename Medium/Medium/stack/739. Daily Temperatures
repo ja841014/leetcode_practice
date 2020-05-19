@@ -1,0 +1,51 @@
+// reference: https://www.youtube.com/watch?v=WGm4Kj3lhRI
+// using stack
+/*
+Given a list of daily temperatures T, return a list such that, for each day in the input, tells you how many days you would have to wait until a warmer temperature. If there is no future day for which this is possible, put 0 instead.
+
+For example, given the list of temperatures T = [73, 74, 75, 71, 69, 72, 76, 73], your output should be [1, 1, 4, 2, 1, 1, 0, 0].
+*/
+class Solution {
+    public int[] dailyTemperatures(int[] T) {
+        Stack<Integer> stack = new Stack<Integer>();
+        int[] result = new int[T.length];
+        int index = T.length - 1;
+        stack.push(index);
+        int pre_temp = T[index];
+        result[index] = 0; // last day is always 0
+        index--;
+        while(index >= 0) {
+            while( !stack.empty() && T[stack.peek()] <= T[index]) { //
+                stack.pop();
+            }
+            if(stack.empty() == true) {
+                result[index] = 0;
+                stack.push(index);
+            }
+            else {
+                result[index] = stack.peek() - index;
+                stack.push(index);
+            }
+            index--;
+        }
+        return result;
+        
+        
+        // Brute Force //
+        // int[] store = new int[T.length];
+        // int count = 1;
+        // for(int i = 0; i < T.length - 1; i++) {
+        //     count = 1;
+        //     for(int j = i + 1; j < T.length; j++) {
+        //         if(T[i] < T[j]) {
+        //             store[i] = count;
+        //             break;
+        //         }
+        //         else {
+        //             count++;
+        //         }
+        //     }
+        // }
+        // return store;
+    }
+}
