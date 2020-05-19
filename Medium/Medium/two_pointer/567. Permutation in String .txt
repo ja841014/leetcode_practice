@@ -1,0 +1,70 @@
+/*
+1. Slinding Window
+2. Brute Force
+
+Given two strings s1 and s2, write a function to return true if s2 contains the permutation of s1. In other words, one of the first string's permutations is the substring of the second string.
+
+ 
+
+Example 1:
+
+Input: s1 = "ab" s2 = "eidbaooo"
+Output: True
+Explanation: s2 contains one permutation of s1 ("ba").
+*/
+class Solution {
+    public boolean checkInclusion(String s1, String s2) {
+        //s1 short s2 long
+        
+        //Sliding Window
+        int[] char_count = new int[26];
+        for(int i = 0; i < s1.length(); i++) {
+            char_count[s1.charAt(i) - 'a']++;
+        }
+        int count = s1.length();
+        int left_ptr = 0;
+        int right_ptr = 0;
+        while(right_ptr < s2.length()) {
+            if(char_count[s2.charAt(right_ptr) - 'a'] > 0) {
+                char_count[s2.charAt(right_ptr) - 'a']--;
+                right_ptr++;
+                count--;
+            }
+            else { 
+               char_count[s2.charAt(right_ptr) - 'a']--;
+                right_ptr++; // right edge window still need to moveon
+            }
+            // meet the window size
+            if(count == 0) {            
+                return true;
+            }
+            if(right_ptr - left_ptr == s1.length()) {
+                if(char_count[s2.charAt(left_ptr) - 'a'] >= 0) {
+                    char_count[s2.charAt(left_ptr) - 'a']++;
+                    left_ptr++; // move the left pointer
+                    count++;
+                }
+                else {
+                   char_count[s2.charAt(left_ptr) - 'a']++;
+                    left_ptr++; // move the left pointer 
+                }
+            }
+        }
+        return false;
+//         //brute force
+//         int size1 = s1.length();
+//         int size2 = s2.length();
+//         char[] sort1 = s1.toCharArray();
+//         Arrays.sort(sort1);
+//         for(int i = 0; i < size2 - size1 + 1; i++) {
+//             String temp = s2.substring(i, i + size1);
+//             char[] sort2 = temp.toCharArray();
+//             Arrays.sort(sort2);
+//             if(Arrays.equals(sort1, sort2)) {
+//                return true;
+//             }
+//         }
+//         return false;
+        
+    }
+}

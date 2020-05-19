@@ -1,0 +1,110 @@
+/*
+Sliding Window
+*/
+/*
+Given a string s and a non-empty string p, find all the start indices of p's anagrams in s.
+
+Strings consists of lowercase English letters only and the length of both strings s and p will not be larger than 20,100.
+
+The order of output does not matter.
+
+Example 1:
+
+Input:
+s: "cbaebabacd" p: "abc"
+
+Output:
+[0, 6]
+
+Explanation:
+The substring with start index = 0 is "cba", which is an anagram of "abc".
+The substring with start index = 6 is "bac", which is an anagram of "abc".
+*/
+class Solution {
+    public List<Integer> findAnagrams(String s, String p) {
+        //Sliding Window
+       List<Integer> list = new ArrayList<Integer>();
+        
+        if(s.length() == 0) {
+            return list;
+        }
+       int[] char_count = new int[26]; 
+    
+        for(int i = 0 ; i < p.length(); i++) {
+            char_count[p.charAt(i) - 'a']++;
+        }
+        
+        int count = p.length();
+        int left_ptr = 0;
+        int right_ptr = 0;
+        
+        // slidong window
+        while(right_ptr < s.length()) {
+            if(char_count[s.charAt(right_ptr) - 'a'] > 0)
+            {// contain the char
+                count--;
+                // avoid the same char count again
+                // target will minus 1 and maintain >= 0
+                // not target wull minus 1 as well but will < 0 
+                char_count[s.charAt(right_ptr) - 'a']--;
+                right_ptr++;
+            }
+            else {
+            	char_count[s.charAt(right_ptr) - 'a']--;
+                right_ptr++;
+            }
+            // take "abc" for example => 3 continuing char
+            if(count == 0) {// we find the anagram substing
+                list.add(left_ptr);
+            }
+            // we have to move our window
+            if(right_ptr - left_ptr == p.length()) {
+            	if(char_count[s.charAt(left_ptr) - 'a'] >= 0) {
+            		count++;
+            		char_count[s.charAt(left_ptr) - 'a']++;
+            		left_ptr++;
+            	}
+            	else {
+            		char_count[s.charAt(left_ptr) - 'a']++;
+            		left_ptr++;
+            	}
+            }
+        }
+        
+        
+        //concise sliding window//
+        // while(right_ptr < s.length()) {
+        //     if(char_count[s.charAt(right_ptr++) - 'a']-- > 0) {// contain the char
+        //         count--;
+        //         // avoid the same char count again
+        //         // target will minus 1 and maintain >= 0
+        //         // not target wull minus 1 as well but will < 0 
+        //     }
+        //     // take "abc" for example => 3 continuing char
+        //     if(count == 0) {// we find the anagram substing
+        //         list.add(left_ptr);
+        //     }
+        //     // we have to move our window
+        //     if(right_ptr - left_ptr == p.length() && char_count[s.charAt(left_ptr++) - 'a']++ >= 0 ) {
+        //         count++;
+        //     }
+        // }
+        return list;
+        
+        // Brute Force//
+        // List<Integer> list = new ArrayList<Integer>();
+        // int sizes = s.length();
+        // int sizep = p.length();
+        // char[] sortp = p.toCharArray();
+        // Arrays.sort(sortp);
+        // for(int i = 0; i < sizes - sizep + 1; i++) {
+        //     String temp = s.substring(i, i + sizep);
+        //     char[] sorts = temp.toCharArray();
+        //     Arrays.sort(sorts);
+        //     if(Arrays.equals(sorts, sortp)) {
+        //         list.add(i);
+        //     }
+        // }
+        // return list;
+    }
+}
