@@ -1,0 +1,28 @@
+/*
+986. Interval List Intersections
+*/
+class Solution {
+    public int[][] intervalIntersection(int[][] A, int[][] B) {
+        int i = 0;
+        int j = 0;
+        int k = 0;
+        List<int[]> arr_ = new ArrayList<>();
+        while( i < A.length && j < B.length) {
+            int front = Math.max(A[i][0], B[j][0]);
+            int end = Math.min(A[i][1], B[j][1]);
+            if(front <= end) {
+               arr_.add(new int[] {front, end}); 
+            }
+            // always find the end of the interval to ensure the right answer
+            if(A[i][1] < B[j][1]) {
+                i++;
+            }
+            else {
+                j++;
+            }
+            k++;
+        }
+        int[][] ans = arr_.toArray(new int[arr_.size()][]);
+        return ans;
+    }
+}

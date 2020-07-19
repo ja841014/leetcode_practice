@@ -1,0 +1,45 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public TreeNode bstFromPreorder(int[] preorder) {
+        //preorder a.k.a DFS
+        TreeNode root = new TreeNode(preorder[0]);
+        Stack<TreeNode> st = new Stack<TreeNode>();
+        st.push(root);
+        int count = 1;
+        
+        while(count < preorder.length) {
+            TreeNode new_node = new TreeNode(preorder[count]);
+            TreeNode tmp = null;
+            
+            // if the new node is bigeer than the peek node in the stack
+            while(!st.empty() && new_node.val > st.peek().val) {
+                tmp = st.pop();
+            }
+            
+            if(tmp == null) {
+                st.peek().left = new_node;
+            }
+            else {
+                tmp.right = new_node;
+            }
+            
+            st.push(new_node); 
+            count++;
+        }
+        return root;
+    }
+}
