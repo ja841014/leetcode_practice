@@ -1,0 +1,85 @@
+// Given two strings s and t, determine if they are both one edit distance apart.
+
+// Note: 
+
+// There are 3 possiblities to satisify one edit distance apart:
+
+// Insert a character into s to get t
+// Delete a character from s to get t
+// Replace a character of s to get t
+// Example 1:
+
+// Input: s = "ab", t = "acb"
+// Output: true
+// Explanation: We can insert 'c' into s to get t.
+
+class Solution {
+    public boolean isOneEditDistance(String s, String t) {
+        int s_size = s.length();
+        int t_size = t.length();
+        if(s.equals(t)) { // they are the same, do not have to change any thing.
+            return false;
+        }
+        if(s_size < t_size) { // make sure String s always bigger than t
+            return isOneEditDistance(t, s);
+        }
+        int cnt = 0;
+        //if the length of two string are bigger than 2, it must at least two edit distance.
+        if(s_size - t_size > 1) { 
+            return false;
+        }
+        // if two string have same length, there must contain only 1 difference to replace
+        if(s_size == t_size) {
+            for(int i = 0; i < t_size; i++) {
+                if(s.charAt(i) != t.charAt(i)) {
+                    cnt++;
+                }
+            }
+        }
+        else {
+            int k = 0;
+            int tmp = 0;
+            // there must contain only one character to Delete/Insert.
+            while(k < s_size && tmp < t_size) {
+                if(t.charAt(tmp) !=  s.charAt(k)) {
+                    k++;
+                    cnt++;
+                }
+                else {
+                    tmp++;
+                    k++;
+                }
+            }
+        }
+        if(cnt > 1) {
+            return false;
+        }
+        return true;
+        // int s_size = s.length();
+        // int t_size = t.length();
+        // boolean result = true; 
+        // // create empty table
+        // int[][] table = new int[s_size + 1][t_size + 1];
+        // // basic class => empty string
+        // // row
+        // for(int i = 0; i < s_size + 1; i++) {
+        //     table[i][0] = i;
+        // }
+        // // column
+        // for(int i = 0; i < t_size + 1; i++) {
+        //     table[0][i] = i;
+        // }
+        // // DP
+        // for(int i = 1; i < s_size + 1; i++) {
+        //     for(int j = 1; j < t_size + 1; j++) {
+        //         if(s.charAt(i - 1) == t.charAt(j - 1)) {
+        //             table[i][j] = table[i - 1][j - 1];
+        //         }
+        //         else {
+        //             table[i][j] = Math.min(table[i - 1][j - 1], Math.min(table[i][j - 1], table[i - 1][j])) + 1;
+        //         }
+        //     }
+        // }
+        // return table[s_size][t_size] == 1;
+    }
+}

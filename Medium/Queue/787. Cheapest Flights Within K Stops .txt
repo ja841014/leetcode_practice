@@ -1,0 +1,35 @@
+// dijkstra
+class lesscompare implements Comparator<int[]> {
+    public int compare(int[] a, int[] b) {
+        return a[1] - b[1];
+    }
+}
+class Solution {
+    public int findCheapestPrice(int n, int[][] flights, int src, int dst, int K) {
+        // build edgemap
+        ArrayList<int[]>[] edgemap = new ArrayList[n];
+        for(int i = 0; i < n; i++) {
+            edgemap[i] = new ArrayList<>();
+        }
+        for(int j = 0; j < flights.length; j++) {
+             edgemap[flights[j][0]].add(new int[]{flights[j][1], flights[j][2]} );        
+        }
+//      PriorityQueue<int[]> minheap = new PriorityQueue<>((a, b) -> a[1] - b[1] );
+
+        PriorityQueue<int[]> minheap = new PriorityQueue<>(new lesscompare());
+        minheap.offer(new int[]{src, 0, K+1}); //{src, weight, stops}
+        while(!minheap.isEmpty()) {
+            int[] temp = minheap.poll();
+            if(temp[0] == dst) {
+                return temp[1];
+            }
+            if(temp[2] > 0) {
+                for(int[] next: edgemap[temp[0]]) { 
+                    minheap.offer(new int[]{ next[0] ,temp[1]+next[1], temp[2]-1} );
+                }
+            }
+        }
+        return -1;
+    }
+     
+}

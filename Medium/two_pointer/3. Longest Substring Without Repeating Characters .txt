@@ -1,0 +1,55 @@
+// Given a string, find the length of the longest substring without repeating characters.
+
+// Example 1:
+
+// Input: "abcabcbb"
+// Output: 3 
+// Explanation: The answer is "abc", with the length of 3. 
+
+class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        int max_ = 0;
+        Map<Character, Integer> map = new HashMap<>();
+        if(s.length() == 0) { // s.isEmpty()
+            return 0;
+        }
+        if(s.isBlank() == true) {
+            return 1;
+        }
+        // System.out.println(s.charAt(0) - 97);
+        for(int curr = 0, start = 0; curr < s.length(); curr++) { // put j in here can store j value.
+            if(map.containsKey(s.charAt(curr)) == true) { // alredy contains
+                start = Math.max(map.get(s.charAt(curr)), start); // this j is like the start point
+                // example "abba" => map.get(s.charAt(curr) is bigger)
+                // example "abcdcma" => when meet c map.get(s.charAt(curr) is bigger
+                //                   => when meet a 'start' is bigger
+            }
+            max_ = Math.max(max_, curr - start + 1);
+            map.put(s.charAt(curr), curr + 1);
+            
+            // the method below can only handle 'a-z'
+            // if(count[s.charAt(i) - 97] == 0) { // now not contain
+            //     count[s.charAt(i) - 97] = 1;
+            //     crucial++;
+            //     end++;
+            // }
+            // else {   // contain so need eliminate
+            //     for(int j = 0; j < crucial; j++) {
+            //         count[s.charAt(start) - 97] = 0;
+            //         if(s.charAt(start) == s.charAt(i)) {
+            //             count[s.charAt(start) - 97] = 1;
+            //             start++;
+            //             break;
+            //         }
+            //         start++;
+            //         crucial--;
+            //     }
+            // }
+            // if(crucial > max_) {
+            //     max_ = crucial;
+            // }
+            
+        }
+        return max_; 
+    }
+}
