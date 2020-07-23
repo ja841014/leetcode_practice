@@ -1,0 +1,76 @@
+// Pair<Key Type, Value Type> p = new Pair<>()
+// using Queue -> bfs in matrix but actually it can implement in stack -> dfs
+// You are given a m x n 2D grid initialized with these three possible values.
+
+// -1 - A wall or an obstacle.
+// 0 - A gate.
+// INF - Infinity means an empty room. We use the value 231 - 1 = 2147483647 to represent INF as you may assume that the distance to a gate is less than 2147483647.
+// Fill each empty room with the distance to its nearest gate. If it is impossible to reach a gate, it should be filled with INF.
+
+// Example: 
+
+// Given the 2D grid:
+
+// INF  -1  0  INF
+// INF INF INF  -1
+// INF  -1 INF  -1
+//   0  -1 INF INF
+// After running your function, the 2D grid should be:
+
+//   3  -1   0   1
+//   2   2   1  -1
+//   1  -1   2  -1
+//   0  -1   3   4
+class Solution {
+    public void wallsAndGates(int[][] rooms) {
+        for(int i = 0; i < rooms.length; i++) {
+            for(int j = 0; j < rooms[0].length; j++) {
+                if(rooms[i][j] == 0) {
+                    bfs(i, j, rooms);
+                }
+            }
+        }
+    }
+    
+    public void bfs(int row, int col, int[][] room) {
+        Queue<Pair<Integer, Integer>> q = new LinkedList<>();
+        q.offer(new Pair<>(row, col));
+        int level = 0;
+        while(!q.isEmpty()) {
+            int size = q.size();
+            level++;
+            for(int i = 0; i < size; i++) {
+                Pair<Integer, Integer> coordinate = q.poll();
+                // left
+                if(coordinate.getValue() - 1 >= 0 && coordinate.getKey() < room.length && coordinate.getKey() >= 0) {
+                    if(room[coordinate.getKey()][coordinate.getValue() - 1] > level ) {
+                        room[coordinate.getKey()][coordinate.getValue() - 1] = level;
+                        q.offer(new Pair<Integer, Integer>(coordinate.getKey(), coordinate.getValue() - 1 ));
+                    }
+                }
+                // right
+                if(coordinate.getValue() + 1 < room[0].length && coordinate.getKey() < room.length && coordinate.getKey() >= 0) {
+                    if(room[coordinate.getKey()][coordinate.getValue() + 1] > level ) {
+                        room[coordinate.getKey()][coordinate.getValue() + 1] = level;
+                        q.offer(new Pair<Integer, Integer>(coordinate.getKey(), coordinate.getValue() + 1 ));
+                    }
+                }
+                // up
+                if(coordinate.getValue() >= 0 && coordinate.getValue() < room[0].length && coordinate.getKey() - 1 >= 0) {
+                    if(room[coordinate.getKey() - 1][coordinate.getValue()] > level ) {
+                        room[coordinate.getKey() - 1][coordinate.getValue()] = level;
+                        q.offer(new Pair<Integer, Integer>(coordinate.getKey() - 1, coordinate.getValue() ));
+                    }
+                }
+                // down
+                if(coordinate.getValue() >= 0 && coordinate.getValue() < room[0].length && coordinate.getKey() + 1 < room.length) {
+                    if(room[coordinate.getKey() + 1][coordinate.getValue()] > level ) {
+                        room[coordinate.getKey() + 1][coordinate.getValue()] = level;
+                        q.offer(new Pair<Integer, Integer>(coordinate.getKey() + 1, coordinate.getValue()));
+                    }
+                }
+                
+            }
+        }
+    }
+}
