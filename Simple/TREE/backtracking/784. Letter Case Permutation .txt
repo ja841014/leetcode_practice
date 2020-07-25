@@ -1,0 +1,46 @@
+// backtracking Character.toLowerCase() Character.toUpperCase() Character.isDigit()
+// Given a string S, we can transform every letter individually to be lowercase or uppercase to create another string.  Return a list of all possible strings we could create.
+
+// Examples:
+// Input: S = "a1b2"
+// Output: ["a1b2", "a1B2", "A1b2", "A1B2"]
+
+// Input: S = "3z4"
+// Output: ["3z4", "3Z4"]
+
+// Input: S = "12345"
+// Output: ["12345"]
+class Solution {
+    public List<String> letterCasePermutation(String S) {
+        List<String> result = new ArrayList<>();
+        String target = "";
+        char[] char_arr = S.toCharArray();
+        helper(S, 0, char_arr, result);
+        
+        return result;
+    }
+    
+    public void helper(String s, int loc, char[] char_arr, List<String> result) {
+        
+        if(loc == s.length()) {
+            result.add(String.valueOf(char_arr));
+            return;
+        }
+        
+        if(Character.isDigit(s.charAt(loc))) {
+            // target = target + s.charAt(loc);
+            helper(s, loc + 1, char_arr, result);
+            return; // if we do not return here, it will ru the code below and will cause duplicate!!
+        }
+        // else{ // is alphabet
+        char_arr[loc] = Character.toLowerCase(s.charAt(loc));
+            // target = target + Character.toLowerCase(s.charAt(loc));
+        helper(s, loc + 1, char_arr, result);
+            // target = target.substring(0, target.length() - 1);
+        char_arr[loc] = Character.toUpperCase(s.charAt(loc));
+            // target = target + Character.toUpperCase(s.charAt(loc));
+        helper(s, loc + 1, char_arr, result);
+            
+        // }
+    }
+}
