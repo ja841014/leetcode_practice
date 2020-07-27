@@ -1,0 +1,98 @@
+// I have 2 version, 
+// the first vesion is HashMap + two pointer
+// another is HashMap + priority Queue
+// Given a string s , find the length of the longest substring t  that contains at most 2 distinct characters.
+
+// Example 1:
+
+// Input: "eceba"
+// Output: 3
+// Explanation: t is "ece" which its length is 3.
+// Example 2:
+
+// Input: "ccaabbb"
+// Output: 5
+// Explanation: t is "aabbb" which its length is 5.
+
+class Solution {
+    public int lengthOfLongestSubstringTwoDistinct(String s) {
+    if (s == null) {
+        return 0;
+    }
+        
+    int start = 0; // slow pointer
+    int loc = 0; // fast pointer
+    int max = 0;
+    
+    // use a map to track the char and its frequency
+    Map<Character, Integer> map = new HashMap<Character, Integer>();
+    
+    while (loc < s.length()) {
+      char ch = s.charAt(loc);
+      
+      if (map.size() < 2 || map.containsKey(ch)) {
+        // less than 2 distinct chars or the char is in the map already
+        // put it to the map and update the count
+          // concise
+        // map.put(ch, map.containsKey(ch) ? map.get(ch) + 1: 1);
+          // normal
+         if(map.containsKey(ch)) {
+             map.put(ch, map.get(ch) + 1);
+         }
+          else {
+              map.put(ch, 1);
+          }
+        // update the max
+         max = Math.max(max, loc + 1 - start);
+         loc++;
+      } 
+        else {
+        // we keep removing the old chars from the map
+        // till we only have one distinct char
+        while (map.size() == 2) {
+          ch = s.charAt(start);
+          start++;
+          if (map.get(ch) > 1) {
+              map.put(ch, map.get(ch) - 1);
+          }
+          else { // means this character is the last one in the string.
+              map.remove(ch);
+          }   
+        }
+      }
+    }
+    
+    return max;
+  }
+    // another version 
+//     public int lengthOfLongestSubstringTwoDistinct(String s) {
+//         if(s.length() < 3) {
+//             return s.length();
+//         }
+//         int loc = 0;
+//         Map<Character, Integer> map = new HashMap<>();
+//         int count = 0;
+//         int left_ptr = 0;
+//         PriorityQueue<Character> order = new PriorityQueue<>((a, b) -> map.get(a) - map.get(b));        
+//         while(loc < s.length()) {
+            
+//             if(map.size() < 3) {
+//                 map.put(s.charAt(loc), loc);
+//                 if(order.contains(s.charAt(loc))) {
+//                     order.remove(s.charAt(loc));
+//                 }
+//                 order.add(s.charAt(loc));
+//             }
+            
+//             if(map.size() == 3) {
+//                 char front_char = order.poll();
+//                 left_ptr = map.get(front_char) + 1;
+//                 map.remove(front_char);
+//             }
+//             count = Math.max(count, loc - left_ptr + 1);
+//             loc++;
+            
+//         }
+//         return count;
+//     }
+}

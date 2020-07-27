@@ -1,0 +1,39 @@
+// backtracking problem
+// Given a directed, acyclic graph of N nodes.  Find all possible paths from node 0 to node N-1, and return them in any order.
+
+// The graph is given as follows:  the nodes are 0, 1, ..., graph.length - 1.  graph[i] is a list of all nodes j for which the edge (i, j) exists.
+
+// Example:
+// Input: [[1,2], [3], [3], []] 
+// Output: [[0,1,3],[0,2,3]] 
+// Explanation: The graph looks like this:
+// 0--->1
+// |    |
+// v    v
+// 2--->3
+// There are two paths: 0 -> 1 -> 3 and 0 -> 2 -> 3.
+class Solution {
+    public List<List<Integer>> allPathsSourceTarget(int[][] graph) {
+        List<List<Integer>> result = new ArrayList<>();
+        List<Integer> sublist = new ArrayList<>();
+        sublist.add(0);
+        backtrack(graph, result, 0, sublist);
+        return result;
+        
+        
+    }
+    
+    public void backtrack(int[][] graph, List<List<Integer>> result, int cur_node, List<Integer> sublist) {
+        if(graph[cur_node].length == 0) {
+            result.add(new ArrayList(sublist));
+            return;
+        }
+        for(int neighbor : graph[cur_node]) {
+            sublist.add(neighbor);
+            backtrack(graph, result, neighbor, sublist);
+            sublist.remove(sublist.size() - 1);
+        }
+        
+        
+    }
+}

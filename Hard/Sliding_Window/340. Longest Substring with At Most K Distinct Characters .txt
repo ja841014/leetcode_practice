@@ -1,0 +1,54 @@
+// HashMap + 2 ptr
+// Given a string, find the length of the longest substring T that contains at most k distinct characters.
+// Example 1:
+
+// Input: s = "eceba", k = 2
+// Output: 3
+// Explanation: T is "ece" which its length is 3.
+// Example 2:
+
+// Input: s = "aa", k = 1
+// Output: 2
+// Explanation: T is "aa" which its length is 2.
+class Solution {
+    public int lengthOfLongestSubstringKDistinct(String s, int k) {
+        if(s.length()*k == 0) {
+            return 0;
+        }
+        // key: character value: character frequency
+        Map<Character, Integer> map = new HashMap<>();
+        // current position
+        int loc = 0;
+        // the second ptr
+        int start = 0;
+        int result = 0;
+        
+        while(loc < s.length()) {
+            if(map.size() < k || map.containsKey(s.charAt(loc)) ) { // you let map size < k. 
+            // Therefore, after process the code below, the map size might come to be map.size == k
+            // and we nust have this condition  map.containsKey(), because maybe we have the duplicate charater in loc position
+                // if map already contains the character
+                if(map.containsKey(s.charAt(loc)) ) {
+                    map.put(s.charAt(loc), map.get(s.charAt(loc)) + 1);
+                }
+                else {
+                    map.put(s.charAt(loc), 1);
+                }
+                result = Math.max(result, loc + 1 - start);
+                loc++;
+            }
+            else { // map size is bigger than k
+                while(map.size() >= k) {
+                    if(map.get(s.charAt(start)) > 1 ) {
+                        map.put(s.charAt(start), map.get(s.charAt(start)) - 1 );
+                    }
+                    else {
+                       map.remove(s.charAt(start)); 
+                    }
+                    start++;
+                }
+            }
+        }
+        return result;
+    }
+}

@@ -45,7 +45,7 @@ class Solution {
                 count--;
                 // avoid the same char count again
                 // target will minus 1 and maintain >= 0
-                // not target wull minus 1 as well but will < 0 
+                // not target will minus 1 as well but will < 0 
                 char_count[s.charAt(right_ptr) - 'a']--;
                 right_ptr++;
             }

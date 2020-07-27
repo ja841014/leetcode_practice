@@ -1,0 +1,125 @@
+// something like DFS + Backtracking
+// Tarjan can pass the test, brute force will suffer in time limit
+// There are n servers numbered from 0 to n-1 connected by undirected server-to-server connections forming a network where connections[i] = [a, b] represents a connection between servers a and b. Any server can reach any other server directly or indirectly through the network.
+// A critical connection is a connection that, if removed, will make some server unable to reach some other server.
+// Return all critical connections in the network in any order.
+class Solution {
+    public List<List<Integer>> criticalConnections(int n, List<List<Integer>> connections) {
+        // build undirected graph
+        Map<Integer, List<Integer>> edgemap = new HashMap<>();
+        // Map<Integer, Set<Integer>> fakemap = new HashMap<>();
+        List<List<Integer>> result = new ArrayList<>();
+        // int big = 0;
+        // int small = 0;
+        
+        boolean[] visited = new boolean[n];
+        int[] classify = new int[n];
+        // build up the map
+        for(List<Integer> ls : connections) {
+            edgemap.putIfAbsent(ls.get(0), new ArrayList<>());
+            edgemap.putIfAbsent(ls.get(1), new ArrayList<>());
+            
+            edgemap.get(ls.get(0)).add(ls.get(1));
+            edgemap.get(ls.get(1)).add(ls.get(0));
+        }
+        // run tarjan
+        for(int i = 0; i < edgemap.size(); i++) {
+            if(!visited[i]) {
+                Tarjan(i, i, 0, visited, classify, result, edgemap);
+            }
+        }
+        
+        
+        
+        
+//         for(List<Integer> ls : connections) {
+//             fakemap.putIfAbsent(ls.get(0), new HashSet<>());
+//             fakemap.putIfAbsent(ls.get(1), new HashSet<>());
+            
+//             fakemap.get(ls.get(0)).add(ls.get(1));
+//             fakemap.get(ls.get(1)).add(ls.get(0));
+//         }
+        // fakemap = edgemap;
+//         for(int i = 0; i < edgemap.size(); i++) {
+//             for(Integer it: edgemap.get(i)) {
+//                 fakemap.get(i).remove(it);
+//                 fakemap.get(it).remove(i);
+//                 if(is_critical_edge(n, fakemap) == false) {
+//                     List<Integer> sublist = new ArrayList<>();
+//                     if(i > it) {
+//                         big = i;
+//                         small = it;
+//                     }
+//                     else {
+//                         big = it;
+//                         small = i;
+//                     }
+//                     sublist.add(small);
+//                     sublist.add(big);
+//                     if(result.contains(sublist) == false) {
+//                         result.add(sublist);
+//                     }
+                    
+//                 }
+//                 fakemap.get(i).add(it);
+//                 fakemap.get(it).add(i);
+//             }
+            return result;
+        }
+       
+    
+    
+    // Tarjan Algorithm
+    public void Tarjan(int curr_node, int parent, int cnt, boolean[] visited, int[] classify, List<List<Integer>> result, Map<Integer, List<Integer>> edgemap) {
+        cnt++;
+        classify[curr_node] = cnt; 
+        visited[curr_node] = true; // mark current node as visited
+        for(int neighbor : edgemap.get(curr_node)) {
+            // do not process the duplicate node
+            if(neighbor == parent) {
+                continue;
+            }
+
+            if(visited[neighbor] == false) { // the node which is not process yet
+                Tarjan(neighbor, curr_node, cnt, visited, classify, result, edgemap);
+                if(cnt < classify[neighbor]) {
+                    // the two methods below are the same but the first one seems is faster
+                    // 1)
+                    result.add(Arrays.asList(curr_node, neighbor));
+                    // 2) 
+                    // List<Integer> sublist = new ArrayList<>();
+                    // sublist.add(curr_node);
+                    // sublist.add(neighbor);
+                    // result.add(sublist);
+                }
+            }
+            classify[curr_node] = Math.min(classify[curr_node], classify[neighbor]);
+        }
+    }
+
+
+
+//     public boolean is_critical_edge(int node, Map<Integer, Set<Integer>> edgemap) {
+//         boolean[] visited = new boolean[node];
+//         Stack<Integer> st = new Stack<>();
+//         st.add(0);
+//         visited[0] = true;
+//         while(!st.isEmpty()) {
+//             int tmp = st.pop();
+//             for(int neighbor : edgemap.get(tmp)) {
+//                 if(visited[neighbor] == false) {
+//                     st.add(neighbor);
+//                     visited[neighbor] = true;
+//                 }
+//             }
+//         }
+//         for(int i = 0; i < node; i++) {
+//             if(visited[i] == false) {
+//                 return false;
+//             }
+//         }
+//         return true;
+        
+//     }
+}
+
