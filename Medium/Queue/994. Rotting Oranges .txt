@@ -1,0 +1,72 @@
+// using Queue<Pair<Integer, Integer>> maybe next time can use Queue<int[]>
+// n a given grid, each cell can have one of three values:
+
+// the value 0 representing an empty cell;
+// the value 1 representing a fresh orange;
+// the value 2 representing a rotten orange.
+// Every minute, any fresh orange that is adjacent (4-directionally) to a rotten orange becomes rotten.
+
+// Return the minimum number of minutes that must elapse until no cell has a fresh orange.  If this is impossible, return -1 instead.
+class Solution {
+    public int orangesRotting(int[][] grid) {
+        List<List<Integer>> rotten = new ArrayList<>();
+        int fresh = 0;
+        for(int i = 0; i < grid.length; ++i ) {
+            for(int j = 0; j < grid[0].length; ++j) {
+                if(grid[i][j] == 2) {
+                     // bfs(grid, rotten, fresh);
+                    rotten.add(Arrays.asList(i , j));
+                }
+                else if(grid[i][j] == 1) {
+                    fresh++;
+                }
+            }
+        }
+        return bfs(grid, rotten, fresh);
+    }
+    
+    public int bfs(int[][] grid, List<List<Integer>> rotten, int fresh) {
+        Queue<Pair<Integer, Integer>> q = new LinkedList<>();
+        int  level = 3;
+        for(int i = 0; i < rotten.size(); ++i) {
+            q.offer(new Pair( rotten.get(i).get(0), rotten.get(i).get(1)) );
+        }
+        while(!q.isEmpty() && fresh > 0) {
+            int size = q.size();
+            for(int i = 0; i < size; i++) {
+                Pair<Integer, Integer> tmp = q.poll();
+                int tmp_row = tmp.getKey();
+                int tmp_col = tmp.getValue() ;
+                // left
+                if( tmp_col - 1 >= 0 && grid[tmp_row][tmp_col - 1] == 1) {
+                    q.offer(new Pair(tmp_row, tmp_col - 1) );
+                    grid[tmp_row][tmp_col - 1] = 2;
+                    fresh--;
+                }
+                // right
+                if( tmp_col + 1 < grid[0].length && grid[tmp_row][tmp_col + 1] == 1) {
+                    q.offer(new Pair(tmp_row, tmp_col + 1) );
+                    grid[tmp_row][tmp_col + 1] = 2;
+                    fresh--;
+                }
+                // up
+                if(tmp_row - 1 >= 0 && grid[tmp_row - 1][tmp_col] == 1) {
+                    q.offer(new Pair(tmp_row - 1, tmp_col) );
+                    grid[tmp_row - 1][tmp_col] = 2;
+                    fresh--;
+                }
+                // down
+                if(tmp_row + 1 < grid.length && grid[tmp_row + 1][tmp_col] == 1) {
+                    q.offer(new Pair(tmp_row + 1, tmp_col) );
+                    grid[tmp_row + 1][tmp_col] = 2;
+                    fresh--;
+                }
+            }
+            level++;
+        }
+        if(fresh != 0) {
+            return -1;
+        }
+        return level - 3;
+    }
+}

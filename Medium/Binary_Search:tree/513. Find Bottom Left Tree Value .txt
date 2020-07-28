@@ -1,0 +1,54 @@
+// BFS
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public int findBottomLeftValue(TreeNode root) {
+        if(root.left == null && root.right == null) {
+            return root.val;
+        }
+        return bfs(root);
+    }
+    public int bfs(TreeNode root) {
+        TreeNode head = root;
+        // List<Integer> ls = new ArrayList<>();
+        int result = 0;
+        // List<List<Integer>> list = new ArrayList<>();
+        Queue<TreeNode> q = new LinkedList<>();
+        q.offer(head);
+        while(!q.isEmpty()) {
+            int size = q.size();
+            List<Integer> sublist = new ArrayList<>();
+            for(int i = 0; i < size; i++) {
+                TreeNode tmp = q.poll();
+                
+                if(tmp.left != null) {
+                    q.offer(tmp.left);
+                    sublist.add(tmp.left.val);
+                }
+                if(tmp.right != null) {
+                    q.offer(tmp.right);
+                    sublist.add(tmp.right.val);
+                }
+            }
+            // list.add(sublist);
+            if(!sublist.isEmpty()) {
+                result = sublist.get(0);
+            }
+        }
+        // return list.get(list.size() - 2).get(0);
+        return result;
+    }
+}
