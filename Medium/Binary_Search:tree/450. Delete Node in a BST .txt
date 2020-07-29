@@ -1,0 +1,72 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public TreeNode deleteNode(TreeNode root, int key) {
+        TreeNode head = root;
+        head = helper(head, key);
+        return head;
+    }
+    
+    public TreeNode helper(TreeNode head, int target) {
+        if(head == null) {
+            return null;
+        }
+        if(head.val < target) {
+            head.right = helper(head.right, target);
+            // head = head.right;
+        }
+        else if(head.val > target){
+            head.left = helper(head.left, target);
+            // head = head.left;
+        }
+        else { // we find the target
+            // 1. head right and head left are all null 
+            if(head.left == null && head.right == null) {
+                head = null;
+            }
+            // 2. head has left child
+            else if(head.left != null) {
+                head.val = rightmost_child_subtree(head.left);
+                head.left = helper(head.left, head.val);
+            }
+            // 3. head has right child
+            else {
+                head.val = leftmost_child_subtree(head.right);
+                head.right = helper(head.right, head.val);
+            }
+        }
+        return head;
+    }
+    
+    public int rightmost_child_subtree(TreeNode tmp) {
+        TreeNode fake = tmp;
+        // fake = fake.left;
+        while(fake.right != null) {
+            fake = fake.right;
+        }
+        return fake.val;  
+    }
+    
+    public int leftmost_child_subtree(TreeNode tmp) {
+        TreeNode fake = tmp;
+        // fake = fake.right;
+        while(fake.left != null) {
+            fake = fake.left;
+        }
+        return fake.val;  
+    }
+    
+}

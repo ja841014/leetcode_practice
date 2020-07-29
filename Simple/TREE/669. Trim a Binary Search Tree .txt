@@ -1,0 +1,39 @@
+// recusive
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public TreeNode trimBST(TreeNode root, int L, int R) {
+        if(root == null) {
+            return null;
+        }
+        // left sub tree out of range
+        if(root.val < L) {
+            return trimBST(root.right, L, R);
+            //why is root.right?
+            // because value of root is already out of range of L, so root.left is impossible to be a suitable answer.
+        }
+        // right subtree out of range
+        if(root.val > R) {
+            return trimBST(root.left, L, R);
+        }
+        
+        root.left = trimBST(root.left, L, R);
+        root.right = trimBST(root.right, L, R);
+        
+        return root;
+        
+    }
+}
