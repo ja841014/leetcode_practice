@@ -1,0 +1,53 @@
+// using BFS on array
+// Given an array of non-negative integers arr, you are initially positioned at start index of the array. When you are at index i, you can jump to i + arr[i] or i - arr[i], check if you can reach to any index with value 0.
+// Notice that you can not jump outside of the array at any time.
+
+// Example 1:
+// Input: arr = [4,2,3,0,3,1,2], start = 5
+// Output: true
+// Explanation: 
+// All possible ways to reach at index 3 with value 0 are: 
+// index 5 -> index 4 -> index 1 -> index 3 
+// index 5 -> index 6 -> index 4 -> index 1 -> index 3 
+
+// Example 2:
+// Input: arr = [4,2,3,0,3,1,2], start = 0
+// Output: true 
+// Explanation: 
+// One possible way to reach at index 3 with value 0 is: 
+// index 0 -> index 4 -> index 1 -> index 3
+class Solution {
+    public boolean canReach(int[] arr, int start) {
+        Queue<Integer> q = new LinkedList<>();
+        boolean[] visited = new boolean[arr.length];
+        q.offer(start);
+        visited[start] = true;
+        boolean activate = false;
+        // BFS
+        while(!q.isEmpty()) {
+            int size = q.size();
+            for(int i = 0; i < size; i++) {
+                int index = q.poll();
+                visited[index] = true;
+                // if find the value 0, break out
+                if(arr[index] == 0) {
+                    activate = true;
+                    break;
+                }
+                // we have to check whther the new index will out of arr range or not 
+                if(index + arr[index] < arr.length && index + arr[index] >= 0 && visited[index + arr[index]] == false) {
+                    q.offer(index + arr[index]);
+                    visited[index + arr[index]] = true;
+                }
+                if(index - arr[index] < arr.length && index - arr[index] >= 0 && visited[index - arr[index]] == false) {
+                    q.offer(index - arr[index]);
+                    visited[index - arr[index]] = true;
+                }
+            }
+            if(activate == true) {
+                break;
+            }
+        }
+        return activate;
+    }
+} 
