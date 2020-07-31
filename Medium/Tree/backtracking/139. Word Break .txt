@@ -1,0 +1,45 @@
+// backtracking
+// Given a non-empty string s and a dictionary wordDict containing a list of non-empty words, determine if s can be segmented into a space-separated sequence of one or more dictionary words.
+
+// Note:
+
+// The same word in the dictionary may be reused multiple times in the segmentation.
+// You may assume the dictionary does not contain duplicate words.
+// Example 1:
+
+// Input: s = "leetcode", wordDict = ["leet", "code"]
+// Output: true
+// Explanation: Return true because "leetcode" can be segmented as "leet code".
+class Solution {
+    public boolean wordBreak(String s, List<String> wordDict) {
+        Map<String, Boolean> map = new HashMap<>();
+        return dfs_backtrack_helper(s, wordDict, map);
+    }
+    
+    public boolean dfs_backtrack_helper(String org_sub, List<String> wordDict, Map<String, Boolean> memo) {
+        // to see whether there is a memo in the map
+        if(memo.containsKey(org_sub)) {
+            return memo.get(org_sub);
+        }
+        boolean determin = false; 
+        // go through the wordDict to see whether the target string contain the word in the wordDict
+        for(String dict_str : wordDict) {
+            if(!org_sub.startsWith(dict_str)) {
+                continue;
+            }
+            int size = dict_str.length();
+            if(size == org_sub.length()) {
+                determin = true;
+                return true;
+            }
+            else if(dfs_backtrack_helper(org_sub.substring(size), wordDict, memo)) {
+                determin = true;
+                return true;
+            }
+            
+        }
+        memo.put(org_sub, determin);
+        return false;
+    }
+    
+}

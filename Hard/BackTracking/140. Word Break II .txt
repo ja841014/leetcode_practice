@@ -1,0 +1,58 @@
+// backtracking + DFS + using map as memo
+// Given a non-empty string s and a dictionary wordDict containing a list of non-empty words, add spaces in s to construct a sentence where each word is a valid dictionary word. Return all such possible sentences.
+
+// Note:
+
+// The same word in the dictionary may be reused multiple times in the segmentation.
+// You may assume the dictionary does not contain duplicate words.
+// Example 1:
+
+// Input:
+// s = "catsanddog"
+// wordDict = ["cat", "cats", "and", "sand", "dog"]
+// Output:
+// [
+//   "cats and dog",
+//   "cat sand dog"
+// ]
+
+class Solution {
+    public List<String> wordBreak(String s, List<String> wordDict) {
+
+        Map<String, List<String>> map = new HashMap<>();
+        return dfs_helper(wordDict, s, map);
+    }
+    
+    public List<String> dfs_helper(List<String> wordDict, String sub_string, Map<String, List<String>> memo) {
+        // we must have this memo map, otherwise, we will calculate repeatly and result in TLE
+        if(memo.containsKey(sub_string) == true) {
+            return memo.get(sub_string);
+        }
+        List<String> result = new ArrayList<>();
+
+        
+        for(String tmp : wordDict) {
+            // if words are not contain in the head of string, then go to next loop
+            if(!sub_string.startsWith(tmp)) {
+                continue;
+            }
+            // calculate dictionary word length
+            int tmp_size = tmp.length();
+            // this is dfs, so tje first word which add into "result" is the last word 
+            if(tmp_size == sub_string.length()) {
+                result.add(tmp);
+            }
+            else {
+                List<String> sublist = dfs_helper(wordDict, sub_string.substring(tmp_size), memo );
+                // adding word into all sublist element.
+                for(String str : sublist) {
+                    str = tmp + " " + str;
+                    result.add(str);
+                }
+            }
+        }
+        memo.put(sub_string, result);
+        return result;
+    }
+    
+}
