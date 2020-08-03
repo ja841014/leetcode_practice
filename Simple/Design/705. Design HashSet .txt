@@ -1,0 +1,59 @@
+class MyHashSet {
+    LinkedList<Integer>[] ls; 
+    int set_size = 17;
+    /** Initialize your data structure here. */
+    public MyHashSet() {
+        ls = new LinkedList[set_size];
+    }
+    
+    public void add(int key) {
+        int index = hash_function(key);
+        
+        if(contains(key) == false) {
+            if(ls[index] == null) { // does have any element in this bucket
+                ls[index] = new LinkedList<>();
+                ls[index].add(key);
+            }
+            else {// already have elements in this bucket
+                ls[index].add(key);
+            }
+            
+        }
+        // else {
+        //     System.out.println("already in it.");
+        // }
+    }
+    
+    public void remove(int key) {
+        int index = hash_function(key);
+        if(contains(key) == true) {
+            ls[index].removeFirstOccurrence(key);
+        }
+    }
+    
+    /** Returns true if this set contains the specified element */
+    public boolean contains(int key) {
+        int index = hash_function(key);
+        if(ls[index] != null) {
+            for(int target : ls[index]) {
+                if(target == key) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+    
+    public int hash_function(int key) {
+        return key % 17;
+    }
+}
+
+/**
+ * Your MyHashSet object will be instantiated and called as such:
+ * MyHashSet obj = new MyHashSet();
+ * obj.add(key);
+ * obj.remove(key);
+ * boolean param_3 = obj.contains(key);
+ */

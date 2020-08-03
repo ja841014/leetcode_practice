@@ -1,0 +1,52 @@
+// First, build up the HashMap of character and frequency
+// Second, build up the maxHeap based on HashMap keySet => MaxHeap.addAll(Map.keySet());
+// Third, each loop pop out two element from Maxheap and add in the the StringBuilder
+// Fourth, the element frequency minus 1 and put into. the Maxheap again if the frequency is not 0.
+// Given a string S, check if the letters can be rearranged so that two characters that are adjacent to each other are not the same.
+// If possible, output any possible result.  If not possible, return the empty string.
+
+// Example 1:
+// Input: S = "aab"
+// Output: "aba"
+    
+// Example 2:
+// Input: S = "aaab"
+// Output: ""
+class Solution {
+    public String reorganizeString(String S) {
+        // build up the Map
+        // int[] char_freq_arr = new int[26];
+        Map<Character, Integer> char_freq = new HashMap<>();
+        PriorityQueue<Character> MaxHeap = new PriorityQueue<>((a, b) -> char_freq.get(b) - char_freq.get(a));
+        for(int i = 0; i < S.length(); i++) {
+            char_freq.put(S.charAt(i), char_freq.getOrDefault(S.charAt(i), 0) + 1);
+        }
+        // put all the thing into Maxheap
+        MaxHeap.addAll(char_freq.keySet());
+        
+        StringBuilder sb = new StringBuilder();
+        // Greedy
+        while(MaxHeap.size() > 1) {
+            char curr = MaxHeap.poll();
+            char next = MaxHeap.poll();
+            sb.append(curr);
+            sb.append(next);
+            if(char_freq.get(curr) - 1 > 0) {
+                char_freq.put(curr, char_freq.get(curr) - 1);
+                MaxHeap.add(curr);
+            }
+            if(char_freq.get(next) - 1 > 0) {
+                char_freq.put(next, char_freq.get(next) - 1);
+                MaxHeap.add(next);
+            }
+        }
+        if(MaxHeap.size() == 0) {
+            return sb.toString();
+        }
+        else if(char_freq.get(MaxHeap.peek()) == 1){
+            return sb.append(MaxHeap.peek()).toString();
+        }
+        
+        return "";
+    }
+}

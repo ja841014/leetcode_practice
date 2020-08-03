@@ -1,0 +1,41 @@
+// String.valueOf(array[]) ==> Array[] -> String
+// Integer.parseInt(s) ==> String -> int
+// Given a non-negative integer, you could swap two digits at most once to get the maximum valued number. Return the maximum valued number you could get.
+// Example 1:
+// Input: 2736
+// Output: 7236
+// Explanation: Swap the number 2 and the number 7.
+
+// Example 2:
+// Input: 9973
+// Output: 9973
+// Explanation: No swap.
+class Solution {
+    public int maximumSwap(int num) {
+        // change int to array
+        char[] num_arr = Integer.toString(num).toCharArray();
+        int[] last_loc = new int[10];
+        boolean activate = false;
+        for(int i = 0; i < num_arr.length; i++) {
+            // tracking the each right most number
+            last_loc[num_arr[i] - '0'] = i;
+        }
+        for(int curr = 0; curr < num_arr.length; curr++) {
+            // check the value whether is suitable or not
+            for(int j = 9; j > num_arr[curr] - '0' ; j--) {
+                // check the location, last_loc[j] is mean the index in num_arr
+                if(last_loc[j] > curr) {
+                    char temp = num_arr[curr];
+                    num_arr[curr] = num_arr[last_loc[j]];
+                    num_arr[last_loc[j]] = temp;
+                    activate = true;
+                    break;
+                }
+            }
+            if(activate == true) {
+                break;
+            }
+        }
+        return  Integer.parseInt(String.valueOf(num_arr));
+    }
+}

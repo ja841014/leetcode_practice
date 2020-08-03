@@ -1,0 +1,36 @@
+// every time pass the central word location to the function, then expand  the string to find the longest substring. 
+// Given a string s, find the longest palindromic substring in s. You may assume that the maximum length of s is 1000.
+// Example 1:
+// Input: "babad"
+// Output: "bab"
+    
+// Example 2:
+// Input: "cbbd"
+// Output: "bb"
+class Solution {
+    public String longestPalindrome(String s) {
+        String result = "";
+        for(int i = 0; i < s.length(); i++) {
+            // even
+            String tmp_even = helper(s, i, i + 1);
+            if(result.length() < tmp_even.length()) {
+                result = tmp_even;
+            }
+            // odd
+            String tmp_odd = helper(s, i, i);
+            if(result.length() < tmp_odd.length()) {
+                result = tmp_odd;
+            }
+            
+        }
+        return result;
+    }
+    public String helper(String str, int left, int right) {
+        while(left >= 0 && right < str.length() && str.charAt(left) == str.charAt(right)) {
+            left--;
+            right++;
+        }
+        return str.substring(left + 1, right);
+    }
+    
+}
