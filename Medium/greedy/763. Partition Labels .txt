@@ -1,0 +1,21 @@
+// Greedy using Math.max
+class Solution {
+    public List<Integer> partitionLabels(String S) {
+        Map<Character, Integer> map = new HashMap<>();
+        // int[] first_loc = new int[26];
+        List<Integer> result = new ArrayList<>();
+        for(int i = 0; i < S.length(); i++) {
+            map.put(S.charAt(i), i);
+        }
+        int curr_loc = 0;
+        int start = 0;
+        for(int i = 0; i < S.length(); i++) {
+            curr_loc = Math.max( map.get(S.charAt(i)), curr_loc);
+            if(curr_loc == i) {
+                result.add(curr_loc - start + 1);
+                start = curr_loc + 1;
+            }
+        }
+        return result;
+    }
+}

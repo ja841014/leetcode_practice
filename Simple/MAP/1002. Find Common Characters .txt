@@ -1,0 +1,50 @@
+// Given an array A of strings made only from lowercase letters, return a list of all characters that show up in all strings within the list (including duplicates).  For example, if a character occurs 3 times in all strings but not 4 times, you need to include that character three times in the final answer.
+
+// Example 1:
+// Input: ["bella","label","roller"]
+// Output: ["e","l","l"]
+
+// Example 2:
+// Input: ["cool","lock","cook"]
+// Output: ["c","o"]
+class Solution {
+    public List<String> commonChars(String[] A) {
+        List<String> result = new ArrayList<>();
+        if(A.length == 0) {
+            return result;
+        }
+        
+        Map<Character, Integer> map = new HashMap<>();
+        // build up the first map of string
+        for(int i = 0; i < A[0].length(); i++) {
+            map.put(A[0].charAt(i), map.getOrDefault(A[0].charAt(i), 0) + 1);
+        }
+        // compare with first one
+        for(String str : A) {
+            char[] str_arr = str.toCharArray();
+            Map<Character, Integer> tmp = new HashMap<>();
+            for(char ch : str_arr) {
+                // if map contain the character and the frequency of the character minus one >= 0
+                if(map.containsKey(ch) && map.get(ch) - 1 >= 0) {
+                    map.put(ch, map.get(ch) - 1);
+                    tmp.put(ch, tmp.getOrDefault(ch, 0) + 1);
+                }
+            }
+            map.clear();
+            map = tmp;
+        }
+        
+        int count = 0;
+        // go through all the keySet
+        for(char key : map.keySet()) {
+            // add the time as many as the frequency of the key in the List
+            while(count < map.get(key)) {
+                result.add("" + key);
+                count++;
+            }
+            count = 0;
+        }
+        
+        return result;
+    }
+}
