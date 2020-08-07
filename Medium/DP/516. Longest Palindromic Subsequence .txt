@@ -1,0 +1,47 @@
+// dynamic programming
+// Given a string s, find the longest palindromic subsequence's length in s. You may assume that the maximum length of s is 1000.
+// Example 1:
+// Input:
+// "bbbab"
+// Output:
+// 4
+// Example 2:
+// Input:
+// "cbbd"
+// Output:
+// 2
+class Solution {
+    public int longestPalindromeSubseq(String s) {
+        if(s.length() == 0) {
+            return 0;
+        }
+        int[][] dynamic_table = new int[s.length()][s.length()];
+        // build up the base case, that is, contain only one character. so every character is the smallest subsequence 
+        for(int i = 0; i < s.length(); i++) {
+            dynamic_table[i][i] = 1;
+        }
+        
+        for(int i = 1; i < s.length(); i++) {
+            helper(dynamic_table, i, s);
+        }
+        return dynamic_table[0][s.length() - 1];
+    }
+    
+    public void helper(int[][] table, int length, String org_str) {
+        for(int i = 0; i < org_str.length() - length; i++) {
+            // the algorithm only see the two new character whether is the same or not
+            if(org_str.charAt(i) == org_str.charAt(i + length)) {
+                // iff they only contain 2 characters and they are the same.
+                if(table[i + 1][i + length - 1] == 0) {
+                    table[i][i + length] = 2;
+                }
+                else {
+                    table[i][i + length] = table[i + 1][i + length - 1] + 2;
+                }
+            }
+            else {
+                table[i][i + length] = Math.max(table[i][i + length - 1], table[i + 1][i + length]);
+            }
+        }
+    }
+}
