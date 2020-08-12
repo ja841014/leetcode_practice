@@ -1,0 +1,40 @@
+// Stinrg operation and StringBuilder
+class Solution {
+    public char findKthBit(int n, int k) {
+        if(n == 1) {
+            return '0';
+        }
+        // String[] s_arr = new String[n];
+        // s_arr[0] = "0";
+        String pre = "0";
+        String next = "";
+        for(int i = 1; i < n; i++) {
+            next = pre + "1" + invertString(pre);
+            pre = next;
+        }
+        return next.charAt(k - 1);
+    }
+    
+    // public String reverseString(String str) {
+    //     int size = str.length();
+    //     String ans = "";
+    //     for(int i = 0; i < size; i++) {
+    //         ans = ans + str.charAt(size - 1 - i);
+    //     }
+    //     return ans;
+    // }
+    
+    public String invertString(String str) {
+        int size = str.length();
+        StringBuilder ans = new StringBuilder();
+        for(int i = 0 ; i < size; i++) {
+            if(str.charAt(i) == '0') {
+                ans = ans.append("1");
+            }
+            else {
+                ans = ans.append("0");
+            }
+        }
+        return ans.reverse().toString();
+    }
+}

@@ -1,0 +1,91 @@
+// inner class; Collections.sort; lambda function
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    // create a new inner class
+    class Triple {
+        int row;
+        int col;
+        TreeNode node;
+        Triple(int row, int col, TreeNode node) {
+            this.row = row;
+            this.col = col;
+            this.node = node;
+        }
+    }
+    
+    public List<List<Integer>> verticalTraversal(TreeNode root) {
+        // our list must usethe triple class, because we will use the triple class to sort the list.
+        Map<Integer, List<Triple>> map = new HashMap<>();
+        List<List<Integer>> result = new ArrayList<>();
+        int level = 0;
+        // put our new class triple into Queue
+        Queue<Triple> q = new LinkedList<>();
+        q.offer(new Triple(level, 0, root));
+        // we have to track the minimum and maximum, becuase we have to use these two variables to go through our map
+        int track_min_col = Integer.MAX_VALUE;
+        int track_max_col = Integer.MIN_VALUE;
+        
+        // BFS
+        while(!q.isEmpty()) {
+            int size = q.size();
+            level++;
+            for(int i = 0; i < size; i++) {
+                Triple tmp = q.poll();
+                // tracking the min column and max column
+                track_min_col = Math.min(tmp.col, track_min_col);
+                track_max_col = Math.max(tmp.col, track_max_col);
+                if(map.get(tmp.col) != null) { // if map already contains the value
+                    map.get(tmp.col).add(tmp);
+                }
+                else { // if map not contain the value yet
+                    map.put(tmp.col, new ArrayList<>());
+                    map.get(tmp.col).add(tmp);
+                }
+                if(tmp.node.left != null) {
+                    q.offer(new Triple(level, tmp.col - 1, tmp.node.left));
+                }
+                if(tmp.node.right != null) {
+                    q.offer(new Triple(level, tmp.col + 1, tmp.node.right));
+                }
+            }
+        }
+        // this index is used to get the right list
+        int index = 0;
+        for(int i = track_min_col; i <= track_max_col; i++) {
+            List<Triple> ls = new ArrayList<>();
+            ls = map.get(i);
+            // same list have the same column
+            Collections.sort(ls, (a, b) -> {
+                if(a.row == b.row) { // if elements are in the same row and col, we sort them by value
+                    return a.node.val - b.node.val; // ascending small -> big
+                }
+                else {
+                    return a.row - b.row;
+                }
+            });
+            
+            List<Integer> int_ls = new ArrayList<>();
+            result.add(int_ls);
+            // put the sorted list into result.
+            for(Triple t: ls) {
+                result.get(index).add(t.node.val);
+            }
+            index++;
+        }
+        return result;
+    }
+}

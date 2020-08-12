@@ -1,0 +1,79 @@
+// this task is same as 987. Vertical Order Traversal of a Binary Tree
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    class Triple {
+        int col;
+        int row;
+        TreeNode node;
+        public Triple(int col, int row, TreeNode node) {
+            this.col = col;
+            this.row = row;
+            this.node = node;
+        }
+    }
+    public List<List<Integer>> verticalOrder(TreeNode root) {
+        Queue<Triple> q = new LinkedList<>();
+        Map<Integer, List<Triple>> map = new HashMap<>();
+        List<List<Integer>> result = new ArrayList<>();
+        
+        if(root == null) {
+            return result;
+        }
+        
+        int min_col = Integer.MAX_VALUE;
+        int max_col = Integer.MIN_VALUE;
+        
+        int level = 0;
+        q.offer(new Triple(0, level, root));
+        while(!q.isEmpty()) {
+            int size = q.size();
+            level++;
+            for(int i = 0 ;i < size; i++) {
+                
+                Triple tmp = q.poll();
+                
+                min_col = Math.min(tmp.col, min_col);
+                max_col = Math.max(tmp.col, max_col);
+                
+                if(map.get(tmp.col) != null) { // map already contains the column
+                    map.get(tmp.col).add(tmp);
+                }
+                else {
+                    map.put(tmp.col, new ArrayList<>());
+                    map.get(tmp.col).add(tmp);
+                }
+                
+                if(tmp.node.left != null) {
+                    q.offer(new Triple(tmp.col - 1, level, tmp.node.left));
+                } 
+                if(tmp.node.right != null) {
+                    q.offer(new Triple(tmp.col + 1, level, tmp.node.right));
+                } 
+                
+            }
+        }
+        
+        for(int i = min_col; i <= max_col; i++) {
+            List<Integer> ls = new ArrayList<>();
+            for(Triple t: map.get(i)) {
+                ls.add(t.node.val);
+            }
+            result.add(ls);
+        }
+        return result;
+    }
+}

@@ -1,0 +1,46 @@
+class Solution {
+    public int minInsertions(String s) {
+        char[] s_arr = s.toCharArray();
+        Stack<Character> st = new Stack<>(); // stack only input '('
+        int count = 0;
+        for(int i = 0; i < s.length(); i++) {
+            if(s_arr[i] == '(') {
+                st.push(s_arr[i] );
+            }
+            else { // when we meet the ')'
+                if(st.size() == 0) { // if stack is empty any element
+                    if(i == s.length() - 1) { // current index is last character
+                        count = count + 2; // add "(" and ")"
+                    }
+                    else if(s_arr[i + 1] == ')') {
+                        i++;
+                        count = count + 1; // add '('
+                    }
+                    else { // next character is '('
+                        count = count + 2; // add "(" and ")"
+                    }
+                    
+                }
+                else { // stack is not empty
+                    if(i == s.length() - 1) { // current index is last character
+                        count = count + 1; // add ')'
+                    }
+                    else if(s_arr[i + 1] == ')') { // perfect
+                        i++;
+                    }
+                    else { // next character is '('
+                        count = count + 1; // add ')'
+                    }
+                    st.pop();
+                }
+            }
+        }
+        int size = st.size();
+     
+        if(!st.isEmpty()) {
+            count = count + size * 2;
+        }
+        
+        return count;
+    }
+}

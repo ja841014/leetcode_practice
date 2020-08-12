@@ -1,0 +1,40 @@
+// something like DP + DFS, you have to take the big array and using recusive break down to the small array and tackle the problem. Finally, return the value back.
+class Solution {
+    int[][] table;
+    public int minCost(int n, int[] cuts) {
+        // build a new array and 
+        int[] new_cuts = new int[cuts.length + 2];
+        
+        for(int i = 0; i < cuts.length; i++) {
+            new_cuts[i] = cuts[i];
+        }
+        new_cuts[new_cuts.length - 1] = 0;
+        new_cuts[new_cuts.length - 2] = n;
+        // sort the Array
+        Arrays.sort(new_cuts);
+        // init dynamic table
+        table = new int[new_cuts.length][new_cuts.length];
+        return cut_helper(0, new_cuts.length - 1, new_cuts, table);
+        
+        
+    }
+    public int cut_helper(int left, int right, int[] cuts, int[][] table) {
+        // cannot divide anymore.
+        if(right - left <= 1) {
+            return 0;
+        }
+        if(table[left][right] != 0) {
+            return table[left][right];
+        }
+        
+        table[left][right] = Integer.MAX_VALUE;
+        
+        for(int i = left + 1; i < right; i++) {
+            int cur_cost = cuts[right] - cuts[left];
+            table[left][right] = Math.min(table[left][right], 
+                                          cur_cost + cut_helper(left, i, cuts,table) + cut_helper(i, right, cuts, table));
+        } 
+        return table[left][right];
+    }
+}
+

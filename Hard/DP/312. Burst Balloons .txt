@@ -1,0 +1,36 @@
+
+class Solution {
+    int[][] table;
+    public int maxCoins(int[] nums) {
+        // build up a new Array which has two more elements
+        int[] new_arr = new int[nums.length + 2];
+        new_arr[0] = 1;
+        for(int i = 0; i < nums.length; i++) {
+            new_arr[i + 1] = nums[i];
+        }
+        new_arr[new_arr.length - 1] = 1;
+        
+        table = new int[new_arr.length][new_arr.length];
+        
+        return helper(0, new_arr.length - 1, new_arr, table);
+        
+    }
+    
+    public int helper(int left, int right, int[] arr, int[][] table)  {
+        // because the left and right boudary means that the location cannot be burst.
+        if (left + 1 == right) {
+            return 0;
+        }
+        // look up the memo table
+        if(table[left][right] != 0) {
+            return table[left][right];
+        }
+        table[left][right] = Integer.MIN_VALUE;
+        // the i is the index of balloon which is bursted last.
+        for(int i = left + 1; i < right; i++) {
+            table[left][right] = Math.max(table[left][right], 
+                                          arr[left] * arr[i] * arr[right] + helper(left, i, arr, table) + helper(i, right, arr, table));
+        }
+        return table[left][right];
+    }
+}
