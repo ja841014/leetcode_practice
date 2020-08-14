@@ -1,0 +1,78 @@
+/*
+[
+[1,0,0],
+[1,1,0],
+[0,1,0],
+[1,0,0],
+[1,1,0],
+[1,0,0]]
+if we do not append "x", when the if statement is false.
+we will get both of them are SDRD, But, actually, they are diffenet island.
+*/
+class Solution {
+    public int numDistinctIslands(int[][] grid) {
+        Set<String> s = new HashSet<>();
+        for(int i = 0; i < grid.length; i++) {
+            for(int j = 0; j < grid[0].length; j++) {
+                if(grid[i][j] == 1) {
+                    s.add(BFS(i, j, grid));
+                }
+            }
+        }
+        return s.size();
+    }
+    
+    public String BFS(int row, int col, int[][] grid) {
+        StringBuilder sb = new StringBuilder();
+        Queue<int[]> q = new LinkedList<>();
+        q.offer(new int[] {row, col});
+        sb.append('S');
+        grid[row][col] = 0;
+        while(!q.isEmpty()) {
+            int size = q.size();
+            for(int i = 0; i < size; i++) {
+                int[] tmp = q.poll();
+                // left
+                if(tmp[1] - 1 >= 0 && grid[tmp[0]][tmp[1] - 1] == 1) {
+                    q.offer(new int[] {tmp[0], tmp[1] - 1});
+                    grid[tmp[0]][tmp[1] - 1] = 0;
+                    sb.append('L');
+                }
+                else {
+                    sb.append('X');
+                }
+                // right
+                if(tmp[1] + 1 < grid[0].length && grid[tmp[0]][tmp[1] + 1] == 1) {
+                    q.offer(new int[] {tmp[0], tmp[1] + 1});
+                    grid[tmp[0]][tmp[1] + 1] = 0;
+                    sb.append('R');
+                }
+                else {
+                    sb.append('X');
+                }
+                // up
+                if(tmp[0] - 1 >= 0 && grid[tmp[0] - 1][tmp[1]] == 1) {
+                    q.offer(new int[] {tmp[0] - 1, tmp[1]});
+                    grid[tmp[0] - 1][tmp[1]] = 0;
+                    sb.append('U');
+                }
+                else {
+                    sb.append('X');
+                }
+                // down
+                if(tmp[0] + 1 < grid.length && grid[tmp[0] + 1][tmp[1]] == 1) {
+                    q.offer(new int[] {tmp[0] + 1, tmp[1]});
+                    grid[tmp[0] + 1][tmp[1]] = 0;
+                    sb.append('D');
+                }
+                else {
+                    sb.append('X');
+                }
+                
+            }
+            
+            
+        }
+        return sb.toString();
+    }
+}

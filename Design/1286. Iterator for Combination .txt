@@ -1,0 +1,63 @@
+// Using backtracking to generate all combinations
+// Design an Iterator class, which has:
+
+// A constructor that takes a string characters of sorted distinct lowercase English letters and a number combinationLength as arguments.
+// A function next() that returns the next combination of length combinationLength in lexicographical order.
+// A function hasNext() that returns True if and only if there exists a next combination.
+ 
+// Example:
+// CombinationIterator iterator = new CombinationIterator("abc", 2); // creates the iterator.
+// iterator.next(); // returns "ab"
+// iterator.hasNext(); // returns true
+// iterator.next(); // returns "ac"
+// iterator.hasNext(); // returns true
+// iterator.next(); // returns "bc"
+// iterator.hasNext(); // returns false
+class CombinationIterator {
+    StringBuilder sb;
+    int target_length;
+    List<String> database;
+    int count = -1;
+    boolean check = true;
+    
+    public CombinationIterator(String characters, int combinationLength) {
+        target_length = combinationLength;
+        sb = new StringBuilder();
+        database = new ArrayList<>();
+        generate_database(sb, 0, characters);
+    }
+    
+    public void generate_database(StringBuilder sb, int head, String str) {
+        if(sb.length() == target_length) {
+            String s = sb.toString();
+            database.add(s);
+        }
+        else {
+            for(int i = head; i <= str.length() - 1; i++) {
+                sb.append(str.charAt(i));
+                generate_database(sb, i + 1, str);
+                sb.deleteCharAt(sb.length() - 1);
+            }    
+        }
+        
+    }   
+    
+    public String next() {
+        count++;
+        if(count == database.size() - 1) {
+            check = false;
+        }
+        return database.get(count);
+    }
+    
+    public boolean hasNext() {
+        return check;
+    }
+}
+
+/**
+ * Your CombinationIterator object will be instantiated and called as such:
+ * CombinationIterator obj = new CombinationIterator(characters, combinationLength);
+ * String param_1 = obj.next();
+ * boolean param_2 = obj.hasNext();
+ */
