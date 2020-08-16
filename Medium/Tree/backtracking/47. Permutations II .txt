@@ -1,0 +1,49 @@
+// backtracking
+/*
+Given a collection of numbers that might contain duplicates, return all possible unique permutations.
+
+Example:
+Input: [1,1,2]
+Output:
+[
+  [1,1,2],
+  [1,2,1],
+  [2,1,1]
+]
+*/
+class Solution {
+    public List<List<Integer>> permuteUnique(int[] nums) {
+        List<List<Integer>> result = new ArrayList<>();
+        if(nums.length == 0) {
+            return result;
+        }
+        Arrays.sort(nums); // we must sort here, because when we want to remove duplicate case, we need to base on this attribute.
+        // Set<List<Integer>> set = new HashSet<>();
+        List<Integer> tmp = new ArrayList<>();
+        boolean[] check = new boolean[nums.length];
+        helper(tmp, check, nums, result);
+        return result;
+    }
+    public void helper(List<Integer> tmp , boolean[] check, int[] nums, List<List<Integer>> result) {
+        // backtracking stop function
+        if(tmp.size() == nums.length) {
+            // if(set.contains(tmp) != true) {
+            //     set.add(tmp);
+                result.add(new ArrayList<>(tmp));
+            // }
+            return;
+        }
+        // backtracking pattern
+        for(int i = 0; i < nums.length; i++) {
+            // if we using this if statement, we do not need the Set to maintain duplcate case.
+            if(check[i] == true || (i > 0 && nums[i] == nums[i - 1] && check[i - 1] != true)) {
+                continue;
+            }
+            check[i] = true;
+            tmp.add(nums[i]);
+            helper(tmp, check, nums, result);
+            tmp.remove(tmp.size() - 1);
+            check[i] = false;
+        }
+    }
+}

@@ -1,0 +1,68 @@
+// backtracking; we probably can use array to optimise
+/*
+Given a string s, return all the palindromic permutations (without duplicates) of it. Return an empty list if no palindromic permutation could be form.
+
+Example 1:
+Input: "aabb"
+Output: ["abba", "baab"]
+Example 2:
+Input: "abc"
+Output: []
+*/
+class Solution {
+    public List<String> generatePalindromes(String s) {
+        Map<Character, Integer> map = new HashMap<>();
+        List<String> ls = new ArrayList<>();
+        char track_odd_char = '\0';
+        StringBuilder sb = new StringBuilder();
+        int odd_element = 0;
+        int str_length = s.length();
+        // built up the map of character's frequecy 
+        for(int i = 0; i < s.length(); i++) {
+            map.put(s.charAt(i), map.getOrDefault(s.charAt(i), 0) + 1);
+        }
+        
+        for(char c: map.keySet()) {
+            if(map.get(c) % 2 == 1) {
+                // odd
+                odd_element++;
+                track_odd_char = c;
+            }
+        }
+        if(odd_element > 1) {
+            return ls;
+        }
+        backtrack(map, ls, track_odd_char, sb, s);
+        return ls;
+    }
+    
+    public void backtrack(Map<Character, Integer> map, List<String> ls, char middle, StringBuilder sb, String org) {
+        if(sb.length() == org.length()/2) {
+            String s = sb.toString();
+            String sb_temp =  sb.reverse().toString();
+            // even
+            if(middle != '\0') {
+                s = s + middle + sb_temp;
+            }
+            // odd
+            else {
+                s = s + sb_temp;    
+            }
+            // wehave to reverse back
+            sb.reverse();
+            ls.add(s);
+            return;
+        }
+        // backtracking pattern
+        for(char c: map.keySet()) {
+            if(map.get(c) - 2 >= 0) {
+                map.put(c, map.get(c) - 2);
+                sb.append(c);
+                backtrack(map, ls, middle, sb, org);
+                sb.deleteCharAt(sb.length() -1 );
+                map.put(c, map.get(c) + 2);
+            }
+            
+        }
+    }
+}
