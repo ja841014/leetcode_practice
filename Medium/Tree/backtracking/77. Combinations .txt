@@ -1,0 +1,47 @@
+// backtracking
+/*
+Given two integers n and k, return all possible combinations of k numbers out of 1 ... n.
+Example:
+Input: n = 4, k = 2
+Output:
+[
+  [2,4],
+  [3,4],
+  [2,3],
+  [1,2],
+  [1,3],
+  [1,4],
+]
+*/
+class Solution {
+    List<List<Integer>> ls;
+    List<Integer> tmp;
+    boolean[] check;
+    public List<List<Integer>> combine(int n, int k) {
+        ls = new ArrayList<>();
+        tmp = new ArrayList<>();
+        check = new boolean[n + 1];
+        helper(n, k, 1);
+        return ls;
+    }
+    public void helper(int n, int k, int start) {
+        
+        if(tmp.size() == k) {
+            ls.add(new ArrayList<>(tmp));
+            return;
+        }
+        if(start > n) {
+            return;
+        }
+        // backtrack pattern
+        for(int i = start; i < n + 1; i++) {
+            if(check[i] != true) {
+                check[i] = true;
+                tmp.add(i);
+                helper(n, k, i + 1);
+                tmp.remove(tmp.size() - 1);
+                check[i] = false;
+            }
+        }
+    }
+}

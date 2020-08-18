@@ -1,0 +1,48 @@
+// binary search TC: O(logn*logn)
+// reference https://www.youtube.com/watch?v=CvrPf1-flAA
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    
+    public int countNodes(TreeNode root) {
+        return helper(root);
+    }
+    
+    public int helper(TreeNode root) {
+        if(root == null) {
+            return 0;
+        }
+        TreeNode tmp_left = root;
+        TreeNode tmp_right = root;
+        int left_level = 0;
+        int right_level = 0;
+        while(tmp_left.left != null) {
+            tmp_left = tmp_left.left;
+            left_level++;
+        }
+        while(tmp_right.right != null) {
+            tmp_right = tmp_right.right;
+            right_level++;
+        }
+        if(right_level == left_level) {
+            return (int)Math.pow(2, right_level + 1) - 1;
+        }
+        else {
+            // the 1 is represent the root
+            return 1 + helper(root.left) + helper(root.right);
+        }
+    }
+}
