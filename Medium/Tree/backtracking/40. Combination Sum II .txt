@@ -1,0 +1,35 @@
+// backtrack
+class Solution {
+    int target;
+    public List<List<Integer>> combinationSum2(int[] candidates, int target) {
+        Arrays.sort(candidates);
+        this.target = target;
+        List<List<Integer>> result = new ArrayList<>();
+        List<Integer> ls = new ArrayList<>();
+        helper(0, ls, result, candidates, 0);
+        return result;
+    }
+    
+    public void helper(int count, List<Integer> ls, List<List<Integer>> result, int[] candidates, int index) {
+        if(count == target) {
+            result.add(new ArrayList<>(ls));
+            return;
+        }
+        // important point, we have to update the "index" in every resusion to avoid duplicate answer.
+        for(int i = index; i < candidates.length; i++) {
+            // if previous one is same as current one. we skip it to avoid duplicate.
+            if(i > index && candidates[i] == candidates[i - 1]) {
+                continue;
+            }
+            if(count + candidates[i] <= target) {
+                ls.add(candidates[i]);
+                helper(count + candidates[i], ls, result, candidates, i + 1);
+                ls.remove(ls.size() - 1);
+            }
+            // if count + candidates[i] is bigger at the point i, then after i, the answer will always bigger than target. So, we can break  out the loop.
+            else {
+                break;
+            }
+        }
+    }
+}

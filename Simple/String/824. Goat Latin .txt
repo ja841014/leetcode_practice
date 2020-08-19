@@ -1,0 +1,45 @@
+class Solution {
+    public String toGoatLatin(String S) {
+        String[] str_arr = S.split(" ");
+        StringBuilder[] sb = new StringBuilder[str_arr.length];
+        Set<Character> set = new HashSet<>();
+        set.add('a');
+        set.add('e');
+        set.add('i');
+        set.add('o');
+        set.add('u');
+        set.add('A');
+        set.add('E');
+        set.add('I');
+        set.add('O');
+        set.add('U');
+        
+        int count = 1;
+        StringBuilder result = new StringBuilder();
+        for(int i = 0; i < str_arr.length; i++) {
+            sb[i] = new StringBuilder(str_arr[i]);
+            // first character is aeiou
+            if(set.contains(sb[i].charAt(0)) == true) {
+                result.append(str_arr[i]);
+            }
+            // not aeious
+            else {
+                // record the first char
+                char tmp = sb[i].charAt(0);
+                sb[i].deleteCharAt(0);
+                sb[i].append(tmp);
+                result.append(sb[i]);
+            }
+            // the code below is common code to aboe if-else, therefore I extract it out.
+            result.append("ma");
+            for(int j = 0; j < count; j++) {
+                result.append("a");
+            }
+            result.append(" ");
+            count++;
+            
+        }
+        result.deleteCharAt(result.length() - 1);
+        return result.toString();
+    }
+}

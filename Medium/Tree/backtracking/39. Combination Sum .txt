@@ -1,0 +1,52 @@
+// backtrack
+/*
+Given a set of candidate numbers (candidates) (without duplicates) and a target number (target), find all unique combinations in candidates where the candidate numbers sums to target.
+The same repeated number may be chosen from candidates unlimited number of times.
+
+Example 1:
+Input: candidates = [2,3,6,7], target = 7,
+A solution set is:
+[
+  [7],
+  [2,2,3]
+]
+
+Example 2:
+Input: candidates = [2,3,5], target = 8,
+A solution set is:
+[
+  [2,2,2,2],
+  [2,3,3],
+  [3,5]
+]
+*/
+class Solution {
+    int target;
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        Arrays.sort(candidates);
+        this.target = target;
+        List<List<Integer>> result = new ArrayList<>();
+        List<Integer> ls = new ArrayList<>();
+        helper(0, ls, result, candidates, 0);
+        return result;
+    }
+    
+    public void helper(int count, List<Integer> ls, List<List<Integer>> result, int[] candidates, int index) {
+        if(count == target) {
+            result.add(new ArrayList<>(ls));
+            return;
+        }
+        // important point, we have to update the "index" in every resusion to avoid duplicate answer.
+        for(int i = index; i < candidates.length; i++) {
+            if(count + candidates[i] <= target) {
+                ls.add(candidates[i]);
+                helper(count + candidates[i], ls, result, candidates, i);
+                ls.remove(ls.size() - 1);
+            }
+            // if count + candidates[i] is bigger at the point i, then after i, the answer will always bigger than target. So, we can break  out the loop.
+            else {
+                break;
+            }
+        }
+    }
+}
