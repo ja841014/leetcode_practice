@@ -1,0 +1,50 @@
+// BFS It is same as 286. walls and gates
+// put the all land in the queue first. After that we run BFS level by level.
+class Solution {
+    public int maxDistance(int[][] grid) {
+        Queue<int[]> q = new LinkedList<>();
+        for(int i = 0; i < grid.length; i++) {
+            for(int j = 0; j < grid[0].length; j++) {
+                if(grid[i][j] == 1) {
+                    q.offer(new int[] {i, j});
+                }
+            }
+        }
+        if(q.size() == 0 || q.size() == grid.length*grid[0].length) {
+            return -1;
+        }
+        return BFS(q, grid);
+    }
+    
+    public int BFS(Queue<int[]> q, int[][] grid) {
+        int level = 1;
+        while(!q.isEmpty()) {
+            int size = q.size();
+            for(int i = 0; i < size; i++) {
+                int[] tmp = q.poll();
+                // up
+                if(tmp[0] - 1 >= 0 && grid[tmp[0] - 1][tmp[1]] == 0) {
+                    q.offer(new int[] {tmp[0] - 1, tmp[1]});
+                     grid[tmp[0] - 1][tmp[1]] = level;
+                }
+                // down
+                if(tmp[0] + 1 < grid.length && grid[tmp[0] + 1][tmp[1]] == 0) {
+                    q.offer(new int[] {tmp[0] + 1, tmp[1]});
+                     grid[tmp[0] + 1][tmp[1]] = level;
+                }
+                // right
+                if(tmp[1] + 1 < grid[0].length && grid[tmp[0]][tmp[1] + 1] == 0) {
+                    q.offer(new int[] {tmp[0], tmp[1] + 1});
+                     grid[tmp[0]][tmp[1] + 1] = level;
+                }
+                // left
+                if(tmp[1] - 1 >= 0 && grid[tmp[0]][tmp[1] - 1] == 0) {
+                    q.offer(new int[] {tmp[0], tmp[1] - 1});
+                     grid[tmp[0]][tmp[1] - 1] = level;
+                }
+            }
+            level++;
+        }
+        return level - 2;
+    }
+}
