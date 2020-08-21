@@ -1,0 +1,68 @@
+/*
+Given a singly linked list L: L0→L1→…→Ln-1→Ln,
+reorder it to: L0→Ln→L1→Ln-1→L2→Ln-2→…
+You may not modify the values in the list's nodes, only nodes itself may be changed.
+Example 1:
+Given 1->2->3->4, reorder it to 1->4->2->3.
+
+Example 2:
+Given 1->2->3->4->5, reorder it to 1->5->2->4->3.
+*/
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public void reorderList(ListNode head) {
+        if(head == null || head.next == null) {
+            return;
+        }
+        ListNode slow = head;
+        ListNode fast = head;
+        while(fast.next != null && fast.next.next != null ) {
+            slow = slow.next;// front half part of linked list
+            fast = fast.next.next;
+        }
+        
+        fast = reverse(slow.next);
+        slow.next = null; // here we will change the head structure.
+        slow = head; //assign
+        
+        ListNode dummy = new ListNode(-1);
+        head = dummy; // here will change head structure
+        boolean gate = false;
+        while(fast != null || slow != null) {
+            if(gate == true) {
+                head.next = fast; // this will change the dummy node simultaneously
+                head = head.next;
+                fast = fast.next;
+                gate = false;
+            }
+            else {
+                head.next = slow; // this will change the dummy node simultaneously
+                head = head.next;
+                slow = slow.next;
+                gate = true;
+            }
+        }
+        head = dummy.next;
+    }
+    public ListNode reverse(ListNode tmp) {
+        ListNode new_node = new ListNode(tmp.val); 
+        new_node.next = null;
+        tmp = tmp.next;
+        while(tmp != null) {
+            ListNode node = new ListNode(tmp.val);
+            node.next = new_node;
+            new_node = node;
+            tmp = tmp.next;
+        }
+        return new_node;
+    }
+}

@@ -1,0 +1,61 @@
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode reverseBetween(ListNode head, int m, int n) {
+        ListNode temp = head;
+        ListNode extract = new ListNode(-1);
+        ListNode extract_tmp = extract;
+        int cnt = 1;
+        while(cnt <= n) {
+            if(cnt >= m) {
+                extract_tmp.next = temp;
+                extract_tmp = extract_tmp.next;
+            }
+            temp = temp.next;
+            cnt++;
+        }
+        ListNode remain = extract_tmp.next;
+        extract_tmp.next = null;
+        extract = reverse(extract.next);
+
+        ListNode temp2 = head;
+        int count = 1;
+        boolean check = false;
+        while(temp2 != null && count != n) {
+            if(m == 1 && check == false) {
+                check = true;
+                head = extract;
+                temp2 = head;
+            }
+            if(count == m - 1 && m != 1) {
+                temp2.next = extract;
+            }
+            temp2 = temp2.next;
+            count++;
+        }
+        temp2.next = remain;
+
+        return head;
+    }
+    // reverse part
+    public ListNode reverse(ListNode tmp) {
+        ListNode new_node = new ListNode(tmp.val); 
+        new_node.next = null;
+        tmp = tmp.next;
+        while(tmp != null) {
+            ListNode node = new ListNode(tmp.val);
+            node.next = new_node;
+            new_node = node;
+            tmp = tmp.next;
+        }
+        return new_node;
+    }
+}
