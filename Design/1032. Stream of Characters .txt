@@ -1,0 +1,60 @@
+// this problem we have to reverse our input and traverse reversely the query 
+class StreamChecker {
+    // TrieNode data structure.
+    class TrieNode {
+        TrieNode[] child;
+        boolean find;
+        public TrieNode() {
+            child = new TrieNode[26];
+            find = false;
+        }
+    }
+    
+    List<Character> ls = new ArrayList<>();  
+    TrieNode root;
+    
+    public StreamChecker(String[] words) {
+        root = new TrieNode();
+        for(String s : words) {
+            insert(s);
+        }
+    }
+    
+    public boolean query(char letter) {
+        ls.add(letter);
+        TrieNode tmp = root;
+        for(int i = ls.size() - 1; i >= 0; i--) {
+            char c = ls.get(i);
+            // System.out.println(c);
+            if(tmp.child[c - 'a'] == null) {
+                return false;
+            }
+            
+            if(tmp.child[c - 'a'].find == true) {
+                return true;
+            }
+            tmp = tmp.child[c - 'a'];
+        }
+        return false;
+    }
+    
+    // build up the tree
+    public void insert (String s) {
+        TrieNode tmp = root;
+        for(int i = s.length() - 1; i >= 0; i--) {
+            
+            if(tmp.child[s.charAt(i) - 'a'] == null) {
+                tmp.child[s.charAt(i) - 'a'] = new TrieNode();
+            }
+            tmp = tmp.child[s.charAt(i) - 'a'];
+        }
+        tmp.find = true;
+    }
+    
+}
+
+/**
+ * Your StreamChecker object will be instantiated and called as such:
+ * StreamChecker obj = new StreamChecker(words);
+ * boolean param_1 = obj.query(letter);
+ */
