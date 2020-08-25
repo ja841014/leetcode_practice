@@ -1,0 +1,61 @@
+/*
+Given a binary tree where node values are digits from 1 to 9. A path in the binary tree is said to be pseudo-palindromic if at least one permutation of the node values in the path is a palindrome.
+https://leetcode.com/problems/pseudo-palindromic-paths-in-a-binary-tree/discuss/648263/Simple-Java-solution-using-DFS
+Return the number of pseudo-palindromic paths going from the root node to leaf nodes.
+*/
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    int count = 0;
+    public int pseudoPalindromicPaths (TreeNode root) {
+        // we use array to record the frequency
+        int[] table = new int[10];
+        dfs_recusive(root, table);
+        return count;
+    }
+    public void dfs_recusive(TreeNode root, int[] table) {
+        if(root.left == null && root.right == null) {
+            table[root.val]++;
+            int cnt = 0;
+            for(int i = 0; i < table.length; i++) {
+                if(table[i] % 2 == 1) {
+                    cnt++;
+                    // palindromic: at most one digit has odd frequency.
+                    if(cnt > 1) {
+                        table[root.val]--;
+                        return;
+                    }
+                }
+            }
+            table[root.val]--;
+            count++;
+            return;
+        }
+        // backtrack pattern
+        if(root.left != null) {
+            table[root.val]++;
+            dfs_recusive(root.left, table);
+            table[root.val]--;
+
+        }
+        if(root.right != null) {
+            table[root.val]++;
+            dfs_recusive(root.right, table);
+            table[root.val]--;
+        }
+    }
+
+}

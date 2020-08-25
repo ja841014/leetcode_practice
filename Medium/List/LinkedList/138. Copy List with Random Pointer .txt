@@ -1,0 +1,45 @@
+// https://leetcode.com/problems/copy-list-with-random-pointer/discuss/719735/2-clean-Java-solutions-with-explanations%3A-O(1)-and-O(n)-space
+// two method: 1) hashmap O(n) space 
+//             2) O(1) space 
+/*
+// Definition for a Node.
+class Node {
+    int val;
+    Node next;
+    Node random;
+
+    public Node(int val) {
+        this.val = val;
+        this.next = null;
+        this.random = null;
+    }
+}
+*/
+
+class Solution {
+    public Node copyRandomList(Node head) {
+        if(head == null) {
+            return null;
+        }
+        Node root = head;
+        Map<Node, Node> map = new HashMap<>();
+        
+        while(root != null) {
+            map.put(root, new Node(root.val));
+            root = root.next;
+        }
+        for(Node n : map.keySet()) {
+            Node org_next = n.next;
+            if(org_next == null) {
+                map.get(n).next = null;
+            }
+            map.get(n).next = map.get(org_next);
+            Node org_rnd = n.random;
+            if(org_rnd == null) {
+                map.get(n).random = null;
+            }
+            map.get(n).random = map.get(org_rnd);
+        }
+        return map.get(head);
+    }
+}
