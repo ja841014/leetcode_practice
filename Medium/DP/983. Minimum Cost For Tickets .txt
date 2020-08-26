@@ -1,0 +1,33 @@
+// dp
+/*
+In a country popular for train travel, you have planned some train travelling one year in advance.  The days of the year that you will travel is given as an array days.  Each day is an integer from 1 to 365.
+Train tickets are sold in 3 different ways:
+a 1-day pass is sold for costs[0] dollars;
+a 7-day pass is sold for costs[1] dollars;
+a 30-day pass is sold for costs[2] dollars.
+The passes allow that many days of consecutive travel.  For example, if we get a 7-day pass on day 2, then we can travel for 7 days: day 2, 3, 4, 5, 6, 7, and 8.
+Return the minimum number of dollars you need to travel every day in the given list of days.
+*/
+class Solution {
+    public int mincostTickets(int[] days, int[] costs) {
+        // it is 366 space-Array from 0 to 365
+        int[] total_cost = new int[days[days.length - 1] + 1];
+        int count = 0;
+        for(int i = 1; i < total_cost.length; i++) {
+            // if i is not equal to the digit in days, then "total_cost" is equal to the previous 
+            if(days[count] != i) {
+                total_cost[i] = total_cost[i- 1];  
+            }
+            else {
+                int one_day = costs[0] + total_cost[Math.max(0, i - 1)];
+                int seven_day = costs[1] + total_cost[Math.max(0, i - 7)];
+                int thirty_day = costs[2] + total_cost[Math.max(0, i - 30)]; 
+                total_cost[i] = Math.min(one_day, Math.min(seven_day, thirty_day));
+                // go to next days we want use pass
+                count++;
+            }
+            
+        }
+        return total_cost[total_cost.length - 1];
+    }
+}
