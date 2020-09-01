@@ -1,0 +1,57 @@
+// we cannot set the visited record on this problem
+/*
+If you define "visited cells" for this problem, you can see that we don't care if a cell has been marked as visited or not. The condition is not true of false. We have 2 possible scenarios:
+
+Going backwards like A -> B -> C -> (B). We will reject (B) the second time because the cost from A -> B is smaller than A -> B -> C -> B
+Reaching a cell that has already been visited in the past coming from a different route. If A -> B -> C cost 5 and A -> D -> E -> F -> (C) costs 4, then we pick the latter and reject the previous path.
+*/
+class Solution {
+    // right, left, up, down
+    private final int[][] dir = new int[][]{
+        {0, 1},
+        {0, -1},
+        {-1, 0},
+        {1, 0}
+    };
+    public int shortestDistance(int[][] maze, int[] start, int[] destination) {
+        return helper(maze, start, destination);
+    }
+    public int helper(int[][] maze, int[] start, int[] destination) {
+        // build up another map to store distance from the start point
+        int[][] distance_map = new int[maze.length][maze[0].length];
+        for(int[] row : distance_map) {
+            Arrays.fill(row, Integer.MAX_VALUE);
+        }
+        distance_map[start[0]][start[1]] = 0;
+        int[] cur = new int[2];
+        Queue<int[]> q = new LinkedList<>();
+        q.offer(new int[] {start[0], start[1]});
+        while(!q.isEmpty()) {
+            int size = q.size();
+            for(int i = 0; i < size; i++) {
+                cur = q.poll();
+                
+                for(int[] direction: dir) {
+                    int row = cur[0] + direction[0];
+                    int col = cur[1] + direction[1];
+                    int cnt = 0;
+                    while(row >= 0 && row < maze.length && col >= 0 && col < maze[0].length && maze[row][col] == 0) {
+                        row = row + direction[0];
+                        col = col + direction[1];
+                        cnt = cnt + 1;
+                    }
+                    
+                    if(distance_map[cur[0]][cur[1]] + cnt < distance_map[row - direction[0]][col - direction[1]] ) {
+                        distance_map[row - direction[0]][col - direction[1]] = distance_map[cur[0]][cur[1]] + cnt;
+                        q.offer(new int[] {row - direction[0], col - direction[1]} );
+                    }
+                    
+                }
+            }
+        }
+        if(distance_map[destination[0]][destination[1]] == Integer.MAX_VALUE) {
+            return -1;
+        }
+        return distance_map[destination[0]][destination[1]];
+    }
+}

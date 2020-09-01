@@ -1,0 +1,57 @@
+class Solution {
+    public int shipWithinDays(int[] weights, int D) {
+        // int max_value = -1;
+        int sum = 0;
+        for(int w : weights) {
+            // max_value = Math.max(max_value, w);
+            sum = sum + w;
+        }
+        // 1. binary search
+        return binary_search(sum, sum/D, weights, D);
+        // 2. take the mid number as max_min to see whether is true or not
+        
+    }
+    public int binary_search(int high, int low, int[] weights, int day) {
+        
+        while(low < high) {
+            int mid = (high - low) / 2 + low;
+            // go left
+            if(isValid(mid, weights, day) == true) {
+                high = mid;
+            }
+            // go right, mean the max_min too small
+            else {
+                low = mid + 1;
+            }
+            
+        }
+        return low;
+    }
+    public boolean isValid(int mid, int[] weights, int D) {
+        
+        int load = 0;
+        int day = 0;
+        
+        for(int i = 0; i < weights.length; i++) {
+            if(weights[i] > mid) {
+                return false;
+            }
+            if(load + weights[i] <= mid) {
+                load = load + weights[i];
+            }
+            else {
+                day++;
+                load = weights[i];
+            }
+        }
+        // this condition is very impoirtant
+        if(load > 0) {
+            day++;
+        }
+        if(day > D) {
+            return false;
+        }
+        return true;
+    }
+    
+}

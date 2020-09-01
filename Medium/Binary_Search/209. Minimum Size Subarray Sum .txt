@@ -1,0 +1,72 @@
+/*
+Given an array of n positive integers and a positive integer s, find the minimal length of a contiguous subarray of which the sum ≥ s. If there isn't one, return 0 instead.
+Example: 
+Input: s = 7, nums = [2,3,1,2,4,3]
+Output: 2
+Explanation: the subarray [4,3] has the minimal length under the problem constraint.
+*/
+class Solution {
+    public int minSubArrayLen(int s, int[] nums) {
+        if(nums.length == 0) {
+            return 0;
+        }
+        int[] sum_array = new int[nums.length + 1];
+        int minLength = Integer.MAX_VALUE;
+        for(int i = 0 ; i < sum_array.length - 1; i++) {
+            sum_array[i + 1] = sum_array[i] + nums[i];
+            
+        }
+        for(int i = 0; i < sum_array.length; i++) {
+            // every loop we shoud update our Key, because we are using accumulate array
+            // Actually, we go to next loop our accumulate array should change, however, we didn't
+            // so, based on we didn;t change our array, we have to change our Key.
+            int end = binary_search(i + 1, sum_array.length - 1, sum_array, sum_array[i] + s);
+            if(end == sum_array.length) {
+                break;
+            }
+            minLength = Math.min(minLength, end - i);
+        }
+        if(minLength == Integer.MAX_VALUE) {
+            return 0;
+        }
+        return minLength;
+    }
+    
+    public int binary_search(int low, int high, int[] sum_array, int key) {
+        while(low <= high) {
+            int mid = (high - low) / 2 + low;
+            if(sum_array[mid] >= key) {
+                high = mid - 1;
+            }
+            else {
+                low = mid + 1;
+            }
+        }
+        return low;
+    }
+}
+
+/*
+Sliding Window
+public int minSubArrayLen(int s, int[] nums) {
+        int min = Integer.MAX_VALUE;
+        int sum = 0;
+        
+        for(int i = 0; i < nums.length; i++) {
+            sum = 0;
+            for(int j = i; j < nums.length; j++) {
+                if(sum + nums[j] >= s && j - i + 1 < min) {
+                    min = j - i + 1;
+                    break;
+                }
+                sum = sum + nums[j];
+            }
+        }
+        if(min == Integer.MAX_VALUE) {
+            return 0;
+        }
+        return min;
+    }
+*/
+
+

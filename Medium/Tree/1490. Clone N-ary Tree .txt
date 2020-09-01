@@ -1,0 +1,49 @@
+/* there is some more efficient solutions in the discussion using recusive method.
+// Definition for a Node.
+class Node {
+    public int val;
+    public List<Node> children;
+
+    
+    public Node() {
+        children = new ArrayList<Node>();
+    }
+    
+    public Node(int _val) {
+        val = _val;
+        children = new ArrayList<Node>();
+    }
+    
+    public Node(int _val,ArrayList<Node> _children) {
+        val = _val;
+        children = _children;
+    }
+};
+*/
+
+class Solution {
+    public Node cloneTree(Node root) {
+        if(root == null) {
+            return null;
+        }
+        Map<Node, Node> map = new HashMap<>();
+        Queue<Node> q = new LinkedList<>();
+        q.offer(root);
+        // build up the clone node
+        while(!q.isEmpty()) {
+            int size = q.size();
+            Node tmp = q.poll();
+            map.put(tmp, new Node(tmp.val, new ArrayList<>()));
+            for(Node n : tmp.children) {
+                q.offer(n);
+            }
+        }
+        for(Node n : map.keySet()) {
+            Node cn = map.get(n);
+            for(Node org_child_n : n.children) {
+                cn.children.add(map.get(org_child_n));
+            }
+        }
+        return map.get(root);
+    }
+}

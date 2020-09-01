@@ -1,0 +1,51 @@
+// reference https://www.youtube.com/watch?v=WxpIHvsu1RI
+/*
+[5, 3, 4, 5]
+first loop we only consider 2 elements
+5, 3
+3, 4
+4, 5
+Second loop we only consider 3 elements
+5, 3, 4
+3, 4, 5
+Third loop we consider
+5, 3, 4, 5
+*/
+
+class Solution {
+    public boolean stoneGame(int[] piles) {
+        Pair<Integer, Integer>[][] table = new Pair[piles.length][piles.length];
+        
+        // base case
+        for(int i = 0; i < piles.length; i++) {
+            table[i][i] = new Pair<>(piles[i], 0);
+        }
+        // go diagonal
+        // how many time we have to loop
+        for(int i = 1; i < piles.length; i++) {
+            // the table row || the left end of pile in this round
+            for(int j = 0; j < piles.length - i; j++) {
+                // the table column || the right end of pile in this round
+                int k = j + i;
+                // current location is (j, k) and it also represent from j element to k element, not (i, j)
+                // if left + piles[right] bigger than down + pile[left]
+                // why we shoud getValue() not getKey()? because next round we add new element into and we choose first. Therefore, our this round score is pile[left or right] + the previous round second player's score
+                if(piles[k] + table[j][k - 1].getValue() >=  piles[j] + table[j + 1][k].getValue()) {
+                    int first = table[j][k - 1].getValue() + piles[k];
+                    int second = table[j][k - 1].getKey();
+                    table[j][k] = new Pair<>(first, second);
+                    
+                }
+                else {
+                    int first = table[j + 1][k].getValue() + piles[j];
+                    int second = table[j + 1][k].getKey();
+                    table[j][k] = new Pair<>(first, second);
+                }
+            }
+        }
+        if(table[piles.length - 1][piles.length - 1].getKey() > table[piles.length - 1][piles.length - 1].getValue()) {
+            return true;
+        }
+        return false;
+    }
+}

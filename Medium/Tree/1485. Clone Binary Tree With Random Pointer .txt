@@ -1,0 +1,55 @@
+```
+/**
+ * Definition for Node.
+ * public class Node {
+ *     int val;
+ *     Node left;
+ *     Node right;
+ *     Node random;
+ *     Node() {}
+ *     Node(int val) { this.val = val; }
+ *     Node(int val, Node left, Node right, Node random) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *         this.random = random;
+ *     }
+ * }
+ */
+
+class Solution {
+    public NodeCopy copyRandomBinaryTree(Node root) {
+        if(root == null) {
+            return null;
+        }
+		// to record the old Node and new Node(clone node)
+        Map<Node, NodeCopy> map = new HashMap<>();
+        Queue<Node> q = new LinkedList<>();
+        q.offer(root);
+		//  we use BFS to clone all node. we do not connect them yet in this part.
+        while(!q.isEmpty()) {
+            int size = q.size();
+            for(int i = 0; i < size; i++) {
+                Node tmp = q.poll();
+                map.put(tmp, new NodeCopy(tmp.val));
+                if(tmp.left != null) {
+                    q.offer(tmp.left);
+                }
+                if(tmp.right != null) {
+                    q.offer(tmp.right);
+                }
+            }
+        }
+		// In this part, we connect our clone nodes  by using HashMap
+        for(Node n : map.keySet()) {
+			// get the Clone node
+            NodeCopy nc = map.get(n);
+			// when we find out the 'n' node's left, right and random node, we can use map.get() to get corresponding clone node in the hashmap
+            nc.left = map.get(n.left);
+            nc.right = map.get(n.right);
+            nc.random = map.get(n.random);
+        }
+        return map.get(root);
+    }
+}
+```

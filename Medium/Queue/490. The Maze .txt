@@ -1,0 +1,53 @@
+class Solution {
+    public boolean hasPath(int[][] maze, int[] start, int[] destination) {
+        return helper(maze, start, destination);
+    }
+    public boolean helper(int[][] maze, int[] start, int[] destination) {
+        if(start[0] == destination[0] && start[1] == destination[1] ) {
+            return true;
+        }
+        // if the ball meet the wall or already visited
+        if(maze[start[0]][start[1]] == 1 || maze[start[0]][start[1]] == -1) {
+            return false;
+        }
+        maze[start[0]][start[1]] = -1;
+        int r = start[1] + 1; 
+        int l = start[1] - 1;
+        int u = start[0] - 1; 
+        int d = start[0] + 1;
+        
+        // left //
+        while(l >= 0 && maze[start[0]][l] != 1) {
+            l = l - 1;
+        }
+        if(helper(maze, new int[] {start[0], l + 1}, destination) == true) {
+            return true;
+        }
+        // right //
+        while(r < maze[0].length && maze[start[0]][r] != 1) {
+            r = r + 1;
+        }
+        if(helper(maze, new int[] {start[0], r - 1}, destination) == true) {
+            return true;
+        }
+        
+        // up //
+        while(u >= 0 && maze[u][start[1]] != 1) {
+            u = u - 1;
+        }
+        if(helper(maze, new int[] {u + 1, start[1]}, destination) == true) {
+            return true;
+        }
+        
+        // down //
+        while(d < maze.length && maze[d][start[1]] != 1) {
+            d = d + 1;
+        }
+        if(helper(maze, new int[] {d - 1, start[1]}, destination) == true) {
+            return true;
+        }
+        
+        return false;
+          
+    }
+}

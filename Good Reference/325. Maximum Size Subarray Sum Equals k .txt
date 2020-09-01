@@ -1,0 +1,30 @@
+class Solution {
+    public int maxSubArrayLen(int[] nums, int k) {
+    int sum = 0;
+    int maxLength = 0;
+    // (accumulate value, index)
+    HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+    for (int i = 0; i < nums.length; i++) {
+        // we want to build the accumulate element in the hashMap
+        sum  = sum + nums[i];
+        // if lucky, we can find the target k in this accumulate process, means add from index 0 to index i 
+        if(sum == k) {
+            maxLength = Math.max(maxLength, i + 1);
+        }
+        // this line is very important https://www.cnblogs.com/grandyang/p/5336668.html
+        // if we want to find a sub-array, we can check whether "sum - k" is exist
+        // if it exist, we just eliminate the sub-array before that element
+        // Example, nums = [-2, -1, 2, 1]  target k = 1
+        //          sums = [-2, -3, -1, 0], Therefore, we can see that -1 - k = -2;
+        // it means there is -2 between -1 and k, so if we add 2, we can find the answer --> -1 + k + 2 = 0 
+        else if(map.containsKey(sum - k) == true) {
+            maxLength = Math.max(maxLength, i - map.get(sum - k));
+        }
+        // map does not contain this sum elemet
+        if(map.containsKey(sum) == false) {
+            map.put(sum, i);
+        }
+    }
+    return maxLength;
+    }
+}

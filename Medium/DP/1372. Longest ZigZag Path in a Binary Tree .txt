@@ -1,0 +1,56 @@
+/*
+Given a binary tree root, a ZigZag path for a binary tree is defined as follow:
+
+Choose any node in the binary tree and a direction (right or left).
+If the current direction is right then move to the right child of the current node otherwise move to the left child.
+Change the direction from right to left or right to left.
+Repeat the second and third step until you can't move in the tree.
+Zigzag length is defined as the number of nodes visited - 1. (A single node has a length of 0).
+
+Return the longest ZigZag path contained in that tree.
+*/
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public int max_value = Integer.MIN_VALUE;
+    public int longestZigZag(TreeNode root) {
+        dynamic(root, 0, 0);
+        dynamic(root, 1, 0);
+        return max_value;
+    }
+    public void dynamic(TreeNode root, int direction, int count) {
+        max_value = Math.max(max_value, count);
+        // go left
+        if(direction == 0) {
+            if(root.left != null) {
+                // next loop go right
+                dynamic(root.left, 1, count + 1);
+                // next loop still go left, we hace to reset the counter 
+                dynamic(root.left, 0, 0);
+            }
+        }
+        // go right
+        else {
+            if(root.right != null) {
+                // next loop go left
+                dynamic(root.right, 0, count + 1);
+                // next loop still go right, we have to reset counter
+                dynamic(root.right, 1, 0);
+                
+            }
+        }
+    }
+}
