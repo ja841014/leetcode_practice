@@ -1,0 +1,22 @@
+// it is the 325 pre-requist!!
+// prefix array
+class NumArray {
+    private int[] sum_array;
+    public NumArray(int[] nums) {
+        sum_array = new int[nums.length + 1];
+        for(int i = 0; i < sum_array.length - 1; i++) {
+            sum_array[i + 1] = sum_array[i] + nums[i];
+        }
+    }
+    
+    public int sumRange(int i, int j) {
+        return sum_array[j + 1] - sum_array[i];
+    }
+}
+
+/**
+ * Your NumArray object will be instantiated and called as such:
+ * NumArray obj = new NumArray(nums);
+ * int param_1 = obj.sumRange(i,j);
+ */
+

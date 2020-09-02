@@ -1,0 +1,33 @@
+class Solution {
+    public List<List<Integer>> getFactors(int n) {
+        List<List<Integer>> result = new ArrayList<>();
+        Set<Integer> set = new HashSet<>();
+        if(n == 1) {
+            return result;
+        }
+        List<Integer> ls = new ArrayList<>();
+        BackTracking(result, ls, n, 2);
+        return result;
+    }
+    public void BackTracking (List<List<Integer>> result, List<Integer> ls, int n, int start) {
+        // if we use product == n we will cause TLE
+        // if(n == 1) {
+        //     if(ls.size() > 1) {
+        //         result.add(new ArrayList<>(ls));
+        //     }
+        //     return;
+        // }
+        // here we can optimal the range 'n' to n/i
+        // if we use n/i, it means you can add two factor in one time ex: 12 -> 2 and 6 can add in same time 
+        for(int i = start; i <= n/i; i++) {
+            if(n % i == 0 ) {
+                ls.add(i);
+                BackTracking(result, ls, n / i, i);
+                ls.add(n/i);
+                result.add(new ArrayList<>(ls));
+                ls.remove(ls.size() - 1);
+                ls.remove(ls.size() - 1);
+            }
+        }
+    }
+}

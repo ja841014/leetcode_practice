@@ -11,6 +11,12 @@ class Solution {
                     dynamic_table[i]++;
                 }
                 else if(i > nums[j]) {
+                    // dynamic_table[i - nums[j]] this is memo step
+                    // for example, we know target = 1 has only one combination -> nums[0] = 1
+                    // so when it comes to target = 2, we want to use previous solution
+                    // dynamic_table[i - nums[j] ] means i減去nums[j] 得到一個 Ｘ
+                    // 那這個Ｘ 若加回nums[j]就可以得到 i , 所以我們去拿table裡 Ｘ 之前計算過總共得方法加到
+                    // table[i ] 裡
                     dynamic_table[i] = dynamic_table[i] + dynamic_table[i - nums[j]];
                 }
             }

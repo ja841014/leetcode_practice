@@ -1,0 +1,59 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public int rangeSumBST(TreeNode root, int L, int R) {
+        if(root == null) {
+            return 0;
+        }
+        return helper(root,L, R);
+    }
+    public int helper(TreeNode tmp, int L, int R) {
+        Queue<TreeNode> q = new LinkedList<>();
+        int sum = 0;
+        q.offer(tmp);
+        while(!q.isEmpty()) {
+            int size = q.size();
+            for(int i = 0; i < size; i++) {
+                TreeNode node = q.poll();
+                // current < left, we have to go right to find the bigger element
+                if(node.val < L) {
+                    if( node.right != null) {
+                        q.offer(node.right);
+                    }                    
+                }
+                // current > right, we have to go left to find the smaller element
+                else if(node.val > R) {
+                    if( node.left != null) {
+                        q.offer(node.left);
+                    }
+                }
+                // node.val >= L && node.val <= R
+                else {
+                    sum = sum + node.val;
+                    if( node.left != null) {
+                        q.offer(node.left);
+                    }
+                    if( node.right != null) {
+                        q.offer(node.right);
+                    }
+                }
+                
+            }
+        }
+        return sum;
+    }
+
+}
