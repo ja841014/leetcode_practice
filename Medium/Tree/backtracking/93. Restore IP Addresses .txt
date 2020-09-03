@@ -1,0 +1,48 @@
+class Solution {
+    public List<String> restoreIpAddresses(String s) {
+        List<String> ans = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        if(s.length() == 0 || s.length() < 4 || s.length() > 12) {
+            return ans;
+        }
+        backtrack(0, s, 0, ans, sb);
+        return ans;
+    }
+    public void backtrack(int start, String s, int count, List<String> ans, StringBuilder sb) {
+        if(count == 3 && start == s.length()) {
+            ans.add(sb.toString());
+            return;
+        }
+        
+        for(int i = start; i < s.length(); i++) {
+            String tmp = s.substring(start, i + 1);
+            if(tmp.length() > 3 || (tmp.length() > 1 && tmp.charAt(0) == '0') || Integer.valueOf(tmp) > 255) {
+                break;
+            }
+            int org_length = sb.length();
+            sb.append(tmp);
+            if(i + 1 != s.length()) {
+                sb.append('.');
+                backtrack(i + 1, s, count + 1, ans, sb);
+            }    
+            else {
+                backtrack(i + 1, s, count, ans, sb);
+            }
+            // here is the backtrack second phase
+            sb.setLength(org_length);
+        }
+        
+    }
+    
+//     public boolean isValid(String str) {
+//         if(str.length() > 3 || (str.length() > 1 && str.charAt(0) == '0')) {
+//             return false;
+//         }
+//         int num = Integer.parseInt(str);
+//         if(num < 256 && num >= 0) {
+//             return true;
+//         }
+//         return false;
+        
+//     }
+}
