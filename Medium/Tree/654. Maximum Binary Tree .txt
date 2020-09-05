@@ -1,0 +1,54 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public TreeNode constructMaximumBinaryTree(int[] nums) {
+        if(nums.length == 0) {
+            return null;
+        }
+        TreeNode node = new TreeNode();
+        node = helper(0, nums.length, node, nums);
+        return node;
+        
+    }
+    public TreeNode helper(int start, int end, TreeNode node, int[] nums) {
+        if(start == end) {
+            return null;
+        }
+        int max_v = Integer.MIN_VALUE;
+        int index = -1;
+        for(int i = start; i < end; i++) {
+            if(max_v < nums[i]) {
+                max_v = nums[i];
+                index = i;
+            }
+        }
+        node.val = max_v;
+        // ** update, I can comment out all these if-else condition, because the upper consition will help us to define whether we can go right or go left. 
+        // the largest is in the middle
+        // if(index != start || index != end - 1) {
+            node.left = helper(start, index, new TreeNode(), nums);
+            node.right = helper(index + 1, end, new TreeNode(), nums);
+        // }
+        // // the largest is in the start
+        // else if (index == start) {
+        //     node.right = helper(index + 1, end, new TreeNode(), nums);
+        // }
+        // else {
+        //     node.left = helper(start, index, new TreeNode(), nums);
+        // }
+        return node;
+    }
+}
