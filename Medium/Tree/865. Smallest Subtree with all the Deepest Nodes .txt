@@ -25,7 +25,7 @@ class Solution {
         q.offer(root);
         while(!q.isEmpty()) {
             Queue<TreeNode> DeepestNode = new LinkedList<>();
-            int size = q.size();
+            
             for(TreeNode tmp : q) {
                 // TreeNode tmp = q.poll();
                 if(tmp.left != null) {
@@ -67,3 +67,33 @@ class Solution {
     }
     
 }
+
+/**
+class Solution {
+    public TreeNode subtreeWithAllDeepest(TreeNode root) {
+        if (root == null) {
+            return null;
+        }
+        int leftDepth = getDepth(root.left);  // get depth of left
+        int rightDepth = getDepth(root.right); // get depth of right
+        if (leftDepth == rightDepth) {
+            return root;    // You got it!
+        } else {
+            // Go with the deepest side 
+            if(leftDepth > rightDepth){
+                return subtreeWithAllDeepest(root.left);
+            } else {
+                return subtreeWithAllDeepest(root.right);
+            }
+        }
+    }
+    
+    // Method to get depth of tree at any node.
+    public int getDepth (TreeNode node) {
+        if (node == null) {
+            return 0;
+        }
+        return 1 + Math.max(getDepth(node.left), getDepth(node.right)); 
+    }
+}
+*/
