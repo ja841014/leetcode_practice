@@ -1,0 +1,34 @@
+class Solution {
+    public List<List<String>> partition(String s) {
+        List<String> ls = new ArrayList<>();
+        List<List<String>> result = new ArrayList<>();
+        boolean[] flag = new boolean[s.length()];
+        backtrack(s, 0, ls, result, flag);
+        return result;
+    }
+    public void backtrack(String s, int index, List<String> ls, List<List<String>> result, boolean[] flag) {
+        if(s.length() == 0&& flag[index - 1] == true) {
+            result.add(new ArrayList(ls));
+            return;
+        }
+        for(int i = 0; i < s.length(); i++) {
+            String isSubStringPali = s.substring(0, i + 1);
+            if(isValidpali(isSubStringPali) == true) {
+                flag[i] = true;
+                ls.add(isSubStringPali);
+                backtrack(s.substring(i + 1, s.length()), i + 1, ls , result, flag);
+                ls.remove(ls.size() - 1);
+                flag[i] = false;
+            }
+            
+        }
+    }
+    
+    private boolean isValidpali(String str) {
+        String reverse_str = new StringBuilder(str).reverse().toString();
+        if(str.equals(reverse_str)) {
+            return true;
+        }
+        return false;
+    }
+} 
