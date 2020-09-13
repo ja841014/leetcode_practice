@@ -15,7 +15,7 @@ class Solution {
         // if we want to find a sub-array, we can check whether "sum - k" is exist
         // if it exist, we just eliminate the sub-array before that element
         // Example, nums = [-2, -1, 2, 1]  target k = 1
-        //          sums = [-2, -3, -1, 0], Therefore, we can see that -1 - k = -2;
+        //          sums = [-2, -3, -1, 0], Therefore, we can see that -1 - k (積累值和目標的差值) = -2;
         // it means there is -2 between -1 and k, so if we add 2, we can find the answer --> -1 + k + 2 = 0 
         else if(map.containsKey(sum - k) == true) {
             maxLength = Math.max(maxLength, i - map.get(sum - k));
