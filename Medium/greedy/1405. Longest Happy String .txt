@@ -1,0 +1,43 @@
+class Solution {
+    public String longestDiverseString(int a, int b, int c) {
+        StringBuilder sb = new StringBuilder();
+        Pair<Character, Integer>[] p = new Pair[3];
+        p[0] = new Pair<Character, Integer>('a', a);
+        p[1] = new Pair<Character, Integer>('b', b);
+        p[2] = new Pair<Character, Integer>('c', c);
+        PriorityQueue<Pair<Character, Integer>> pq = new PriorityQueue<>((one, two) -> two.getValue() - one.getValue());
+        for(int i = 0 ;i < 3; i++) {
+            // we do not put the pair whose value is 0 in the "pq"
+            if(p[i].getValue() > 0) {
+                pq.add(p[i]);
+            }
+            
+        }
+        while(!pq.isEmpty()) {
+            Pair<Character, Integer> first = pq.poll();
+            int curr_sb_length = sb.length();
+            // if we have consecutive 2 same elements in our 'sb', we need to add another element to avoid violate the condition
+            if(curr_sb_length >= 2 && sb.charAt(curr_sb_length - 1) == first.getKey() && sb.charAt(curr_sb_length - 2) == first.getKey()) {
+                // if we do not have any element to poll from "pq". we will stop at here and return
+                if(pq.isEmpty()) {
+                   return sb.toString();
+                }
+                Pair<Character, Integer> second = pq.poll();
+                sb.append(second.getKey());
+                // if this "second pair" value is not 0 after - 1, we will put it back to "pq" again.
+                if(second.getValue() - 1 > 0) {
+                    pq.offer(new Pair(second.getKey(), second.getValue() - 1));
+                }
+            }
+            // if this "first pair" value is not 0 after - 1, we will put it back to "pq" again.
+            sb.append(first.getKey());
+            if(first.getValue() - 1 > 0) {
+                pq.offer(new Pair(first.getKey(), first.getValue() - 1));
+            }
+            
+        }
+        return sb.toString();
+    }
+}
+
+

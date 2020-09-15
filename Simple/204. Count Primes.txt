@@ -1,38 +1,53 @@
-/*
-Arrays.fill(check, false);
-
-Count the number of prime numbers less than a non-negative number, n.
-
-Example:
-
-Input: 10
-Output: 4
-Explanation: There are 4 prime numbers less than 10, they are 2, 3, 5, 7.
-*/
 class Solution {
     public int countPrimes(int n) {
-        Boolean[] check = new Boolean[n+1];
-        Arrays.fill(check, false);
-        int tmp;
-        int count = 2;
-        int ans = 0;
-  
-        for(int i = 2; i < n; ++i) {
-            tmp = i;
-            while(tmp < n) {
-                tmp = count * i;
-                if(tmp < n && check[tmp] == false) {
-                    check[tmp] = true;
-                }
-                count++;
+        boolean[] flag = new boolean[n + 1];
+        // 這裡跑2
+        for(int i = 2; i * i < n; i++) {
+            if(flag[i] == true) {
+                continue;
             }
-            count = 2;
-        }
-        for(int j = 2; j < n; ++j) {
-            if(check[j] == false) {
-                ans++;
+            // 這裡跑 4 6 8 10...
+            for(int j = i * i; j < n; j = j + i) {
+                flag[j] = true;
             }
         }
-        return ans;
+        int cnt = 0;
+        for(int i = 2; i < n; i++) {
+            if(flag[i] == false) {
+                cnt++;
+            }
+        }
+        
+        
+//         boolean[] flag = new boolean[n + 1];
+//         if(n == 0 || n == 1 || n == 2) {
+//             return 0;
+//         }
+//         for(int i = 2; i < n; i++) {
+//             int tmp = i;
+//             if(flag[tmp] == true) {
+//                 continue;
+//             }
+//             else {
+//                for(int j = 2; j < n; j++) {
+//                    tmp = i * j;
+//                    if(tmp > n) {
+//                         break;
+//                    }
+//                    if(flag[tmp] == true) {
+//                         continue;
+//                     }
+//                     flag[tmp] = true;
+                    
+//                 } 
+//             }
+//         }
+//         int cnt = 0;
+//         for(int i = 2; i < n; i++) {
+//             if(flag[i] == false) {
+//                 cnt++;
+//             }
+//         }
+        return cnt;
     }
 }
