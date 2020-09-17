@@ -1,0 +1,69 @@
+class Solution {
+    
+    class TrieNode {
+        boolean isfind;
+        TrieNode[] child;
+        public TrieNode() {
+            isfind = false;
+            child = new TrieNode[2];
+        }
+    }
+    
+    public int findMaximumXOR(int[] nums) {
+        int maxV = nums[0];
+        for(int i = 1; i < nums.length; i++) {
+            maxV = Math.max(maxV, nums[i]);
+        }
+        
+        int L_binary_str = Integer.toBinaryString(maxV).length();
+        // ex: 1 << 1 become 2       10
+        //     1 << 2 become 4      100
+        //     1 << 5 become 32  100000
+        int mask = 1 << L_binary_str;
+        String[] binary_str = new String[nums.length];
+        
+        
+        for(int i = 0; i < nums.length; i++) {
+            // we have to use substring because our mask is always bog one more digit than nums[i] 
+            binary_str[i] = Integer.toBinaryString( nums[i] | mask ).substring(1);
+        }
+        
+        TrieNode root = new TrieNode();
+        int Max_xor = 0;
+        for(String str : binary_str) {
+            // the code below we will simultaneously to track two path.
+            // therefore we have two TrieNode, node and xornode
+            TrieNode node = root;
+            TrieNode xornode = root;
+            int curXor = 0;
+            // this for loop contain two phase
+            for(Character c : str.toCharArray()) {
+                // first phase 
+                int bit_int = Integer.parseInt(String.valueOf(c));
+                // if this "node" do not has this child, add it, else go to the child node 
+                if(node.child[bit_int] == null) {
+                    node.child[bit_int] = new TrieNode();
+                }
+                node = node.child[bit_int];
+            
+                // second phase
+                // The path we want to go is opposite bit_int 
+                int reverseBit = bit_int == 1 ? 0 : 1;
+                // if "xornode" contain the child, current XOR will go left and "OR" with 1 (bit)
+                // ex : 5 << 1 | 1 = 11  => 101 << 1 | 1=> 1010 | 1 =>  1011 
+                if(xornode.child[reverseBit] != null) {
+                    curXor = curXor << 1 | 1;
+                    xornode = xornode.child[reverseBit];
+                }
+                else {
+                    // if do not contain this child, current Xor only go left 1 bit
+                    curXor = curXor << 1;
+                    xornode = xornode.child[bit_int];
+                }
+            }
+            Max_xor = Math.max(Max_xor, curXor);
+        }
+        
+        return Max_xor;
+    }    
+}
