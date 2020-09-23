@@ -1,0 +1,68 @@
+/*
+On a 2-dimensional grid, there are 4 types of squares:
+
+1 represents the starting square.  There is exactly one starting square.
+2 represents the ending square.  There is exactly one ending square.
+0 represents empty squares we can walk over.
+-1 represents obstacles that we cannot walk over.
+Return the number of 4-directional walks from the starting square to the ending square, that walk over every non-obstacle square exactly once.
+*/
+
+class Solution {
+    
+    int count_path = 0;
+    int[][] grid;
+    // right left down up
+    int[] row_ = new int[]{0, 0 ,1, -1};
+    int[] col_ = new int[]{1, -1, 0, 0};
+    
+    public int uniquePathsIII(int[][] grid) {
+        this.grid = grid;
+        // find starting point and remaining cell
+        int startX = 0;
+        int startY = 0;
+        int remain = 0;
+        for(int i = 0 ; i < grid.length; i++) {
+            for(int j = 0; j < grid[0].length; j++) {
+                if(grid[i][j] == 1) {
+                    startX = i;
+                    startY = j;
+                }
+                if(grid[i][j] >= 0) {
+                    remain++;
+                }
+            }
+        }
+        
+        backtrack(startX, startY, remain);
+        return count_path;
+        
+    }
+    
+    private void backtrack(int startX, int startY, int remain) {
+        if(grid[startX][startY] == 2 && remain == 1) {
+            count_path++;
+            return;
+        }
+        
+        int tmp = grid[startX][startY];
+        grid[startX][startY] = -2;
+        remain = remain - 1;
+        
+        for(int dir = 0; dir < 4; dir++) {
+            int next_row = startX + row_[dir];
+            int next_col = startY + col_[dir];
+            // invalid cell
+            if(next_row < 0 || next_row >= grid.length || next_col < 0 || next_col >= grid[0].length) {
+                continue;
+            }
+            // obstacle
+            if(grid[next_row][next_col] < 0) {
+                continue;
+            } 
+            backtrack(next_row, next_col, remain);
+        }
+        grid[startX][startY] = tmp;
+    }
+    
+}

@@ -1,0 +1,27 @@
+// 1019. Next Greater Node In Linked List 
+// 496. Next Greater Element I
+/* if we meet the circular problem we can think about loop twice!!
+Given a circular array (the next element of the last element is the first element of the array), print the Next Greater Number for every element. The Next Greater Number of a number x is the first greater number to its traversing-order next in the array, which means you could search circularly to find its next greater number. If it doesn't exist, output -1 for this number.
+
+Example 1:
+Input: [1,2,1]
+Output: [2,-1,2]
+Explanation: The first 1's next greater number is 2; 
+The number 2 can't find next greater number; 
+The second 1's next greater number needs to search circularly, which is also 2.
+*/
+class Solution {
+    public int[] nextGreaterElements(int[] nums) {
+        Stack<Integer> st = new Stack<>();
+        int[] arr = new int[nums.length];
+        Arrays.fill(arr, -1);
+        for(int i = 0; i < arr.length * 2; i++) {
+            while(!st.isEmpty() && nums[i % arr.length] > nums[st.peek()]) {
+                arr[st.peek()] = nums[i % arr.length];
+                st.pop();
+            }
+            st.push(i % arr.length);
+        }
+        return arr;
+    }
+}
