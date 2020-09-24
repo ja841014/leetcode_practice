@@ -1,0 +1,77 @@
+/*
+Given a positive 32-bit integer n, you need to find the smallest 32-bit integer which has exactly the same digits existing in the integer n and is greater in value than n. If no such positive 32-bit integer exists, you need to return -1.
+
+Example 1:
+Input: 12
+Output: 21
+
+Example 2:
+Input: 21
+Output: -1
+*/
+class Solution {
+    public int nextGreaterElement(int n) {
+        String str = Integer.toString(n);
+        boolean flag = false;
+        char[] Charr = str.toCharArray();
+        char pre = Charr[Charr.length - 1];
+        
+        char target = ' ';
+        int index = 0;
+        // find the first point we need to swap
+        for(int i =  Charr.length - 2; i >= 0 ; i--) {
+            if(pre > Charr[i] ) {
+                index = i + 1;
+                target = Charr[i];
+                flag = true;
+                break;
+            }
+            pre = Charr[i];
+        }
+        
+        if(flag == false) {
+            return -1;
+        }
+        
+        char swapchar2 = ' ';
+        int index2 = 0;
+        // find the point which is bigger than the first number we want to swap
+        for(int i = Charr.length - 1; i >= index; i-- ) {
+            if(Charr[i] > target) {
+                swapchar2 = Charr[i];
+                index2 = i;
+                break;
+            }
+        }
+        
+        swap(Charr, index - 1, index2);
+        reverse(Charr, index);
+        long longint = 0;
+        
+        try {
+            return Integer.parseInt(new String(Charr));
+        } catch (Exception e) {
+            return -1;
+        }
+        
+        
+    }
+    
+    
+    public void swap(char[] arr, int first, int second) {
+        char tmp = arr[first];
+        arr[first] = arr[second];
+        arr[second] = tmp;
+    }
+    
+    public void reverse(char[] arr, int endpoint) {
+        int start = arr.length - 1;
+        while(start > endpoint) {
+            swap(arr, start, endpoint);
+            start--;
+            endpoint++;
+        }
+    }
+    
+    
+}

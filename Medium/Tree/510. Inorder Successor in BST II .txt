@@ -1,0 +1,30 @@
+/*
+// Definition for a Node.
+class Node {
+    public int val;
+    public Node left;
+    public Node right;
+    public Node parent;
+};
+*/
+
+class Solution {
+    public Node inorderSuccessor(Node node) {
+        // situation 1
+        if(node.right != null) {
+            node = node.right;
+            while(node.left != null) {
+                node = node.left;
+            }
+            return node;
+        }
+        // situatin 2: find the common parent        
+        while(node.parent != null && node.parent.right == node) {
+            node = node.parent;
+            // System.out.println(node.val);
+            // System.out.println(node.parent.val);
+        }
+        
+        return node.parent;
+    }
+}

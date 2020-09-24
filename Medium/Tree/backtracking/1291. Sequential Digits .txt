@@ -1,0 +1,43 @@
+/*
+An integer has sequential digits if and only if each digit in the number is one more than the previous digit.
+Return a sorted list of all the integers in the range [low, high] inclusive that have sequential digits.
+Example 1:
+Input: low = 100, high = 300
+Output: [123,234]
+
+Example 2:
+Input: low = 1000, high = 13000
+Output: [1234,2345,3456,4567,5678,6789,12345]
+*/
+class Solution {
+    public List<Integer> sequentialDigits(int low, int high) {
+        List<Integer> ls = new ArrayList<>();
+        
+        String str_low = Integer.toString(low);
+        String str_high = Integer.toString(high);
+        for(int i = 1; i < 10; i++) {
+            StringBuilder sb = new StringBuilder();
+            backtrack(low, high, ls, sb, i);
+        }
+        Collections.sort(ls);
+        return ls;
+    }
+    public void backtrack(int low, int high, List<Integer> ls, StringBuilder sb, int start) {
+         sb.append(start);
+        // System.out.println(sb.toString().compareTo(low));
+        if( sb.length() != 0 && start < 10 && Integer.parseInt(sb.toString())  >=  low  && Integer.parseInt(sb.toString())  <= high ) {
+            ls.add(Integer.parseInt(sb.toString())  );
+        }
+       
+        if(Integer.parseInt(sb.toString()) > high) {
+            sb.deleteCharAt(sb.length() - 1);
+            return;
+        }
+        if(start + 1 == 10) {
+            return;
+        }
+        backtrack(low, high, ls, sb, start + 1);
+        return;
+        
+    }
+}
