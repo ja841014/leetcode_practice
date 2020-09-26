@@ -1,6 +1,4 @@
-/*
-用stack來到當作類似counter 可以用來執行以前需要執行的事情
-*/
+// using stack to store some information that we need to process after.
 /**
  * Definition for singly-linked list.
  * public class ListNode {
@@ -13,22 +11,24 @@
  */
 class Solution {
     public int[] nextLargerNodes(ListNode head) {
+        // maybe we can using pair<Integer, Integer> --> (value, index)
+        Stack<Integer> st = new Stack<>();
         List<Integer> ls = new ArrayList<>();
         while(head != null) {
             ls.add(head.val);
             head = head.next;
         }
-        Stack<Integer> st = new Stack<>();
-        int[] arr = new int[ls.size()];
-        for(int i = 0 ; i < ls.size(); i++) {
-            while(!st.isEmpty() && ls.get(i) > ls.get(st.peek())) {
-                int index = st.pop();
-                arr[index] = ls.get(i);
+        int[] result = new int[ls.size()];
+                
+        for(int i = 0; i < ls.size(); i++) {
+            while(!st.isEmpty() && ls.get(st.peek()) < ls.get(i)) {
+                result[st.peek()] = ls.get(i);
+                st.pop();
             }
+            // here have to put the index, otherwise, the while loop do not know where to put the element
             st.push(i);
         }
-        return arr;
+        
+        return result;
     }
 }
-
-

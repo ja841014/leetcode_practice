@@ -1,0 +1,65 @@
+/* Others thinking maybe we can use Stack
+You are given two non-empty linked lists representing two non-negative integers. The most significant digit comes first and each of their nodes contain a single digit. Add the two numbers and return it as a linked list.
+You may assume the two numbers do not contain any leading zero, except the number 0 itself.
+
+Follow up:
+What if you cannot modify the input lists? In other words, reversing the lists is not allowed.
+
+Example:
+Input: (7 -> 2 -> 4 -> 3) + (5 -> 6 -> 4)
+Output: 7 -> 8 -> 0 -> 7
+*/
+
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+
+class Solution {
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        
+        ListNode l1reverse = reverse(l1);
+        ListNode l2reverse = reverse(l2);
+
+        ListNode dummy = new ListNode(-1);
+        ListNode tail = dummy;
+        int sum = 0;
+        // we have need this conditin "sum != 0" because, there might be some carry number exist, when we exit the while loop
+        while(l1reverse != null || l2reverse != null || sum != 0) {
+            if(l1reverse != null) {
+                sum = sum + l1reverse.val;
+                l1reverse = l1reverse.next;
+            }
+            if(l2reverse != null) {
+                sum = sum + l2reverse.val;
+                l2reverse = l2reverse.next;
+            }
+            ListNode tmp = new ListNode(sum % 10);
+            tail.next = tmp;
+            tail = tail.next;
+            sum = sum / 10;
+        }
+        
+        dummy = reverse(dummy.next);
+        return dummy;
+    }
+    
+    // reverse part: we do not need dummy head in reverse part!!
+    public ListNode reverse(ListNode node) {
+        ListNode root = null;
+        while(node != null) {
+            ListNode tmp = new ListNode(node.val);
+            tmp.next = root;
+            root = tmp;
+            node = node.next;
+        }
+        return root;
+    }
+    
+}

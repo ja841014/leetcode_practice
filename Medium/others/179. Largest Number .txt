@@ -1,0 +1,47 @@
+/*
+Given a list of non negative integers, arrange them such that they form the largest number.
+
+Example 1:
+
+Input: [10,2]
+Output: "210"
+Example 2:
+
+Input: [3,30,34,5,9]
+Output: "9534330"
+
+*/
+class Solution {
+    private class largestNumberComparator implements Comparator<String> {
+        @Override
+        public int compare(String a, String b) {
+            // a 拿到的是第二個數
+            String tmp1 = a + b;
+            String tmp2 = b + a;
+            // System.out.println(tmp1);
+            // System.out.println(tmp2);
+            // System.out.println(tmp1.compareTo(tmp2));
+            return tmp2.compareTo(tmp1);
+        }
+    }
+    public String largestNumber(int[] nums) {
+        String[] strArr = new String[nums.length];
+        for(int i = 0; i < nums.length; i++) {
+            strArr[i] = String.valueOf(nums[i]);
+        }
+        // Arrays.sort(strArr, new largestNumberComparator());
+        // 相似於descending排序 所以第一個這裡要用b + a
+        Arrays.sort(strArr, (a, b) -> (b + a).compareTo(a + b) );
+
+
+        if(strArr[0].equals("0")) {
+            return "0";
+        }
+        
+        String result = "";
+        for(String s: strArr) {
+            result = result + s;
+        }
+        return result;
+    }
+}
