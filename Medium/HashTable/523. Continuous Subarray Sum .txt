@@ -1,0 +1,41 @@
+/* ！！ 模數相同的兩個數相減 可以得到模數  == 0的結果
+    23 % 6 = 5
+    25 % 6 = 1
+    29 % 6 = 5. 所以29 - 23 = 6.  6 % 6 = 0;
+For anybody is confused about map.put(0,-1);
+In the case nums = [1, 5] k = 6, at i=1, sum % k is 0, 
+so we need a key '0' in the map, and it must be comply with the continuous condition, 
+i - map.get(sum) > 1, so we give an arbitrary value of -1.
+*/
+class Solution {
+    // we need to very be careful k == 0 this case.!
+    public boolean checkSubarraySum(int[] nums, int k) {
+        Map<Integer, Integer> map = new HashMap<>();
+        int sum = 0;
+        int mod = 0;
+        map.put(0, -1);
+        for(int i = 0; i < nums.length; i++) {
+            sum = sum + nums[i];
+            if(k != 0) {
+              mod = sum % k;  
+            }
+            else {
+                mod = sum;
+            }
+            if(map.containsKey(mod)) {
+                if(i - map.get(mod) > 1) {
+                    return true;
+                }
+            }
+            else {
+                map.put(mod , i);
+            }
+        }
+        return false;
+    }
+}
+
+
+
+// 29 % 6 = 5   29 / 6 = 4 ... 5
+// 25 % 6 = 1   25 / 6 = 4 ... 1
