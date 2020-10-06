@@ -35,6 +35,37 @@ You can return this binary search tree:
  *     }
  * }
  */
+
+class Solution {
+    public TreeNode insertIntoBST(TreeNode root, int val) {
+        if(root == null) {
+            return new TreeNode(val);
+        }
+        
+        if(root.val > val) {
+            if(root.left != null) {
+                root.left = insertIntoBST(root.left, val);
+            }
+            else {
+                TreeNode insertNode = new TreeNode(val);
+                root.left = insertNode;
+            }
+            
+        }
+        
+        else if(root.val < val) {
+            if(root.right != null) {
+                root.right = insertIntoBST(root.right, val);
+            }
+            else {
+                TreeNode insertNode = new TreeNode(val);
+                root.right = insertNode;
+            }
+        }
+        return root;
+    }
+}
+/*
 class Solution {
     public TreeNode insertIntoBST(TreeNode root, int val) {
         TreeNode tmp = root;
@@ -65,3 +96,4 @@ class Solution {
         return root;
     }
 }
+*/

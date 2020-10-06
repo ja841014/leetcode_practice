@@ -1,0 +1,70 @@
+/*
+Given a string S and a string T, find the minimum window in S which will contain all the characters in T in complexity O(n).
+
+Example:
+Input: S = "ADOBECODEBANC", T = "ABC"
+Output: "BANC"
+Note:
+
+If there is no such window in S that covers all characters in T, return the empty string "".
+If there is such window, you are guaranteed that there will always be only one unique minimum window in S.
+*/
+class Solution {
+    public String minWindow(String s, String t) {
+        if(s.length() < t.length()) {
+            return "";
+        }
+        
+        int start = 0;
+        int end = 0;
+        int tSize = t.length();
+        int minLength = Integer.MAX_VALUE;
+        int subStringStartIndex = 0;
+        int subStringEndIndex = 0;
+        
+        
+        Map<Character, Integer> map = new HashMap<>();
+        // put all the String t element into map
+        for (char c : t.toCharArray()) {
+		    map.put(c, map.getOrDefault(c, 0) + 1);
+	    }
+        
+        while(end < s.length()) {
+            char curr = s.charAt(end);
+            
+            if(map.containsKey(curr)) {
+                // so we will maintain the tSize always >= 0
+                if(map.get(curr) > 0) {
+                    tSize--;
+                }
+                map.put(curr, map.get(curr) - 1);
+                
+            }
+            // currently the substring contain all the String t, so we can start moving start point to trim the substring.
+            
+            while(tSize == 0) {
+                if(minLength > end - start + 1) {
+                    minLength = end - start + 1;
+                    subStringStartIndex = start;
+                    subStringEndIndex = end;
+                }
+                char startChar = s.charAt(start);
+                if(map.containsKey(startChar)) {
+                    map.put(startChar, map.get(startChar) + 1);
+                    // only when the value is bigger than zero will increase the "tSize"
+                    if(map.get(startChar) > 0) {
+                        tSize++;
+                    }
+                }
+                // moving start point
+                start++;
+            }
+            
+            end++;
+        }
+        if(minLength == Integer.MAX_VALUE) {
+            return "";
+        }
+        return s.substring(subStringStartIndex, subStringEndIndex + 1);
+    }
+}
