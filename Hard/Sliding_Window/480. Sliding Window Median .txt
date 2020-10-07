@@ -1,0 +1,76 @@
+// using maxHeap to store half of samller window elements
+// using minHeap to store half of bigger window elements
+// The difference between the two heap is at most one element, maxheap size always >= minheap
+// removing the element out pf window using pq.remove() method which can find the specific element and remove it
+/*
+Median is the middle value in an ordered integer list. If the size of the list is even, there is no middle value. So the median is the mean of the two middle value.
+
+Examples:
+[2,3,4] , the median is 3
+[2,3], the median is (2 + 3) / 2 = 2.5
+Given an array nums, there is a sliding window of size k which is moving from the very left of the array to the very right. You can only see the k numbers in the window. Each time the sliding window moves right by one position. Your job is to output the median array for each window in the original array.
+For example,
+Given nums = [1,3,-1,-3,5,3,6,7], and k = 3.
+Window position                Median
+---------------               -----
+[1  3  -1] -3  5  3  6  7       1
+ 1 [3  -1  -3] 5  3  6  7       -1
+ 1  3 [-1  -3  5] 3  6  7       -1
+ 1  3  -1 [-3  5  3] 6  7       3
+ 1  3  -1  -3 [5  3  6] 7       5
+ 1  3  -1  -3  5 [3  6  7]      6
+Therefore, return the median sliding window as [1,-1,-1,3,5,6].
+*/
+class Solution {
+    private PriorityQueue<Long> minPQ;
+    private PriorityQueue<Long> maxPQ;
+
+    public double[] medianSlidingWindow(int[] nums, int k) {
+        minPQ = new PriorityQueue<>();
+        maxPQ = new PriorityQueue<>(Collections.reverseOrder());
+        double[] res = new double[nums.length - k + 1];
+        int i = 0;
+        while(i < nums.length) {
+            if(i < k) {
+                addNum(nums[i]);
+                if(i == k - 1) {
+                    res[i - k + 1] = getMid();
+                }
+                i++;
+                continue;
+            }
+            
+            if(!minPQ.isEmpty() && minPQ.contains((long)nums[i - k]) ) {
+                minPQ.remove((long)nums[i - k]);
+            }
+            else if(!maxPQ.isEmpty() && maxPQ.contains((long)nums[i - k]) ) {
+                maxPQ.remove((long)nums[i - k]);
+            }
+            addNum(nums[i]);
+            res[i - k + 1] = getMid();
+            i++;
+            
+        }
+        return res;
+        
+    }
+    
+    private double getMid() {
+        double midValue = 0;
+        if(maxPQ.size() == minPQ.size()) {
+            midValue = (double)(minPQ.peek() + maxPQ.peek()) / 2.0;
+        } else {
+            midValue = maxPQ.peek();
+        }
+        return midValue;
+    }
+    
+    private void addNum(int num) {
+        maxPQ.add((long)num);
+        minPQ.add((long)maxPQ.poll());
+        if (minPQ.size() > maxPQ.size()) {
+            maxPQ.add((long)minPQ.remove());
+        } 
+    }
+    
+}
