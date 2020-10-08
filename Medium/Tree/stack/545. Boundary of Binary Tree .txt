@@ -1,0 +1,90 @@
+// it is slightly differnet 199. Binary Tree Right Side View
+// this problem's boundary only contain the path from root to the right/left-most node.
+// go not contain the inner nodes which is not cover by outside node
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    
+    public List<Integer> boundaryOfBinaryTree(TreeNode root) {
+        List<Integer> ls = new ArrayList<>();
+        if(root == null) {
+            return ls;
+        }
+        Stack<Integer> st = new Stack<>();
+        
+        if(root.left != null || root.right != null) {
+            ls.add(root.val);
+        }
+        
+        dfsleftsubtree(root.left, ls);
+        
+        addLeaves(root, ls);
+        
+        dfsright(root.right, st);
+        while(!st.isEmpty()) {
+            ls.add(st.pop());
+        }
+        return ls;
+    }
+    
+    public void addLeaves(TreeNode head, List<Integer> isleaf) {
+        if(head == null) {
+            return;
+        }
+        if(head.left == null && head.right == null) {
+            isleaf.add(head.val);
+        }
+        addLeaves(head.left, isleaf);
+        addLeaves(head.right, isleaf);
+    }
+    
+    public void dfsleftsubtree(TreeNode head, List<Integer> ls ) {
+        if(head == null) {
+            return;
+        }
+        // not a leaf
+        if( head.left != null || head.right != null) {
+            ls.add(head.val);
+        }
+        if(head.left != null) {
+            dfsleftsubtree(head.left, ls);
+        } 
+        if(head.right != null && head.left == null)  {
+            dfsleftsubtree(head.right, ls);
+        }
+        
+    }
+    
+    
+    public void dfsright(TreeNode head, Stack<Integer> st) {
+        if(head == null) {
+            return;
+        }
+        if( head.left != null || head.right != null) {
+            st.push(head.val);
+        }
+        if(head.right != null) {
+            dfsright(head.right, st);
+        }
+        if(head.left != null && head.right == null)  {
+            dfsright(head.left, st);
+        }
+        
+    }
+    
+    
+}

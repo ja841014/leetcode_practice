@@ -1,0 +1,88 @@
+/** two dfs Method
+Given a binary tree, imagine yourself standing on the right side of it, return the values of the nodes you can see ordered from top to bottom.
+
+Example:
+Input: [1,2,3,null,5,null,4]
+Output: [1, 3, 4]
+Explanation:
+
+   1            <---
+ /   \
+2     3         <---
+ \     \
+  5     4       <---
+
+
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public List<Integer> rightSideView(TreeNode root) {
+        // List<Integer> ls = new ArrayList<>();
+        // dfs(root, ls, 1);
+        // return ls;
+        List<Integer> ls = new ArrayList<>();
+        if(root == null) {
+            return ls;
+        }
+        Stack<TreeNode> st = new Stack<>();
+        int level = 0;
+        TreeNode head = root;
+        TreeNode preNode = null;
+         
+        while(!st.isEmpty() || head != null) {
+            
+            while(head != null) {
+                level++;
+                if(level > ls.size()) {
+                    ls.add(head.val);
+                    
+                }
+                st.push(head);
+                head = head.right;
+            }
+            
+            head = st.pop();
+            level--;
+            // why we should use the "head.left != preNode" condition, it's function is similar to visited array
+            if(head.left != null && head.left != preNode) {
+                // we find that the "node" has a left child, so we put it back to the stack
+                st.push(head);
+                head = head.left;
+                // we have to compensate its level
+                level++;
+                continue;
+            }            
+            preNode = head;
+            head = null;
+            
+        }
+        
+        return ls;
+    }
+    
+    
+    private void dfs(TreeNode node, List<Integer> ls, int level) {
+        if(node == null) {
+            return;
+        }
+        if(ls.size() < level) {
+            ls.add(node.val);
+        }
+        dfs(node.right, ls, level + 1);
+        dfs(node.left, ls, level + 1);
+        
+    }
+
+}
