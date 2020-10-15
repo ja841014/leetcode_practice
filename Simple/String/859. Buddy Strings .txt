@@ -1,0 +1,77 @@
+/*
+Given two strings A and B of lowercase letters, return true if you can swap two letters in A so the result is equal to B, otherwise, return false.
+Swapping letters is defined as taking two indices i and j (0-indexed) such that i != j and swapping the characters at A[i] and A[j]. For example, swapping at indices 0 and 2 in "abcd" results in "cbad".
+
+Example 1:
+Input: A = "ab", B = "ba"
+Output: true
+Explanation: You can swap A[0] = 'a' and A[1] = 'b' to get "ba", which is equal to B.
+
+Example 2:
+Input: A = "ab", B = "ab"
+Output: false
+Explanation: The only letters you can swap are A[0] = 'a' and A[1] = 'b', which results in "ba" != B.
+
+Example 3:
+Input: A = "aa", B = "aa"
+Output: true
+Explanation: You can swap A[0] = 'a' and A[1] = 'a' to get "aa", which is equal to B.
+
+Example 4:
+Input: A = "aaaaaaabc", B = "aaaaaaacb"
+Output: true
+
+Example 5:
+Input: A = "", B = "aa"
+Output: false
+*/
+class Solution {
+    public boolean buddyStrings(String A, String B) {
+        if(A.length() != B.length() || A.length() == 0 && B.length() == 0) {
+            return false;
+        }
+        int cnt = 0;
+        boolean flag = false;
+        char Afirst = 0;
+        char Bfirst = 0;
+        char Asecond = 0;
+        char Bsecond = 0;
+        int[] table = new int[26];
+        
+        if(A.equals(B)) {
+            for(int i = 0 ;i < A.length(); i++) {
+                table[A.charAt(i) - 'a']++;
+            }
+            for(int i : table) {
+                if(i > 1) {
+                    return true;
+                }
+            }
+        }
+        
+        for(int i = 0; i < A.length(); i++) {
+            if(A.charAt(i) != B.charAt(i) ) {
+                if(cnt == 0) {
+                    Afirst = A.charAt(i);
+                    Bfirst = B.charAt(i);
+                }
+                else if(cnt == 1) {
+                    Asecond = A.charAt(i);
+                    Bsecond = B.charAt(i);
+                    if(Asecond == Bfirst && Afirst == Bsecond) {
+                        flag = true;
+                    }
+                }
+                else {
+                    flag = false;
+                }
+                cnt++;
+            }
+        }
+        
+        if(flag == true) {
+            return true;
+        }
+        return false;
+    }
+}

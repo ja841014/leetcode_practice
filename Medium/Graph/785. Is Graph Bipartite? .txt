@@ -1,0 +1,77 @@
+// we can use array to optimize, because in this problem, we know the number of nodes.
+/*
+Given an undirected graph, return true if and only if it is bipartite.
+
+Recall that a graph is bipartite if we can split it's set of nodes into two independent subsets A and B such that every edge in the graph has one node in A and another node in B.
+
+The graph is given in the following form: graph[i] is a list of indexes j for which the edge between nodes i and j exists.  Each node is an integer between 0 and graph.length - 1.  There are no self edges or parallel edges: graph[i] does not contain i, and it doesn't contain any element twice.
+
+Example 1:
+Input: [[1,3], [0,2], [1,3], [0,2]]
+Output: true
+Explanation: 
+The graph looks like this:
+0----1
+|    |
+|    |
+3----2
+We can divide the vertices into two groups: {0, 2} and {1, 3}.
+Example 2:
+Input: [[1,2,3], [0,2], [0,1,3], [0,2]]
+Output: false
+Explanation: 
+The graph looks like this:
+0----1
+| \  |
+|  \ |
+3----2
+We cannot find a way to divide the set of nodes into two independent subsets.
+*/
+class Solution {
+    public boolean isBipartite(int[][] graph) {
+        // the map function is record the node is visited or not.
+        Map<Integer, Boolean> map = new HashMap<>();
+        for(int i = 0; i < graph.length; i++) {
+            if(map.containsKey(i) == true) {
+                continue;
+            }
+            if(bfsTraverse(map, graph, i) == false) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    private boolean bfsTraverse(Map<Integer, Boolean> map, int[][] graph, int index) {
+        // we assign false is Red; true  is Blue
+        boolean toggle = false;
+        Queue<Integer> q = new LinkedList<>();
+        q.offer(index);
+        map.put(index, toggle);
+        
+        while(!q.isEmpty()) {
+            
+            int size = q.size();
+            for(int j = 0; j < size; j++) {
+                int tmp = q.poll();
+                // we use map.get() to toggle
+                toggle = !map.get(tmp);
+                for(int i = 0; i < graph[tmp].length; i++) {
+                    // if true, means the node already visited
+                    if(map.containsKey(graph[tmp][i]) == true) {
+                        // if the adjancecy nodes are in different colors -> continue
+                        if(map.get(graph[tmp][i]) != map.get(tmp)) {
+                            continue;
+                        }
+                        return false;
+                    }
+
+                    map.put(graph[tmp][i], toggle);
+                    q.offer(graph[tmp][i]);
+                }
+            }
+        }
+        
+        return true;
+    }
+}

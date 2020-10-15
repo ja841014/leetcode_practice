@@ -1,4 +1,4 @@
-/* Dynamic Programming
+/* Dynamic Programming update another solution 10/14
 You are given coins of different denominations and a total amount of money amount. Write a function to compute the fewest number of coins that you need to make up that amount. If that amount of money cannot be made up by any combination of the coins, return -1.
 
 Example 1:
@@ -10,6 +10,34 @@ Example 2:
 Input: coins = [2], amount = 3
 Output: -1
 */
+
+class Solution {
+    public int coinChange(int[] coins, int amount) {
+        if(amount == 0) {
+            return 0;
+        }
+        int[] table = new int[amount + 1];
+        Arrays.fill(table, Integer.MAX_VALUE);
+        
+        table[0] = 0;
+        for(int i = 1; i <= amount; i++) {
+            // we built up the table from 1 coin to 'amount' coins
+            // because the answer of dp is depend on th previos answer
+            for(int coin : coins) {
+                // if my money is less than change type, I cannot change it
+                // if my table[i - coin] == Integer.MAX_VALUE, means that we cannot give you change in this time. because, in the previous moment, we still do not have any change can handle our money.
+                if(i - coin >= 0 && table[i - coin] != Integer.MAX_VALUE) {
+                    table[i] = Math.min(table[i], table[i - coin] + 1);
+                }
+                
+            }
+            
+        }
+        return (table[amount] == Integer.MAX_VALUE) ? -1 : table[amount];
+    }
+}
+
+/*
 class Solution {
     public int coinChange(int[] coins, int amount) {
         int[] table = new int[amount + 1];
@@ -42,3 +70,4 @@ class Solution {
         return table[amount];
     }
 }
+*/
