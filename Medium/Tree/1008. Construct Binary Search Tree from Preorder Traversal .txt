@@ -1,4 +1,9 @@
-/**
+/** we can use stack and preorder to built our BST
+Return the root node of a binary search tree that matches the given preorder traversal.
+
+(Recall that a binary search tree is a binary tree where for every node, any descendant of node.left has a value < node.val, and any descendant of node.right has a value > node.val.  Also recall that a preorder traversal displays the value of the node first, then traverses node.left, then traverses node.right.)
+
+It's guaranteed that for the given test cases there is always possible to find a binary search tree with the given requirements.
  * Definition for a binary tree node.
  * public class TreeNode {
  *     int val;
@@ -14,32 +19,34 @@
  * }
  */
 class Solution {
+    
     public TreeNode bstFromPreorder(int[] preorder) {
-        //preorder a.k.a DFS
-        TreeNode root = new TreeNode(preorder[0]);
-        Stack<TreeNode> st = new Stack<TreeNode>();
-        st.push(root);
-        int count = 1;
-        
-        while(count < preorder.length) {
-            TreeNode new_node = new TreeNode(preorder[count]);
-            TreeNode tmp = null;
-            
-            // if the new node is bigeer than the peek node in the stack
-            while(!st.empty() && new_node.val > st.peek().val) {
-                tmp = st.pop();
-            }
-            
-            if(tmp == null) {
-                st.peek().left = new_node;
-            }
-            else {
-                tmp.right = new_node;
-            }
-            
-            st.push(new_node); 
-            count++;
+        if(preorder.length == 0) {
+            return null;
         }
-        return root;
+        Deque<TreeNode> st = new ArrayDeque<>();
+        TreeNode head = new TreeNode(preorder[0]);
+        TreeNode node = head;
+        
+        st.push(node);
+        for(int i = 1; i < preorder.length; i++) {
+            // this situation means the preorder[i] locate at the next level
+            if(!st.isEmpty() && preorder[i] < st.peek().val) {
+                node.left = new TreeNode(preorder[i]);
+                node = node.left;
+                st.push(node);
+            }// this situation means the preorder[i] locate at another subtree
+            else if(!st.isEmpty() && preorder[i] > st.peek().val) {
+                while(!st.isEmpty() && preorder[i] > st.peek().val) {
+                    node = st.pop();
+                }
+                node.right = new TreeNode(preorder[i]);
+                node = node.right;
+                st.push(node);
+            }
+            
+        }
+        return head;
     }
+    
 }
