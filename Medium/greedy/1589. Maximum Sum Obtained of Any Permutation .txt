@@ -1,5 +1,6 @@
 // https://www.youtube.com/watch?v=slTcWHIUfUE&ab_channel=TheAlgorithmicEye
-/*
+// the higher overlap interval has the bigger value
+/* 
 We have an array of integers, nums, and an array of requests where requests[i] = [starti, endi]. The ith request asks for the sum of nums[starti] + nums[starti + 1] + ... + nums[endi - 1] + nums[endi]. Both starti and endi are 0-indexed.
 
 Return the maximum total sum of all requests among all permutations of nums.
@@ -35,6 +36,7 @@ class Solution {
         int[] table = new int[nums.length];
         int size = nums.length - 1;
         long mod = 1_000_000_007;
+        // it is a very special technique. firstly, we can crop out the interval in a loop, and calculate the value in another loop.
         for(int[] arr : requests) {
             table[arr[0]]++;
             if(arr[1] + 1 < nums.length) {

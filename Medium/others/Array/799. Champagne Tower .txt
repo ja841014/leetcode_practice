@@ -1,0 +1,23 @@
+class Solution {
+    public double champagneTower(int poured, int query_row, int query_glass) {
+        
+        double[][] table = new double[100][100];
+        // table is used to store current quantity status.
+        table[0][0] = (double)poured;
+        
+        for(int i = 0; i < query_row; i++) {
+            for(int j = 0; j <= i; j++ ) {
+                double exceed = ( table[i][j] - 1.0 ) / 2.0;
+                if(exceed > 0) {
+                    // the middle cups always have 2 incoming flows.
+                    table[i + 1][j] = table[i + 1][j] + exceed;
+                    table[i + 1][j + 1] = table[i + 1][j + 1] + exceed;
+                }
+                
+            }
+        }
+        
+        // the cup will not exceed 1
+        return Math.min(1, table[query_row][query_glass]);
+    }
+}
