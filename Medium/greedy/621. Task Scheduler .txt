@@ -11,6 +11,27 @@
 // Explanation: 
 // A -> B -> idle -> A -> B -> idle -> A -> B
 // There is at least 2 units of time between any two same tasks.
+// First method
+class Solution {
+    public int leastInterval(char[] tasks, int n) {
+        int[] tableFreq = new int[26];
+        for(char c : tasks) {
+            tableFreq[c - 'A']++;
+        }
+        Arrays.sort(tableFreq);
+        // actually , we only have maxFreq - 1 intervals
+        int maxFreq = tableFreq[25];
+        int totalIdleTime = (maxFreq - 1) * n;
+        for(int i = tableFreq.length - 2; i >= 0; i--) {
+            totalIdleTime = totalIdleTime - Math.min(maxFreq - 1, tableFreq[i]);
+        }
+        if(totalIdleTime < 0) {
+            return tasks.length;
+        }
+        return tasks.length + totalIdleTime;
+    }
+}
+//Second method
 class Solution {
     public int leastInterval(char[] tasks, int n) {
         Map<Character, Integer> map = new HashMap<>();

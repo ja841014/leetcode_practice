@@ -1,0 +1,43 @@
+/* same as 316: https://leetcode.com/problems/remove-duplicate-letters/
+Return the lexicographically smallest subsequence of s that contains all the distinct characters of s exactly once.
+*/
+class Solution {
+    public String smallestSubsequence(String s) {
+        int[] charTable = new int[26];
+        // built up frequency table
+        for(int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            charTable[c - 'a']++;
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        Stack<Character> st = new Stack<>();
+        
+        for(int i = 0 ; i < s.length(); i++) {
+            char tmp = s.charAt(i);
+            
+            // when stack is empty or stack peek element is smaller than current element
+            if(st.isEmpty() ||  st.peek() - tmp < 0 ) {
+                if(!st.contains(tmp)) {
+                    st.push(tmp);
+                }                
+            }
+            else {
+                if(!st.contains(tmp)) {
+                    // if peek is bigger than current && charTable[peek] > 0
+                    while(!st.isEmpty() && charTable[st.peek() - 'a'] > 0 && st.peek() - tmp > 0 ) {
+                        st.pop();
+                    }
+                    st.push(tmp);
+                }
+            }            
+            charTable[tmp - 'a']--;
+        }
+        
+        for(char c: st) {
+            sb.append(c);
+        }
+        
+        return sb.toString();
+    }
+}

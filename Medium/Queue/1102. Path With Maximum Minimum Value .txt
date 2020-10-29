@@ -1,0 +1,66 @@
+/*
+Given a matrix of integers A with R rows and C columns, find the maximum score of a path starting at [0,0] and ending at [R-1,C-1].
+The score of a path is the minimum value in that path.  For example, the value of the path 8 →  4 →  5 →  9 is 4.
+A path moves some number of times from one visited cell to any neighbouring unvisited cell in one of the 4 cardinal directions (north, east, west, south).
+
+Example 1:
+Input: [[5,4,5],[1,2,6],[7,4,6]]
+Output: 4
+Explanation: 
+The path with the maximum score is highlighted in yellow. 
+
+Example 2:
+Input: [[2,2,1,2,2,2],[1,2,2,2,1,2]]
+Output: 2
+
+Example 3:
+Input: [[3,4,6,3,4],[0,2,1,1,7],[8,8,3,2,7],[3,2,4,9,8],[4,1,2,0,0],[4,6,5,4,3]]
+Output: 3
+*/
+class Solution {
+    public int maximumMinimumPath(int[][] A) {
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> b[2] - a[2] );
+        int[] dirX = {-1, 1, 0, 0};// up down left right
+        int[] dirY = {0, 0, -1, 1};
+        // decrease dimension 2d -> 1d
+        boolean[] visited = new boolean[A.length * A[0].length];
+        visited[0] = true;
+        
+        int curRow = 0;
+        int curCol = 0;
+        
+        pq.offer(new int[] {0, 0, A[0][0]} );
+        
+        while(!pq.isEmpty()) {
+            int[] curData = pq.poll();
+            curRow = curData[0];
+            curCol = curData[1];
+            // our third parameter will track the maxMin when we traverse the element.
+            if(curRow == A.length - 1 && curCol == A[0].length - 1) {
+                return curData[2];
+            }
+            for(int dir = 0; dir < 4; dir++) {
+                int row = curRow + dirX[dir];
+                int col = curCol + dirY[dir];
+                // it is valid row and col. we not visited yet.
+                if(isValid(row, col, A) == true && visited[row * A[0].length + col] == false) {
+                    
+                    pq.offer(new int[] {row, col, Math.min(curData[2], A[row][col])} );
+                    visited[row * A[0].length + col] = true;
+                    
+                }
+            }
+            
+        }
+        
+        return -1;
+    }
+    
+    
+    private boolean isValid(int row, int col, int[][] A) {
+        if(row >= 0 && row < A.length && col >= 0 && col < A[0].length) {
+            return true;
+        }
+        return false;
+    }
+}

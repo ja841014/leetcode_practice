@@ -1,0 +1,70 @@
+// https://leetcode.com/problems/minimum-cost-tree-from-leaf-values/discuss/476513/Java-Mono-Stack-98-Example-to-explain
+/*
+Given an array arr of positive integers, consider all binary trees such that:
+
+Each node has either 0 or 2 children;
+The values of arr correspond to the values of each leaf in an in-order traversal of the tree.  (Recall that a node is a leaf if and only if it has 0 children.)
+The value of each non-leaf node is equal to the product of the largest leaf value in its left and right subtree respectively.
+Among all possible binary trees considered, return the smallest possible sum of the values of each non-leaf node.  It is guaranteed this sum fits into a 32-bit integer.
+
+Example 1:
+Input: arr = [6,2,4]
+Output: 32
+Explanation:
+There are two possible trees.  The first has non-leaf node sum 36, and the second has non-leaf node sum 32.
+
+    24            24
+   /  \          /  \
+  12   4        6    8
+ /  \               / \
+6    2             2   4
+*/
+class Solution {
+    // int[][] dpTable;
+    // int[][] intervalMax;
+    public int mctFromLeafValues(int[] arr) {
+        int[][] dpTable = new int[arr.length][arr.length];
+        int[][] intervalMax = new int[arr.length][arr.length];
+        for(int i = 0; i < arr.length; i++) {
+            for(int j = i; j < arr.length; j++) {
+                intervalMax[i][j] = findMax(arr, i ,j);
+            }
+        }
+        
+        dynamicProgramming(0, arr.length - 1, dpTable, intervalMax);
+        
+        
+        return dpTable[0][dpTable.length - 1];
+    }
+    
+    private int dynamicProgramming(int start, int end, int[][] dpTable, int[][] intervalMax) {
+        if(start==end){
+            dpTable[start][end]=0;
+            return 0;
+        }
+        int ans=Integer.MAX_VALUE;
+        for(int i = start ;i < end; i++) {
+            // 最上面那層乘法
+            int val = intervalMax[start][i] * intervalMax[i + 1][end];
+            if(dpTable[start][i] == 0) {
+                dpTable[start][i] = dynamicProgramming(start, i, dpTable, intervalMax);
+            }
+            if(dpTable[i + 1][end] == 0) {
+                dpTable[i + 1][end] = dynamicProgramming(i + 1, end, dpTable, intervalMax);
+            }
+            // System.out.println(dpTable[start][i] + " " +dpTable[i + 1][end]);
+            // dpTable 這層是下面層的
+            ans = Math.min(ans, val + dpTable[start][i] + dpTable[i + 1][end]);
+        }
+        dpTable[start][end] = ans;
+        return ans;
+    }
+    
+    private int findMax(int[] arr, int start, int end) {
+        int maxValue = Integer.MIN_VALUE;
+        for(int i = start; i <= end; i++ ) {
+            maxValue = Math.max(maxValue, arr[i]);
+        }
+        return maxValue;
+    }
+}
