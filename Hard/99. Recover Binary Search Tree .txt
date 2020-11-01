@@ -1,0 +1,73 @@
+/*
+You are given the root of a binary search tree (BST), where exactly two nodes of the tree were swapped by mistake. Recover the tree without changing its structure.
+
+*/
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public void recoverTree(TreeNode root) {
+        List<Integer> ls = new ArrayList<>();
+        dfs(root, ls);
+        
+        int[] twoElements = findTwoElement(ls);
+        
+        swap(twoElements, root, 2);
+        
+    }
+    
+    private void swap(int[] twoElements, TreeNode root, int cnt) {
+        if(root != null) {
+            if(root.val == twoElements[0] || root.val == twoElements[1]) {
+                root.val = root.val == twoElements[0] ? twoElements[1] : twoElements[0];
+                cnt--;
+            }
+            if(cnt == 0) {
+                return;
+            }
+            swap(twoElements, root.left, cnt);
+            swap(twoElements, root.right, cnt);  
+        }
+        
+    }
+    
+    private int[] findTwoElement(List<Integer> ls ) {
+        int first = -1;
+        int second = -1;
+        int size = ls.size();
+        for(int i = 0; i < size - 1; i++) {
+            // it will be in increasing order in normal
+            if(ls.get(i + 1) < ls.get(i)) {
+                second = ls.get(i + 1);
+                if(first == -1) {
+                    first = ls.get(i);
+                }
+                else {
+                    break;
+                }
+            }
+        }
+        return new int[] {first, second};
+    }
+    
+    private void dfs(TreeNode head, List<Integer> ls) {
+        if(head == null) {
+            return;
+        }
+        dfs(head.left, ls);
+        ls.add(head.val);
+        dfs(head.right, ls);
+    }
+}
