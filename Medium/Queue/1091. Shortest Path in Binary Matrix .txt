@@ -1,0 +1,51 @@
+/*
+In an N by N square grid, each cell is either empty (0) or blocked (1).
+
+A clear path from top-left to bottom-right has length k if and only if it is composed of cells C_1, C_2, ..., C_k such that:
+
+Adjacent cells C_i and C_{i+1} are connected 8-directionally (ie., they are different and share an edge or corner)
+C_1 is at location (0, 0) (ie. has value grid[0][0])
+C_k is at location (N-1, N-1) (ie. has value grid[N-1][N-1])
+If C_i is located at (r, c), then grid[r][c] is empty (ie. grid[r][c] == 0).
+Return the length of the shortest such clear path from top-left to bottom-right.  If such a path does not exist, return -1.
+*/
+class Solution {
+    public int shortestPathBinaryMatrix(int[][] grid) {
+        Queue<int[]> q = new LinkedList<>();
+        boolean[][] seen = new boolean[grid.length][grid[0].length];
+        int length = 1;
+        int[][] dir = new int[][] {{-1,-1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
+        if(grid[0][0] == 1 || grid[grid.length - 1][grid[0].length - 1] == 1) {
+            return -1;
+        }
+        q.offer(new int[] {0, 0});
+        seen[0][0] = true;
+        while(!q.isEmpty()) {
+            int size = q.size();
+            for(int i = 0; i < size; i++) {
+                int[] curr = q.poll();
+                // System.out.println(curr[0] + " "+ curr[1]);
+                if(curr[0] == grid.length - 1 && curr[1] == grid[0].length - 1 ) {
+                    return length;
+                }
+                
+                for(int[] d : dir) {
+                    int newX = curr[0] + d[0];
+                    int newY = curr[1] + d[1];
+                    if(isValidCell(newX, newY, grid) && grid[newX][newY] == 0 && seen[newX][newY] == false) {
+                        q.offer(new int[] {newX, newY});
+                        seen[newX][newY] = true;
+                    }
+                }
+            }
+            length++;
+        }
+        return -1;
+    }
+    private boolean isValidCell(int x, int y, int[][] grid) {
+        if(x < 0 || y < 0 || x >= grid.length || y >= grid[0].length) {
+            return false;
+        }
+        return true;
+    }
+}
