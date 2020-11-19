@@ -1,0 +1,28 @@
+/* Two loops DP; 2d DP problem
+Given two integer arrays A and B, return the maximum length of an subarray that appears in both arrays.
+Example 1:
+
+Input:
+A: [1,2,3,2,1]
+B: [3,2,1,4,7]
+Output: 3
+Explanation: 
+The repeated subarray with maximum length is [3, 2, 1].
+*/
+class Solution {
+    public int findLength(int[] A, int[] B) {
+        int[][] table = new int[A.length + 1][B.length + 1];
+        int maxV = 0;
+        for(int i = A.length - 1; i >= 0; i-- ) {
+            for(int j = B.length - 1; j >= 0; j--) {
+                if(A[i] == B[j]) {
+                    table[i][j] = table[i + 1][j + 1] + 1;
+                    if(maxV < table[i][j]) {
+                        maxV = table[i][j];
+                    }
+                }
+            }
+        }
+        return maxV;
+    }
+}

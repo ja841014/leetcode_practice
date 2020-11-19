@@ -1,0 +1,52 @@
+/*
+It is same as 124. Binary Tree Maximum Path Sum
+Given the root of a binary tree, return the length of the longest path, where each node in the path has the same value. This path may or may not pass through the root.
+The length of the path between two nodes is represented by the number of edges between them.
+*/
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    int level;
+    public int longestUnivaluePath(TreeNode root) {
+        level = 0;
+        dfs(root);
+        return level;
+    }
+    
+    private int dfs(TreeNode node) {
+        if(node == null) {
+            return 0;
+        }
+        
+        int left = dfs(node.left);
+        int right = dfs(node.right);
+        int levelLeft = 0;
+        int levelRight = 0;
+        
+        if(node.left != null && node.left.val == node.val) {
+            levelLeft = levelLeft + 1 + left;
+        }
+        
+        if(node.right != null && node.right.val == node.val) {
+            levelRight = levelRight + 1 + right;
+        }
+        
+        level = Math.max(level, levelLeft + levelRight );
+        // go to upper level
+        // and because of the "Path" we only can path the maximum one
+        return Math.max(levelLeft, levelRight);
+    }
+}

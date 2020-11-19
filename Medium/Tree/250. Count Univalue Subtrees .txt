@@ -1,0 +1,49 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    int cnt = 0;
+    public int countUnivalSubtrees(TreeNode root) {
+        dfs(root);
+        return cnt;
+    }
+    private boolean dfs(TreeNode node) {
+        if(node == null) {
+            return true;
+        }
+        if(node.left == null && node.right == null) {
+            cnt++;
+            return true;
+        }
+        
+        boolean left = dfs(node.left);
+        boolean right = dfs(node.right);
+        // we have to add "left == true" this condition, because there might be a case that false == false than it will be counted such as [1,1,1,5,5,null,5]this case
+        if(left == right && left == true && node.right == null && node.left.val == node.val) {
+            cnt++;
+            return true;
+        }
+        if(left == right && left == true && node.left == null && node.right.val == node.val) {
+            cnt++;
+            return true;
+        }
+        if(left == right && left == true &&node.left != null && node.right != null && node.left.val == node.right.val && node.left.val == node.val) {
+            cnt++;
+            return true;
+        }
+        return false;
+        
+    }
+}

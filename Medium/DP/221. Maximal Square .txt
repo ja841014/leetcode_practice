@@ -1,0 +1,73 @@
+/*
+2d array dp problem 2 loops
+
+Given a 2D binary matrix filled with 0's and 1's, find the largest square containing only 1's and return its area.
+Example:
+
+Input: 
+
+1 0 1 0 0
+1 0 1 1 1
+1 1 1 1 1
+1 0 0 1 0
+
+Output: 4
+*/
+class Solution {
+    /*
+    public class Solution {
+    public int maximalSquare(char[][] matrix) {
+        int rows = matrix.length, cols = rows > 0 ? matrix[0].length : 0;
+        int[][] dp = new int[rows + 1][cols + 1];
+        int maxsqlen = 0;
+        for (int i = 1; i <= rows; i++) {
+            for (int j = 1; j <= cols; j++) {
+                if (matrix[i-1][j-1] == '1'){
+                    dp[i][j] = Math.min(Math.min(dp[i][j - 1], dp[i - 1][j]), dp[i - 1][j - 1]) + 1;
+                    maxsqlen = Math.max(maxsqlen, dp[i][j]);
+                }
+            }
+        }
+        return maxsqlen * maxsqlen;
+    }
+}
+    */
+    
+    public int maximalSquare(char[][] matrix) {
+        if(matrix.length == 0 || matrix[0].length == 0) {
+            return 0;
+        }
+        int maxArea = 0;
+        for(int i = 0; i < matrix.length; i++) {
+            for(int j = 0; j < matrix[0].length; j++) {
+                if(matrix[i][j] == '1') {
+                    
+                    boolean flag = true;
+                    int enlarge = 1;
+                    while(flag == true&& i + enlarge < matrix.length && j + enlarge < matrix[0].length && matrix[i + enlarge][j + enlarge] == '1') {
+                        // horizontal
+                        for(int k = j; k < j + enlarge; k++) {
+                            if(matrix[i + enlarge][k] != '1') {
+                                flag = false;
+                            }
+                        }
+                        // vertical same
+                        for(int k = i; k < i + enlarge; k++) {
+                            if(matrix[k][j + enlarge] != '1') {
+                                flag = false;
+                            }
+                        }
+                        if(flag == true) {
+                            enlarge++;
+                        }
+                        
+                    }
+                    
+                    maxArea = Math.max(maxArea, (enlarge ) * (enlarge ));
+                    
+                }
+            }
+        }
+        return maxArea;
+    }
+}

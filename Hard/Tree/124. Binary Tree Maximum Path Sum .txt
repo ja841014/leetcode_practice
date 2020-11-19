@@ -1,0 +1,42 @@
+/*
+Given a non-empty binary tree, find the maximum path sum.
+
+For this problem, a path is defined as any node sequence from some starting node to any node in the tree along the parent-child connections. The path must contain at least one node and does not need to go through the root.
+*/
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    private int maxPath;
+    public int maxPathSum(TreeNode root) {
+        maxPath = root.val;
+        int path = dfs(root);
+        return maxPath > path ? maxPath : path;
+    }
+    public int dfs(TreeNode node) {
+        if(node == null) {
+            return 0;
+        }
+        
+        int left = Math.max(dfs(node.left), 0);
+        int right = Math.max(dfs(node.right), 0);
+        // we update maxPath to see whether our maximum path is locate at current node.
+        maxPath = Math.max(maxPath, node.val + left + right);
+        // choose one path only, 
+        // we cannot take all the two path, if our root of maximum path is locate at top level
+        return Math.max(left, right) + node.val;
+    }
+    
+}
