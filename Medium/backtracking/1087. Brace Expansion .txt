@@ -1,0 +1,57 @@
+/*
+A string S represents a list of words.
+Each letter in the word has 1 or more options.  If there is one option, the letter is represented as is.  If there is more than one option, then curly braces delimit the options.  For example, "{a,b,c}" represents options ["a", "b", "c"].
+For example, "{a,b,c}d{e,f}" represents the list ["ade", "adf", "bde", "bdf", "cde", "cdf"].
+Return all words that can be formed in this manner, in lexicographical order.
+
+Example 1:
+Input: "{a,b}c{d,e}f"
+Output: ["acdf","acef","bcdf","bcef"]
+
+Example 2:
+Input: "abcd"
+Output: ["abcd"]
+*/
+class Solution {
+    public String[] expand(String s) {
+        s = s.replace(",", "");
+        List<String> strs = new ArrayList<>();
+        int i = 0;
+        while (i < s.length()) {
+            if (s.charAt(i) == '{')  {
+                StringBuilder builder = new StringBuilder();
+                // from index i + 1 search the location which '}' appear first time 
+                int end = s.indexOf('}', i+1);
+				builder.append(s.substring(i+1, end));
+
+                strs.add(builder.toString());
+                i = end + 1;
+            } else {
+                // we let the subString which must stay together add it in arraylist one by one.
+                // Therefore, we force it must take the character evert time.
+                strs.add(s.charAt(i) + "");
+                i++;
+            }
+        }
+                
+        List<String> result = new ArrayList<>();
+        backTrack(strs, result, new StringBuilder(), 0);
+        Collections.sort(result);
+        return result.toArray(new String[result.size()]);
+    }
+    private void backTrack(List<String> ls, List<String> result, StringBuilder sb, int outIndex) {
+        if(outIndex >= ls.size()) {
+            result.add(sb.toString());
+            return;
+        }
+        
+        for(int i = 0; i < ls.get(outIndex).length(); i++) {
+            sb.append(ls.get(outIndex).charAt(i));
+            outIndex++;
+            backTrack(ls, result, sb, outIndex);
+            outIndex--;
+            sb.deleteCharAt(sb.length() - 1);
+        }
+    }
+    
+}

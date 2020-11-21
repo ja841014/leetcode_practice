@@ -1,4 +1,4 @@
-/*
+/* DP and STACK
 Given a string containing just the characters '(' and ')', find the length of the longest valid (well-formed) parentheses substring.
 
 Example 1:
@@ -17,26 +17,70 @@ Output: 0
 */
 class Solution {
     public int longestValidParentheses(String s) {
-        int maxLength = 0;
-        int size = s.length();
-        // we put index into the stack
-        Stack<Integer> st = new Stack<>();
-        st.push(-1);
-        for(int i = 0; i < size; i++) {
-            char c = s.charAt(i);
-            if( c == '(') {
-                st.push(i);
-            }
-            else {
-                // we have to pop first then calculate the length
-                st.pop();
-                if(st.isEmpty()) {
-                    st.push(i);
-                }
-                maxLength = Math.max(maxLength, i - st.peek());
-            }
+//         int maxLength = 0;
+//         int size = s.length();
+//         // we put index into the stack
+//         Stack<Integer> st = new Stack<>();
+//         st.push(-1);
+//         for(int i = 0; i < size; i++) {
+//             char c = s.charAt(i);
+//             if( c == '(') {
+//                 st.push(i);
+//             }
+//             else {
+//                 // we have to pop first then calculate the length
+//                 st.pop();
+//                 if(st.isEmpty()) {
+//                     st.push(i);
+//                 }
+//                 maxLength = Math.max(maxLength, i - st.peek());
+//             }
             
+//         }
+//         return maxLength;
+        
+        int  maxLength = 0;
+        int size = s.length();
+        int[] dpTable = new int[size];
+        for(int i = 1; i < size; i++) {
+            
+            if(s.charAt(i) == ')') {
+                // the very inner case
+                if(s.charAt(i - 1) == '(') {
+                    // make sure we are not in the front of the string
+                    if(i >= 2) {
+                        dpTable[i] = dpTable[i - 2] + 2;
+                    }
+                    else {
+                        dpTable[i] = 2;
+                    }
+                }
+                ///
+                //i-dp[i-1]-1 is the index of last "(" not paired until this ")"
+                    // because the value of dp[i - 1] tell us how many charaters we alredy valid, so we just minus the value then minus 1, then we can meet the potential character.
+                    // case : (())
+                else if(i - dpTable[i - 1] - 1 >= 0 && s.charAt(i - dpTable[i - 1] - 1 ) == '(') {
+                    if(dpTable[i - 1] != 0) {
+                        // why we should add "dpTable[i - dpTable[i - 1] - 2]" ? we have to connect the past valid parentheses
+                        // And, we should have this condition "i - dpTable[i - 1] - 2 >= 0"
+                        // because we want to connect the the past valid parentheses, 
+                        // BUT we have to check whether the index is out of bound or not!
+                        if(i - dpTable[i - 1] - 2 >= 0) {
+                            dpTable[i] = dpTable[i - 1] + 2 + dpTable[i - dpTable[i - 1] - 2];
+                        }
+                        else {
+                            dpTable[i] = dpTable[i - 1] + 2;
+                        }
+                        
+                    }
+                    else {
+                        dpTable[i] = 0;
+                    }
+                }
+                maxLength = Math.max(maxLength, dpTable[i]);
+            }
         }
+        
         return maxLength;
     }
 }

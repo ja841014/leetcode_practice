@@ -1,0 +1,81 @@
+/*
+The i-th person has weight people[i], and each boat can carry a maximum weight of limit.
+Each boat carries at most 2 people at the same time, provided the sum of the weight of those people is at most limit.
+Return the minimum number of boats to carry every given person.  (It is guaranteed each person can be carried by a boat.
+
+Example 1:
+Input: people = [1,2], limit = 3
+Output: 1
+Explanation: 1 boat (1, 2)
+
+Example 2:
+Input: people = [3,2,2,1], limit = 3
+Output: 3
+Explanation: 3 boats (1, 2), (2) and (3)
+
+Example 3:
+Input: people = [3,5,3,4], limit = 5
+Output: 4
+Explanation: 4 boats (3), (3), (4), (5)
+*/
+class Solution {
+    public int numRescueBoats(int[] people, int limit) {
+        Arrays.sort(people);
+        int i = 0;
+        int j = people.length - 1;
+        int numOfTimes = 0;
+        // we can use head and tail two pointer to handle this problem
+        // if the lightest + heaviest > limit we must decrease heaviest weight
+        // because if we add lightest weight will never fit the condition "< limit" 
+        while(i <= j) {
+            numOfTimes++;
+            if(people[i] + people[j] <= limit) {
+                i++;
+            }
+            j--;
+        }
+        return numOfTimes;
+        
+//         Arrays.sort(people);
+//         // weight freq
+//         Map<Integer, Integer> map = new HashMap<>();
+//         for(int i: people) {
+//             map.put(i, map.getOrDefault(i, 0) + 1);
+//         }
+//         int size = people.length;
+//         int index = 0;
+//         int times = 0;
+        
+//         while(size > 0) {
+//             int weightA = people[index];
+//             map.put(weightA, map.get(weightA) - 1);
+//             int decrease = 0;
+//             boolean flag = false;
+            
+//             while( limit - weightA - decrease > 0) {
+//                 int weightB = limit - weightA - decrease;
+                
+//                 if( map.containsKey(weightB) && map.get(weightB) > 0) {
+                    
+//                     map.put(weightB, map.get(weightB) - 1);
+//                     flag = true;
+//                     break;
+//                 }
+                
+//                 decrease++;
+//             }
+            
+//             if(flag == true) {
+//                 size = size - 2;
+//             }
+//             else {
+//                 size--;
+//             }
+            
+//             times++;
+//             index++;
+            
+//         }
+//         return times;
+    }
+}

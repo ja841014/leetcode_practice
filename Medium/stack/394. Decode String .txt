@@ -1,0 +1,83 @@
+/*
+Given an encoded string, return its decoded string.
+
+The encoding rule is: k[encoded_string], where the encoded_string inside the square brackets is being repeated exactly k times. Note that k is guaranteed to be a positive integer.
+
+You may assume that the input string is always valid; No extra white spaces, square brackets are well-formed, etc.
+Furthermore, you may assume that the original data does not contain any digits and that digits are only for those repeat numbers, k. For example, there won't be input like 3a or 2[4].
+
+Example 1:
+Input: s = "3[a]2[bc]"
+Output: "aaabcbc"
+
+Example 2:
+Input: s = "3[a2[c]]"
+Output: "accaccacc"
+
+Example 3:
+Input: s = "2[abc]3[cd]ef"
+Output: "abcabccdcdcdef"
+
+Example 4:
+Input: s = "abc3[cd]xyz"
+Output: "abccdcdcdxyz"
+*/
+class Solution {
+    public String decodeString(String s) {
+        Stack<Character> st = new Stack<>();
+        
+        for(int i = 0; i < s.length(); i++) {
+            char curr = s.charAt(i);
+            if(curr != ']') {
+                st.push(curr);
+            }
+            
+            else {
+                StringBuilder tmp = new StringBuilder();
+                // pop out from stack and append the word to 'tmp'
+                append(st, tmp);
+                
+                // update the number of multiplication
+                int sum = updateScalar(st);
+                                    
+                // put back into the stack
+                putBackToStack(st, tmp, sum)
+            }            
+        }
+        // change the stack element to char array then to String
+        char[] result = new char[st.size()];
+        for (int i = result.length - 1; i >= 0; i--) {
+            result[i] = st.pop();
+        }
+        
+        return new String(result);
+    }
+    
+    private void append(Stack<Character> st, StringBuilder tmp ) {
+        while(!st.isEmpty() && st.peek() != '[') {
+            tmp.append(st.pop());
+        }
+        // pop out the '['
+        st.pop();
+    }
+    
+    private int updateScalar(Stack<Character> st) {
+        int scalar = 1;
+        int sum = 0;
+        while(!st.isEmpty() && Character.isDigit(st.peek())) {
+            sum = sum + (st.pop() - '0') * scalar;
+            scalar = scalar * 10;
+        }
+        return sum;
+    }
+    
+    private void putBackToStack(Stack<Character> st, StringBuilder tmp, int sum) {
+        while(sum > 0) {
+            for(int j = tmp.length() - 1; j >= 0 ; j--) {
+                st.push(tmp.charAt(j));
+            }
+            sum--;
+        }
+    }
+    
+}
