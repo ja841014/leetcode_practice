@@ -1,0 +1,121 @@
+/* In this question we do not need to know how they swap. we only want to know the final result
+You are given a string s, and an array of pairs of indices in the string pairs where pairs[i] = [a, b] indicates 2 indices(0-indexed) of the string.
+You can swap the characters at any pair of indices in the given pairs any number of times.
+Return the lexicographically smallest string that s can be changed to after using the swaps.
+
+Example 1:
+Input: s = "dcab", pairs = [[0,3],[1,2]]
+Output: "bacd"
+Explaination: 
+Swap s[0] and s[3], s = "bcad"
+Swap s[1] and s[2], s = "bacd"
+
+Example 2:
+Input: s = "dcab", pairs = [[0,3],[1,2],[0,2]]
+Output: "abcd"
+Explaination: 
+Swap s[0] and s[3], s = "bcad"
+Swap s[0] and s[2], s = "acbd"
+Swap s[1] and s[2], s = "abcd"
+
+Example 3:
+Input: s = "cba", pairs = [[0,1],[1,2]]
+Output: "abc"
+Explaination: 
+Swap s[0] and s[1], s = "bca"
+Swap s[1] and s[2], s = "bac"
+Swap s[0] and s[1], s = "abc"
+*/
+class Solution {
+    public String smallestStringWithSwaps(String s, List<List<Integer>> pairs) {
+        //init the Union class
+        Union uf = new Union(s.length());
+        
+        // firstly built the map and seperate the category
+        for(List<Integer> ls : pairs) {
+            uf.union(ls.get(0), ls.get(1));
+        }
+        
+        
+        // (這個root的union, 這個union有什麼char)
+        Map<Integer, List<Character> > map = new HashMap<>();
+        // Secondly, traverse the string and put the same union character into the list(we can use priorityqueue to sort it in the same time)
+        for(int i = 0; i < s.length(); i++) {
+            // we want to find the root of index i
+            int root = uf.findParent(i);
+            char c = s.charAt(i);
+            // if this key does not exist, then we made a new Arraylist for it, 
+            // otherwise do nothing and input it
+            List<Character> ls = map.computeIfAbsent(root, k -> new ArrayList<>() );
+            ls.add(c);
+        }
+        
+        // Thirdly, we need to sort characters which in the same union.
+        // map.values() : The method is used to return a collection view containing all the values of the map.
+        // if we use PQ as map value, we can skip this step.
+        for(List<Character> list : map.values()) {
+            Collections.sort(list);
+        }
+        
+        // Fourthly, we need to append the word in order and return the string
+        // if we use PQ we can simply poll out the character.
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0 ; i < s.length(); i++) {
+            int root = uf.findParent(i);
+            char currAppend = map.get(root).remove(0);
+            sb.append(currAppend);
+        }
+        
+        return sb.toString();
+        
+        
+    }
+    //////////////////////////
+    // union class template //
+    //////////////////////////
+    class Union {
+        int[] parent;
+        int[] size;
+        public Union(int strLength) {
+            parent = new int[strLength];
+            size = new int[strLength];
+            // init the parent;
+            for(int i = 0; i < strLength; i++) {
+                parent[i] = i;
+                size[i] = 1;
+            }
+        }
+        
+        private int findParent(int index) {
+            while(index != parent[index]) {
+                parent[index] = parent[parent[index] ];
+                index = parent[index] ;
+            }
+            return index;
+        }
+        
+        private int union(int p, int q) {
+            int pRoot = findParent(p);
+            int qRoot = findParent(q);
+            if(pRoot == qRoot) {
+                return size[pRoot];
+            }
+            
+            if(size[pRoot] > size[qRoot]) {
+                parent[qRoot] = pRoot;
+                size[pRoot] = size[pRoot] + size[qRoot];
+                return size[pRoot];
+            }
+            else {
+                parent[pRoot] = qRoot;
+                size[qRoot] = size[qRoot] + size[pRoot];
+                return size[qRoot];
+            }
+        }
+        
+    }
+    
+    
+    
+    
+}

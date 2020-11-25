@@ -1,0 +1,38 @@
+/*
+Say you have an array for which the ith element is the price of a given stock on day i.
+
+Design an algorithm to find the maximum profit. You may complete as many transactions as you like (ie, buy one and sell one share of the stock multiple times) with the following restrictions:
+
+You may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).
+After you sell your stock, you cannot buy stock on next day. (ie, cooldown 1 day)
+Example:
+
+Input: [1,2,3,0,2]
+Output: 3 
+Explanation: transactions = [buy, sell, cooldown, buy, sell]
+*/
+class Solution {
+    public int maxProfit(int[] prices) {
+        if(prices.length <= 1) {
+            return 0;
+        }
+        int[] sold = new int[prices.length];
+        
+        int[] inHand = new int[prices.length];
+        
+        int[] noStock = new int[prices.length];
+        
+        
+        inHand[0] = -prices[0];
+        for(int i = 1; i < prices.length; i++) {
+            // 賣出得狀態
+            noStock[i] = Math.max(noStock[i - 1], sold[i - 1]);
+            // (前一天的inhand和 “手上沒股票的狀況且買進當天股票(所以要減prices[i])” ) 手上有股票未賣出狀態
+            inHand[i] = Math.max(inHand[i-1], noStock[i-1] - prices[i]);
+            sold[i] = inHand[i - 1] + prices[i];
+            
+        }
+        
+        return Math.max(sold[prices.length - 1], noStock[prices.length - 1]);
+    }
+}
