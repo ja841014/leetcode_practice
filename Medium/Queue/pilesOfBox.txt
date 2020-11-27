@@ -1,0 +1,31 @@
+private static int pilesOfBox(int[] arr) {
+		PriorityQueue<Integer> maxHeap = new PriorityQueue<>((a, b) -> b - a);
+		for(int i: arr) {
+			maxHeap.add(i);
+		}
+		int totalOperation = 0;
+		int maxHeapSize = maxHeap.size();
+		
+		while(!maxHeap.isEmpty()) {
+			int curr = maxHeap.poll();
+			int oper = 1;
+			int size = 1;
+			while(!maxHeap.isEmpty() && curr == maxHeap.peek()) {
+				maxHeap.poll();
+				oper++;
+				size++;
+			}
+			if(oper == maxHeapSize) {
+				return totalOperation;
+			}
+			else {
+				totalOperation = totalOperation + oper;
+			}
+			
+			for(int i = 0; i < size; i++) {
+				maxHeap.add(maxHeap.peek());
+			}
+		}
+		return 0;
+		
+	}
