@@ -1,0 +1,42 @@
+/* we can do better without using HasMap
+Given a list of words and two words word1 and word2, return the shortest distance between these two words in the list.
+word1 and word2 may be the same and they represent two individual words in the list.
+Example:
+Assume that words = ["practice", "makes", "perfect", "coding", "makes"].
+
+Input: word1 = “makes”, word2 = “coding”
+Output: 1
+Input: word1 = "makes", word2 = "makes"
+Output: 3
+Note:
+You may assume word1 and word2 are both in the list.
+*/
+
+class Solution {
+    // str, str's index 
+    private Map<String, List<Integer> > map;
+    public int shortestWordDistance(String[] words, String word1, String word2) {
+        WordDistance(words);
+        int result = Integer.MAX_VALUE;
+        for(int index1 : map.get(word1)) {
+            for(int index2 : map.get(word2)) {
+                if(index2 == index1) {
+                    continue;
+                }
+                result = Math.min(result, Math.abs(index1 - index2));
+            }
+        }
+        return result;
+    }
+    
+    public void WordDistance(String[] words) {
+        map = new HashMap<>();
+        for(int i = 0; i < words.length; i++) {
+            if(!map.containsKey(words[i])) {
+                map.put(words[i], new ArrayList<>());
+            }
+            map.get(words[i]).add(i);
+        }
+    }
+    
+}

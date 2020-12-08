@@ -1,0 +1,75 @@
+/*
+// this is very important!! we have to  know how to set boxIndex
+int boxIndex = (i/3) * 3 + (j / 3);
+Determine if a 9 x 9 Sudoku board is valid. Only the filled cells need to be validated according to the following rules:
+
+Each row must contain the digits 1-9 without repetition.
+Each column must contain the digits 1-9 without repetition.
+Each of the nine 3 x 3 sub-boxes of the grid must contain the digits 1-9 without repetition.
+Note:
+
+A Sudoku board (partially filled) could be valid but is not necessarily solvable.
+Only the filled cells need to be validated according to the mentioned rules.
+*/
+class Solution {
+    public boolean isValidSudoku(char[][] board) {
+        // check square
+        Set<Character>[] squareSetArr = new HashSet[9]; 
+        // check row
+        Set<Character>[] rowSetArr = new HashSet[9]; 
+        // check col
+        Set<Character>[] colSetArr = new HashSet[9]; 
+        
+        for(int i = 0; i < 9; i++) {
+            squareSetArr[i] = new HashSet<>();
+            rowSetArr[i] = new HashSet<>();
+            colSetArr[i] = new HashSet<>();
+        }
+        
+        for(int i = 0; i < 9; i++) {
+            for(int j = 0; j < 9; j++) {
+                if(board[i][j] == '.') {
+                    continue;
+                }
+                // this is very important!! we have to  know how to set boxIndex
+                int boxIndex = (i/3) * 3 + (j / 3);
+                boolean rowValid = isRowValid(board, i, j, rowSetArr[i]);
+                boolean colValid = isColValid(board, i, j, colSetArr[j]);
+                boolean squareValid = isColValid(board, i, j, squareSetArr[boxIndex]);
+                if(rowValid == true && colValid == true && squareValid == true) {
+                    continue;
+                }
+                else {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    
+    
+    private boolean isSquareValid(char[][] board, int i, int j, Set<Character> squareSetArr) {
+        if(squareSetArr.contains(board[i][j])) {
+            return false;
+        }
+        squareSetArr.add(board[i][j]);
+        return true;
+    }
+        
+    private boolean isRowValid(char[][] board, int i, int j, Set<Character> rowSetArr) {
+        if(rowSetArr.contains(board[i][j])) {
+            return false;
+        }
+        rowSetArr.add(board[i][j]);
+        return true;
+    }
+
+    private boolean isColValid(char[][] board, int i, int j, Set<Character> colSetArr) {
+        if(colSetArr.contains(board[i][j])) {
+            return false;
+        }
+        colSetArr.add(board[i][j]);
+        return true;
+    }
+
+}
