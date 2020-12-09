@@ -1,0 +1,48 @@
+/*
+Given a non-empty array nums containing only positive integers, find if the array can be partitioned into two subsets such that the sum of elements in both subsets is equal.
+
+Example 1:
+Input: nums = [1,5,11,5]
+Output: true
+Explanation: The array can be partitioned as [1, 5, 5] and [11].
+
+Example 2:
+Input: nums = [1,2,3,5]
+Output: false
+Explanation: The array cannot be partitioned into equal sum subsets.
+*/
+class Solution {
+    
+    public boolean canPartition(int[] nums) {
+        int sum = 0;
+        for(int i: nums) {
+            sum += i;
+        }
+        if(sum % 2 != 0) {
+            return false;
+        }
+        int target = sum/2;
+        // dp[i][j] means that is there any sum from 0 ~ i is equal to j
+        Boolean[][] dpTable = new Boolean[nums.length][target + 1];
+        return helper(nums, target, 0, dpTable);
+    }
+    private boolean helper(int[] nums, int target, int index, Boolean[][] dpTable ) {
+        if(target == 0) {
+            return true;
+        }
+        else if(target < 0 || index >= nums.length) {
+            return false;
+        }
+        // [1,4,4,7]
+        if(dpTable[index][target] != null) {
+            return dpTable[index][target];
+        }
+        // take or not take     
+        boolean isValid = helper(nums, target - nums[index], index + 1, dpTable) || 
+                            helper(nums, target, index + 1, dpTable);
+        dpTable[index][target] = isValid;
+        
+        
+        return dpTable[index][target];
+    }
+}

@@ -1,0 +1,54 @@
+/*
+Given an array of integers nums and a positive integer k, find whether it's possible to divide this array into k non-empty subsets whose sums are all equal.
+
+Example 1:
+
+Input: nums = [4, 3, 2, 3, 5, 2, 1], k = 4
+Output: True
+Explanation: It's possible to divide it into 4 subsets (5), (1, 4), (2,3), (2,3) with equal sums.
+*/
+class Solution {
+    public boolean canPartitionKSubsets(int[] nums, int k) {
+        int total = 0;
+        for(int i : nums) {
+            total += i;
+        }
+        if(total % k != 0) {
+            return false;
+        }
+        int target = total/k;
+        boolean[] used = new boolean[nums.length];
+        return helper(nums, used, 0, k, 0, target);
+        
+    }
+    
+    private boolean helper(int[] nums, boolean[] used, int index, int k, int curSum, int curTarget) {
+        // one bucket left
+        if(k == 1) {
+            return true;
+        }
+        // we fill up one bucket, therefore, we have k - 1 bucket left
+        if(curSum == curTarget) {
+            // if we fill up one bucket our 'index' have to set to 0 again.
+            return helper(nums, used, 0, k - 1, 0, curTarget);
+        }
+        else if(curSum > curTarget) {
+            return false;
+        }
+        // searching suitable number process
+        for(int i = index; i < nums.length; i++) {
+            if(used[i] == false) {
+                // choose
+                used[i] = true;
+                boolean isValid = helper(nums, used, i + 1, k, curSum + nums[i], curTarget);
+                if(isValid == true) {
+                    return true;
+                }
+                // not choose
+                used[i] = false;
+            }
+        }
+        return false;
+        
+    }
+}
