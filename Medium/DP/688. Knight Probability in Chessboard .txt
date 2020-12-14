@@ -1,0 +1,53 @@
+/*
+maybe we cam use 3Darray as memo instead of map and String
+https://leetcode.com/problems/knight-probability-in-chessboard/discuss/206720/Share-My-Intuitive-Recursive-Java-Solution
+(-2, 1), (-2,-1) up
+( 2, 1), ( 2,-1) down
+( 1, 2), ( -1,2) right
+( 1, -2), (-1,-2) left
+
+On an NxN chessboard, a knight starts at the r-th row and c-th column and attempts to make exactly K moves. The rows and columns are 0 indexed, so the top-left square is (0, 0), and the bottom-right square is (N-1, N-1).
+
+A chess knight has 8 possible moves it can make, as illustrated below. Each move is two squares in a cardinal direction, then one square in an orthogonal direction.
+Each time the knight is to move, it chooses one of eight possible moves uniformly at random (even if the piece would go off the chessboard) and moves there.
+
+The knight continues moving until it has made exactly K moves or has moved off the chessboard. Return the probability that the knight remains on the board after it has stopped moving.
+
+Example:
+Input: 3, 2, 0, 0
+Output: 0.0625
+Explanation: There are two moves (to (1,2), (2,1)) that will keep the knight on the board.
+From each of those positions, there are also two moves that will keep the knight on the board.
+The total probability the knight stays on the board is 0.0625.
+*/
+class Solution {
+    int[][] direction = {{-2, 1}, {-2,-1}, {2, 1}, {2, -1}, {1, 2}, {-1, 2}, {1, -2}, {-1, -2}};
+    Map<String, Double> map = new HashMap<>();
+    public double knightProbability(int N, int K, int r, int c) {
+        // out of bound
+        if(r < 0 || c < 0 || r >= N || c >= N ) {
+            return 0;
+        }
+        // this loc is valid
+        if(K == 0) {
+            return 1;
+        }
+        // put into memo
+        String key = K + "," + r + "," + c;
+        if(map.containsKey(key)) {
+            return map.get(key);
+        }
+        
+        double result = 0;
+        for(int[] dir : direction) {
+            int row = r + dir[0];
+            int col = c + dir[1];
+            
+            result = result + knightProbability(N, K - 1, row, col);
+        }
+        map.put(key, result * 0.125);
+        return result * 0.125;
+    }
+    
+    
+}

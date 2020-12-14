@@ -1,0 +1,58 @@
+/*
+Alice has a hand of cards, given as an array of integers.
+Now she wants to rearrange the cards into groups so that each group is size W, and consists of W consecutive cards.
+Return true if and only if she can.
+Note: This question is the same as 1296: https://leetcode.com/problems/divide-array-in-sets-of-k-consecutive-numbers/
+
+Example 1:
+Input: hand = [1,2,3,6,2,3,4,7,8], W = 3
+Output: true
+Explanation: Alice's hand can be rearranged as [1,2,3],[2,3,4],[6,7,8]
+
+Example 2:
+Input: hand = [1,2,3,4,5], W = 4
+Output: false
+Explanation: Alice's hand can't be rearranged into groups of 4.
+*/
+class Solution {
+    public boolean isNStraightHand(int[] hand, int W) {
+        if(hand.length % W != 0) {
+            return false;
+        }
+        Arrays.sort(hand);
+        // (number, freq)
+        Map<Integer, Integer> map = new HashMap<>();
+        for(int i: hand) {
+            map.put(i, map.getOrDefault(i, 0) + 1);
+        }
+        
+        int cnt = 0;
+        
+        for(int i = 0; i < hand.length; i++) {
+            if(cnt == hand.length) {
+                return true;
+            }
+            int currNum = hand[i];
+            int freq = map.get(hand[i]);
+        
+            if(freq == 0) {
+                continue;
+            }
+            
+            // go through consecutive number W time
+            for(int j = 0; j < W; j++) {
+                
+                // int nextNumFreq = map.get(currNum);
+                if(map.containsKey(currNum) == false || map.get(currNum) == 0) {
+                    return false;
+                }
+
+                map.put(currNum, map.get(currNum) - 1);
+                currNum++;
+            }
+            
+            cnt = cnt + W;
+        }
+        return true;
+    }
+}

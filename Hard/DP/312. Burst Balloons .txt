@@ -1,36 +1,35 @@
-
 class Solution {
-    int[][] table;
+    int[][] dpTable;
     public int maxCoins(int[] nums) {
-        // build up a new Array which has two more elements
-        int[] new_arr = new int[nums.length + 2];
-        new_arr[0] = 1;
+        int[] newArr = new int[nums.length + 2];
+        dpTable = new int[newArr.length][newArr.length];
+        newArr[0] = 1;
+        newArr[newArr.length - 1]  = 1;
         for(int i = 0; i < nums.length; i++) {
-            new_arr[i + 1] = nums[i];
+            newArr[i + 1] = nums[i];
         }
-        new_arr[new_arr.length - 1] = 1;
-        
-        table = new int[new_arr.length][new_arr.length];
-        
-        return helper(0, new_arr.length - 1, new_arr, table);
-        
+        return dp(newArr, 0, newArr.length - 1);
     }
     
-    public int helper(int left, int right, int[] arr, int[][] table)  {
-        // because the left and right boudary means that the location cannot be burst.
-        if (left + 1 == right) {
+    private int dp(int[] arr, int left, int right) {
+        // 只有兩個元素->都不能爆破 return 0
+        if(left + 1 == right) {
             return 0;
         }
-        // look up the memo table
-        if(table[left][right] != 0) {
-            return table[left][right];
+        
+        if(dpTable[left][right] != 0) {
+            return dpTable[left][right];
         }
-        table[left][right] = Integer.MIN_VALUE;
-        // the i is the index of balloon which is bursted last.
+        
+        dpTable[left][right] = Integer.MIN_VALUE;
+        // 找最後一個爆的氣球然後遍歷所有可能
         for(int i = left + 1; i < right; i++) {
-            table[left][right] = Math.max(table[left][right], 
-                                          arr[left] * arr[i] * arr[right] + helper(left, i, arr, table) + helper(i, right, arr, table));
+            dpTable[left][right] = Math.max(dpTable[left][right], 
+                        arr[left] * arr[i] * arr[right] + dp(arr, left, i) + dp(arr, i, right));
         }
-        return table[left][right];
+        
+        
+        return dpTable[left][right];
     }
+}
 }
