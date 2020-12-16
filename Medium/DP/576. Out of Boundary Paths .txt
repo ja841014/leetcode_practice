@@ -1,0 +1,47 @@
+/* slightly same as 688. Knight Probability in Chessboard
+
+There is an m by n grid with a ball. Given the start coordinate (i,j) of the ball, you can move the ball to adjacent cell or cross the grid boundary in four directions (up, down, left, right). However, you can at most move N times. Find out the number of paths to move the ball out of grid boundary. The answer may be very large, return it after mod 109 + 7.
+*/
+class Solution {
+    // left up right down
+    private int[][] dirction = new int[][]{{0, -1}, {-1, 0}, {0, 1}, {1, 0}};
+    private int MOD = 1000000007;
+    
+    public int findPaths(int m, int n, int N, int i, int j) {
+        
+        int[][][] memo = new int[m][n][N + 1];
+        // need to init all element as -1
+        for (int row = 0; row < memo.length; row++) {
+            for (int col = 0; col < memo[row].length; col++) {
+                Arrays.fill(memo[row][col], -1);
+            }
+        }
+        return dp(memo, m, n, i, j, N) % MOD;
+    }
+    
+    private int dp(int[][][] memo, int m, int n, int i, int j, int moves) {
+        // out of bounds
+        if(i >= m || i < 0 || j >= n || j < 0) {
+            return 1;
+        }
+        if(moves == 0) {
+            return 0;
+        }
+        if(memo[i][j][moves] >= 0) {
+            return memo[i][j][moves];
+        }
+        int result = 0;
+        for(int[] dir: dirction) {
+            int curRow = i + dir[0];
+            int curCol = j + dir[1];
+            
+            result = (result + dp(memo, m, n, curRow, curCol, moves - 1)) % MOD;
+        }
+        
+        memo[i][j][moves] = result;
+        return memo[i][j][moves];
+        
+    }
+    
+    
+}

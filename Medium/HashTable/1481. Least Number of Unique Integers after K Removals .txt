@@ -1,0 +1,36 @@
+class Solution {
+    // create a custom comparator
+    public class comp implements Comparator<Map.Entry<Integer,Integer>> {
+        public int compare(Map.Entry<Integer,Integer> a, Map.Entry<Integer,Integer> b) {
+            return a.getValue().compareTo( b.getValue());
+        }
+    }
+    
+    public int findLeastNumOfUniqueInts(int[] arr, int k) {
+        Map<Integer, Integer> map = new HashMap<>();
+        // count the frequencies of the numbers
+        for(int i: arr) {
+            map.put(i, map.getOrDefault(i, 0) + 1);
+        }
+        
+        List<Map.Entry<Integer,Integer>> ls = new ArrayList<>(map.entrySet());
+        // use custom sort to sort the map value in non-decreasing order
+        Collections.sort(ls, new comp() );
+        
+        int size = map.size();
+        int moves = k;
+        // we remove the smaller frequency first
+        for(Map.Entry<Integer,Integer> m: ls) {
+            // we cannot delete this number in rest of the moves, so return it
+            if(m.getValue() > moves) {
+                return size;
+            }
+            // we can remove this number and still have >= 0 moves
+            else if(m.getValue() <= moves) {
+                moves = moves - m.getValue();
+                size--;
+            }
+        }
+        return size;
+    }
+}
