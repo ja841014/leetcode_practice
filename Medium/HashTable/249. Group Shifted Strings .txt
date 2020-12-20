@@ -1,0 +1,51 @@
+/*
+Given a string, we can "shift" each of its letter to its successive letter, for example: "abc" -> "bcd". We can keep "shifting" which forms the sequence:
+
+"abc" -> "bcd" -> ... -> "xyz"
+Given a list of non-empty strings which contains only lowercase alphabets, group all strings that belong to the same shifting sequence.
+
+Example:
+
+Input: ["abc", "bcd", "acef", "xyz", "az", "ba", "a", "z"],
+Output: 
+[
+  ["abc","bcd","xyz"],
+  ["az","ba"],
+  ["acef"],
+  ["a","z"]
+]
+*/
+class Solution {
+    public List<List<String>> groupStrings(String[] strings) {
+        List<List<String>> ls = new ArrayList<>();
+        List<String> inner = new ArrayList<>();
+        Map<String, List<String>> map = new HashMap<>();
+        for(String str: strings) {
+            category(map, str);
+        }
+        for(String str: map.keySet()) {
+            inner = map.get(str);
+            ls.add(inner);
+        }
+        return ls;
+    }
+    private void category(Map<String, List<String>> map, String str) {
+        StringBuilder sb = new StringBuilder();
+        for(int i = 1; i < str.length(); i++) {
+            char sec = str.charAt(i);
+            char first = str.charAt(i - 1);
+            int diff = sec - first;
+            // thus is important technique!
+            if(diff < 0 ) {
+                diff = diff + 26;
+            }
+            sb.append(diff);
+        }
+        String keyStr = sb.toString();
+        if(map.containsKey(keyStr) == false) {
+            List<String> ls = new ArrayList<>();
+            map.put(keyStr, ls);
+        }
+        map.get(keyStr).add(str);
+    }
+}
