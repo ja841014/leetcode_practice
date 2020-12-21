@@ -1,0 +1,104 @@
+/*
+In a given 2D binary array A, there are two islands.  (An island is a 4-directionally connected group of 1s not connected to any other 1s.)
+Now, we may change 0s to 1s so as to connect the two islands together to form 1 island.
+Return the smallest number of 0s that must be flipped.  (It is guaranteed that the answer is at least 1.)
+
+Example 1:
+Input: A = [[0,1],[1,0]]
+Output: 1
+
+Example 2:
+Input: A = [[0,1,0],[0,0,0],[0,0,1]]
+Output: 2
+
+Example 3:
+Input: A = [[1,1,1,1,1],[1,0,0,0,1],[1,0,1,0,1],[1,0,0,0,1],[1,1,1,1,1]]
+Output: 1
+*/
+class Solution {
+    // up down right left 
+    private int[][] direction = new int[][] {{-1, 0}, {1, 0}, {0, 1}, {0, -1}};
+    public int shortestBridge(int[][] A) {
+        Queue<int[]> firstIsland = new LinkedList<>();
+        Queue<int[]> expand = new LinkedList<>();
+        
+        int[] firstLand = findFirstLand(A);
+        int level = 0;
+        
+        findIsland(A, firstIsland, firstLand);
+        while(!firstIsland.isEmpty()) {
+            int[] node = firstIsland.poll();
+            for(int[] dir: direction) {
+                int[] neighbor = new int[2];
+                neighbor[0] = node[0] + dir[0];
+                neighbor[1] = node[1] + dir[1];
+                if(isValidCell(neighbor, A)) {
+                    if(A[neighbor[0] ][neighbor[1]] == 0) {
+                       A[neighbor[0] ][neighbor[1]] = 2;
+                        expand.add(neighbor); 
+                    }
+                    else if(A[neighbor[0] ][neighbor[1]] == 1) {
+                        return level;
+                    }
+                }
+            }
+            // if first level is finish processing, we need to add seond level to it
+            if(firstIsland.isEmpty()) {
+                firstIsland = expand;
+                expand = new LinkedList<>();
+                level++;
+            }
+            
+        }
+        return level;
+        
+    }
+    private void findIsland(int[][] A, Queue<int[]> firstIsland, int[] start) {
+        int row = A.length;
+        Queue<int[]> q = new LinkedList<>();
+        
+        q.offer(start);
+        firstIsland.offer(start);
+        A[start[0]][start[1]] = 2;
+        while(!q.isEmpty()) {
+            int[] node = q.poll();
+            
+            for(int[] dir: direction) {
+                int[] neighbor = new int[2];
+                neighbor[0] = node[0] + dir[0];
+                neighbor[1] = node[1] + dir[1];
+                int loc = neighbor[0] * row + neighbor[1];
+                if(isValidCell(neighbor, A) && A[neighbor[0]][neighbor[1]] == 1) {
+                    A[neighbor[0]][neighbor[1]] = 2;
+                    q.offer(neighbor);
+                    firstIsland.offer(neighbor);
+                }
+            }            
+        }
+        
+    }
+    
+    private boolean isValidCell(int[] node, int[][] A) {
+        int x = node[0];
+        int y = node[1];
+        if(x >= 0 && x < A.length && y >= 0 && y < A[0].length){
+            return true;
+        }
+        return false;
+    }
+    
+    
+    private int[] findFirstLand(int[][] A) {
+        //find first edge node
+        for(int i = 0; i < A.length; i++) {
+            for(int j = 0; j < A[0].length; j++) {
+                if(A[i][j] == 1) {
+                    return new int[]{i, j};
+                }
+            }
+        }
+        return new int[]{-1, -1};
+    }
+}
+
+
