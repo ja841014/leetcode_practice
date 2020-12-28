@@ -1,0 +1,65 @@
+/**
+Given a binary tree root. Split the binary tree into two subtrees by removing 1 edge such that the product of the sums of the subtrees are maximized.
+
+Since the answer may be too large, return it modulo 10^9 + 7.
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    int optDiff;
+    int first;
+    int second;
+    int total;
+    
+    public int maxProduct(TreeNode root) {
+        long MOD = 1000000000 + 7;
+        first = 0;
+        second = 0;
+        total = totalSum(root);
+        optDiff = Integer.MAX_VALUE;
+        dp(root);
+        
+        long a = (long)first;
+        long b = (long)second;
+        return (int)( (a*b) % MOD );
+    }
+    // calxulate the total sum
+    private int totalSum(TreeNode root) {
+        if(root == null) {
+            return 0;   
+        }
+        int left = totalSum(root.left);
+        int right = totalSum(root.right);
+        return left + right + root.val;
+    }
+    // resusive to find the most closet two number in hte tree
+    // the more closet numbers we have the more bigger number we get when they multiply
+    private int dp(TreeNode root) {
+        if(root == null) {
+            return 0;   
+        }
+        int left = dp(root.left);
+        int right = dp(root.right);
+        int curSum = left + right + root.val;
+        // if the diff is smaller than the current diff
+        if(Math.abs( (total - curSum) - curSum) < optDiff) {
+            first = curSum;
+            second = total - curSum;
+            
+            optDiff = Math.abs( second - first);
+        }
+        
+        return curSum;
+    }
+}

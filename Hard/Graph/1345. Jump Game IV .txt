@@ -1,0 +1,80 @@
+class Solution {
+    // num, Index
+    Map<Integer, List<Integer>> edgemap;
+    public int minJumps(int[] arr) {
+        edgemap = new HashMap<>();
+        int startNum = arr[0];
+        buildMap(arr);
+        return bfs(edgemap, arr, startNum, 0);
+    }
+    
+    private void buildMap(int[] arr) {
+        for(int i = 0; i < arr.length; i++ ) {
+            if(!edgemap.containsKey(arr[i])) {
+                edgemap.put(arr[i], new ArrayList<>());
+            }
+            edgemap.get(arr[i]).add(i);
+        }
+    }
+    
+    private int bfs(Map<Integer, List<Integer>> edgemap, int[] arr, int startNum, int startIndex) {
+        Pair startPair = new Pair(startNum, startIndex);
+        Queue<Pair> q = new LinkedList<>();
+        // store index
+        Set<Integer> seen = new HashSet<>();
+        // store index
+        seen.add(startIndex);
+        
+        q.offer(startPair);
+        int level = 0;
+        
+        while(!q.isEmpty()) {
+            int size = q.size();
+            for(int i = 0; i < size; i++) {
+                Pair currPair = q.poll();
+                
+                if(currPair.index == arr.length - 1) {
+                    return level;
+                }
+                
+                for(int sameValueDiffIndex : edgemap.get(currPair.num)) {
+                    if(!seen.contains(sameValueDiffIndex)) {
+                        q.offer(new Pair(currPair.num, sameValueDiffIndex));
+                        seen.add(sameValueDiffIndex);
+                        if(sameValueDiffIndex == arr.length - 1) {
+                            return level + 1;
+                        }
+                    }
+                }
+                // clear this collection, avoid redundant calculate
+                edgemap.get(currPair.num).clear();
+                
+                // next index
+                if(!seen.contains(currPair.index + 1)) {
+                    q.offer(new Pair(arr[currPair.index + 1], currPair.index + 1 ) );
+                    seen.add(currPair.index + 1 );
+                    if(currPair.index + 1 == arr.length - 1) {
+                        return level + 1;
+                    }
+                }
+                // pre index
+                if(currPair.index - 1 >= 0 && !seen.contains(currPair.index - 1)) {
+                    q.offer(new Pair(arr[currPair.index - 1], currPair.index - 1));
+                    seen.add(currPair.index - 1 );
+                }
+            }
+            level++;
+        }
+        return -1;
+    }
+    
+    
+    class Pair{
+        int num;
+        int index;
+        public Pair(int num, int index) {
+            this.num = num;
+            this.index= index;
+        }
+    }
+}
