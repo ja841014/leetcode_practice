@@ -19,43 +19,48 @@ Return the number of pseudo-palindromic paths going from the root node to leaf n
  * }
  */
 class Solution {
-    int count = 0;
+    int cnt;
     public int pseudoPalindromicPaths (TreeNode root) {
         // we use array to record the frequency
-        int[] table = new int[10];
-        dfs_recusive(root, table);
-        return count;
+        int[] freq = new int[10];
+        cnt = 0;
+        // dfs and determine
+        dfs(root, freq);
+        
+        return cnt;
     }
-    public void dfs_recusive(TreeNode root, int[] table) {
-        if(root.left == null && root.right == null) {
-            table[root.val]++;
-            int cnt = 0;
-            for(int i = 0; i < table.length; i++) {
-                if(table[i] % 2 == 1) {
-                    cnt++;
-                    // palindromic: at most one digit has odd frequency.
-                    if(cnt > 1) {
-                        table[root.val]--;
-                        return;
-                    }
-                }
-            }
-            table[root.val]--;
-            count++;
+    private void dfs(TreeNode root, int[] freq) {
+        if(root == null) {
             return;
         }
-        // backtrack pattern
-        if(root.left != null) {
-            table[root.val]++;
-            dfs_recusive(root.left, table);
-            table[root.val]--;
-
+        
+        freq[root.val]++;
+        if(root.right == null && root.left == null) {
+            if(isValid(freq)) {
+                cnt++;
+            }
+            freq[root.val]--;
+            return;
         }
-        if(root.right != null) {
-            table[root.val]++;
-            dfs_recusive(root.right, table);
-            table[root.val]--;
-        }
+        dfs(root.left, freq);
+        dfs(root.right, freq);
+        // at this point, we  will back to upper stack
+        // therefore, we have to minus this layer's freq
+        freq[root.val]--;
     }
-
+    
+    private boolean isValid(int[] freq) {
+        int even = 0;
+        int odd = 0;
+        for(int num: freq) {
+            if(num % 2 != 0) {
+                odd++;
+                // palindromic: at most one digit has odd frequency.
+                if(odd >= 2) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 }
