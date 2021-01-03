@@ -1,0 +1,60 @@
+/*
+There are n people, each person has a unique id between 0 and n-1. Given the arrays watchedVideos and friends, where watchedVideos[i] and friends[i] contain the list of watched videos and the list of friends respectively for the person with id = i.
+
+Level 1 of videos are all watched videos by your friends, level 2 of videos are all watched videos by the friends of your friends and so on. In general, the level k of videos are all watched videos by people with the shortest path exactly equal to k with you. Given your id and the level of videos, return the list of videos ordered by their frequencies (increasing). For videos with the same frequency order them alphabetically from least to greatest. 
+*/
+class Solution {
+    public List<String> watchedVideosByFriends(List<List<String>> watchedVideos, int[][] friends, int id, int level) {
+        
+        // BFS
+        Queue<Integer> q = new LinkedList<>();
+        Set<Integer> seen = new HashSet<>();
+        q.offer(id);
+        seen.add(id);
+        // we only loop "level" times to get friends who is on "level".
+        for(int i = 0; i < level; i++) {
+            int size = q.size();
+            for(int j = 0; j < size; j++) {
+                int curr = q.poll();
+                // put all "curr's" friends in the queue
+                for(int friend: friends[curr]) {
+                    // if already see it before we skip it.
+                    if(seen.contains(friend)) {
+                        continue;
+                    }
+                    q.offer(friend);
+                    seen.add(friend);
+                }
+            }
+        }
+        
+        // (Movie Name, freq)
+        Map<String, Integer> map = new HashMap<>();
+        for(int ID: q) {
+            for(String movie: watchedVideos.get(ID)) {
+                map.put(movie, map.getOrDefault(movie, 1) + 1);
+            }
+        }
+        
+        // take the "map entry" as type
+        List<Map.Entry<String,Integer>> ls = new ArrayList<>(map.entrySet());
+        Collections.sort(ls, new Comp());
+        
+        List<String> result = new ArrayList<>();
+        for(Map.Entry<String,Integer> entry: ls) {
+            result.add(entry.getKey());
+        }
+        return result;
+        
+    }
+    
+    public class Comp implements Comparator<Map.Entry<String,Integer> > {
+        public int compare(Map.Entry<String,Integer> a, Map.Entry<String,Integer> b) {
+            // if the frequency is same, we sort it by "Key" in increasing order
+            if(a.getValue() == b.getValue()) {
+                return a.getKey().compareTo(b.getKey());
+            }
+            return a.getValue() - b.getValue();
+        }
+    }
+}
