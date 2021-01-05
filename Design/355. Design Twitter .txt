@@ -1,0 +1,131 @@
+/*
+Design a simplified version of Twitter where users can post tweets, follow/unfollow another user and is able to see the 10 most recent tweets in the user's news feed. Your design should support the following methods:
+
+postTweet(userId, tweetId): Compose a new tweet.
+getNewsFeed(userId): Retrieve the 10 most recent tweet ids in the user's news feed. Each item in the news feed must be posted by users who the user followed or by the user herself. Tweets must be ordered from most recent to least recent.
+follow(followerId, followeeId): Follower follows a followee.
+unfollow(followerId, followeeId): Follower unfollows a followee.
+*/
+class Twitter {
+    
+    private int timeStamp = 1;
+    
+    // self-define class
+    // User class
+    public class User {
+        Set<Integer> followed;
+        Tweet tweetHead;
+        public User(int selfID) {
+            followed = new HashSet<>();
+            followed.add(selfID);
+            tweetHead = null;
+        }
+        
+        public void follow(int ID) {
+            followed.add(ID);
+        }
+        
+        public void unFollow(int ID) {
+            followed.remove(ID);
+        }
+        // self post
+        public void composeTweet(int postID) {
+            Tweet curT = new Tweet(postID);
+            curT.next = tweetHead;
+            tweetHead = curT;
+        }
+    }
+    
+    // Tweet class
+    public class Tweet {
+        Tweet next;
+        int curTimeStamp;
+        int postID;
+        
+        public Tweet(int postID) {
+            this.postID = postID;
+            curTimeStamp = timeStamp;
+            timeStamp++;
+            next = null;
+        }
+        
+    }
+    
+    
+    
+    private Map<Integer, User> userMap;
+    
+    /** Initialize your data structure here. */
+    public Twitter() {
+        userMap = new HashMap<>();
+    }
+    
+    /** Compose a new tweet. */
+    public void postTweet(int userId, int tweetId) {
+        if(!userMap.containsKey(userId)) {
+            userMap.put(userId, new User(userId));
+        }
+        userMap.get(userId).composeTweet(tweetId);
+    }
+    
+    /** Retrieve the 10 most recent tweet ids in the user's news feed. Each item in the news feed must be posted by users who the user followed or by the user herself. Tweets must be ordered from most recent to least recent. */
+    public List<Integer> getNewsFeed(int userId) {
+        if(!userMap.containsKey(userId)) {
+            return new ArrayList<>();
+        }
+        List<Integer> newsFeed = new ArrayList<>();
+        Set<Integer> userFollowee = userMap.get(userId).followed;
+        PriorityQueue<Tweet> pq = new PriorityQueue<>((a, b) -> b.curTimeStamp - a.curTimeStamp);
+        
+        
+        for(int followee : userFollowee) {
+            if(!userMap.containsKey(followee)) {
+                continue;
+            }
+            Tweet t = userMap.get(followee).tweetHead;
+            if(t != null) {
+                pq.add(t);
+            }
+        }
+        
+        while(newsFeed.size() < 10 && !pq.isEmpty()) {
+            Tweet feed = pq.poll();
+            newsFeed.add(feed.postID);
+            if(feed.next != null) {
+                pq.offer(feed.next);
+            }
+        }
+        
+        
+        return newsFeed;
+    }
+    
+    /** Follower follows a followee. If the operation is invalid, it should be a no-op. */
+    public void follow(int followerId, int followeeId) {
+        if(!userMap.containsKey(followerId)) {
+            userMap.put(followerId, new User(followerId));
+            // System.out.println("here");
+        }
+        userMap.get(followerId).follow(followeeId);
+        
+    }
+    
+    /** Follower unfollows a followee. If the operation is invalid, it should be a no-op. */
+    public void unfollow(int followerId, int followeeId) {
+        if(!userMap.containsKey(followerId) || followerId == followeeId) {
+            return;
+        }
+        userMap.get(followerId).unFollow(followeeId);
+    }
+    
+   
+}
+
+/**
+ * Your Twitter object will be instantiated and called as such:
+ * Twitter obj = new Twitter();
+ * obj.postTweet(userId,tweetId);
+ * List<Integer> param_2 = obj.getNewsFeed(userId);
+ * obj.follow(followerId,followeeId);
+ * obj.unfollow(followerId,followeeId);
+ */

@@ -1,4 +1,5 @@
-// reference https://www.youtube.com/watch?v=WxpIHvsu1RI
+// reference https://www.youtube.com/watch?v=WxpIHvsu1RI 
+// update second method using 3D DP table
 /*
 [5, 3, 4, 5]
 first loop we only consider 2 elements
@@ -11,6 +12,39 @@ Second loop we only consider 3 elements
 Third loop we consider
 5, 3, 4, 5
 */
+
+
+class Solution {
+    public boolean stoneGame(int[] piles) {
+        int size = piles.length;
+        // 2 means we have to choice leftMost or rightmost
+        int[][][] dpTable = new int[size][size][2];
+        
+        //base case
+        for(int i = 0; i < size; i++) {
+            dpTable[i][i][0] = piles[i];
+            // dpTable[i][i][1]
+        }
+        
+        for(int i = 1; i < size; i++) {
+            for(int j = 0; j < size - i; j++) {
+                int k = j + i;
+                // loc(j, k)
+                //                              pick the leftMost               pick the rightMost
+                dpTable[j][k][0] =  Math.max(piles[j] + dpTable[j + 1][k][1], piles[k] + dpTable[j][k - 1][1]);
+                if(dpTable[j][k][0]  == piles[j] + dpTable[j + 1][k][1]) {
+                    dpTable[j][k][1] = dpTable[j + 1][k][0];
+                }
+                else {
+                    dpTable[j][k][1] = dpTable[j][k - 1][0];
+                }
+            }
+        }
+        return dpTable[size - 1][size - 1][0] > dpTable[size - 1][size - 1][1];
+    }
+}
+
+
 
 class Solution {
     public boolean stoneGame(int[] piles) {

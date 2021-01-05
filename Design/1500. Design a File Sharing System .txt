@@ -1,0 +1,73 @@
+/*
+We will use a file-sharing system to share a very large file which consists of m small chunks with IDs from 1 to m.
+
+When users join the system, the system should assign a unique ID to them. The unique ID should be used once for each user, but when a user leaves the system, the ID can be reused again.
+
+Users can request a certain chunk of the file, the system should return a list of IDs of all the users who own this chunk. If the user receive a non-empty list of IDs, they receive the requested chunk successfully.
+
+
+Implement the FileSharing class:
+
+FileSharing(int m) Initializes the object with a file of m chunks.
+int join(int[] ownedChunks): A new user joined the system owning some chunks of the file, the system should assign an id to the user which is the smallest positive integer not taken by any other user. Return the assigned id.
+void leave(int userID): The user with userID will leave the system, you cannot take file chunks from them anymore.
+int[] request(int userID, int chunkID): The user userID requested the file chunk with chunkID. Return a list of the IDs of all users that own this chunk sorted in ascending order.
+*/
+class FileSharing {
+    // userID chunckIDs
+    Map<Integer, Set<Integer>> userMap;
+    PriorityQueue<Integer> reuseId;
+    int ID = 1;
+    
+    public FileSharing(int m) {
+        reuseId = new PriorityQueue<>();
+        userMap = new HashMap<>();
+    }
+    
+    public int join(List<Integer> ownedChunks) {
+        int currID = assignId();
+        userMap.put(currID, new HashSet<>(ownedChunks));
+        
+        return currID;
+    }
+    
+    public void leave(int userID) {
+        // put this userID into minHeap
+        reuseId.offer(userID);
+        userMap.remove(userID);
+    }
+    
+    public List<Integer> request(int userID, int chunkID) {
+        List<Integer> result = new ArrayList<>();
+        for(int user : userMap.keySet()) {
+            if(userMap.get(user).contains(chunkID)) {
+                result.add(user);
+            }
+        }
+        // this step is important
+        // if result is not empty that means there is at least one user contains this chunk
+        // Therefore, after the user request the chunk, the user had it.
+        if(!result.isEmpty()) {
+            userMap.get(userID).add(chunkID);
+        }
+        
+        return result;
+    }
+    
+    private int assignId() {
+        if(reuseId.isEmpty()) {
+           return ID++; 
+        }
+        else {
+            return reuseId.poll();
+        }
+    }
+}
+
+/**
+ * Your FileSharing object will be instantiated and called as such:
+ * FileSharing obj = new FileSharing(m);
+ * int param_1 = obj.join(ownedChunks);
+ * obj.leave(userID);
+ * List<Integer> param_3 = obj.request(userID,chunkID);
+ */
