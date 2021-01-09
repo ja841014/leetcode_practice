@@ -24,6 +24,9 @@ class Solution {
                 // example "abcdcma" => when meet c map.get(s.charAt(curr) is bigger
                 //                   => when meet a 'start' is bigger
             }
+	//record the logest distance
+            // we are using the current as the counting start point
+            // if we only use curr - start we will not pass the "au"
             max_ = Math.max(max_, curr - start + 1);
             map.put(s.charAt(curr), curr + 1);
             

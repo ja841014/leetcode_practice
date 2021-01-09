@@ -1,0 +1,52 @@
+/*
+We are playing the Guessing Game. The game will work as follows:
+
+I pick a number between 1 and n.
+You guess a number.
+If you guess the right number, you win the game.
+If you guess the wrong number, then I will tell you whether the number I picked is higher or lower, and you will continue guessing.
+Every time you guess a wrong number x, you will pay x dollars. If you run out of money, you lose the game.
+Given a particular n, return the minimum amount of money you need to guarantee a win regardless of what number I pick.
+*/
+class Solution {
+    public int getMoneyAmount(int n) {
+        int[][] table = new int[n + 1][n + 1];
+        
+        for(int len = 1; len < n; len++) {
+            // take n = 5 as example start [1, 4]
+            for(int start = 1; start <= n - len; start++) {
+                // take n = 5 as example start [2, 5]
+                int end = len + start;
+                
+                int globalMinMax = Integer.MAX_VALUE;
+                // we have to loop through [start, end] value
+                for(int pick = start; pick <= end; pick++) {
+                    
+                    int localMax = pick + Math.max(
+                        table[start][pick - 1], 
+                        // pick + 1 might exceed the array size
+                        // take n = 5 as example, there is a situation table[5 + 1][5]
+                        pick + 1 > n ? 0 : table[pick + 1][end]
+                    );
+                    
+                    globalMinMax = Math.min(globalMinMax, localMax);
+                }
+                // System.out.println(start + " " +  end + " " + globalMinMax);
+                table[start][end] = globalMinMax;
+            }
+        }
+        return table[1][n];
+    }
+}
+
+/*
+    0   1   2   3   4   5
+0   0   -   -   -   -   -
+1   -   0   1   2   4   6
+2   -   -   0   2   3   6
+3   -   -   -   0   3   4
+4   -   -   -   -   0   4
+5   -   -   -   -   -   0
+
+
+*/
