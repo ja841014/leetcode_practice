@@ -1,0 +1,44 @@
+/*
+You are playing the following Flip Game with your friend: Given a string that contains only these two characters: + and -, you and your friend take turns to flip two consecutive "++" into "--". The game ends when a person can no longer make a move and therefore the other person will be the winner.
+
+Write a function to determine if the starting player can guarantee a win.
+
+Example:
+
+Input: s = "++++"
+Output: true 
+Explanation: The starting player can guarantee a win by flipping the middle "++" to become "+--+".
+*/
+class Solution {
+    Map<String, Boolean> memo;
+    public boolean canWin(String s) {
+        memo = new HashMap<>();
+        return helper(s);
+    }
+    
+    private boolean helper(String s) {
+        if(memo.containsKey(s)) {
+            return memo.get(s);
+        }
+        
+        
+        StringBuilder sb = new StringBuilder(s);
+        for(int i = 1; i < s.length(); i++) {
+            
+            if(s.charAt(i - 1) == '+' && s.charAt(i) == '+') {
+                sb.replace(i-1, i + 1, "--");
+                String tmp = sb.toString();
+                // if helper() return false. it can go into if statement
+                // it mean "sb string" return false, so "s string" must return true
+                if(!helper(tmp)) {
+                    memo.put(s, true);
+                    return true;
+                }
+                
+                sb.replace(i-1, i + 1, "++");
+            }
+        }
+        memo.put(s, false);
+        return false;
+    }
+}
