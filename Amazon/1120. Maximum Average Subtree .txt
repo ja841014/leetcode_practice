@@ -1,0 +1,71 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    double max = Integer.MIN_VALUE;
+    public double maximumAverageSubtree(TreeNode root) {
+        helper(root);
+        return max;
+    }
+    private double[] helper(TreeNode head) {
+        if(head == null) {
+            return new double[]{0, 0};
+        }
+        double[] left = helper(head.left);
+        double[] right = helper(head.right);
+        double numNode = left[0] + right[0] + 1;
+        double totalValue = left[1] + right[1] + head.val;
+        double cur = totalValue / numNode;
+        if(max < cur) {
+            max = cur;
+        }
+        return new double[]{numNode, totalValue};
+    }
+}
+
+
+
+
+//////////////
+class Solution {
+
+double max = Integer.MIN_VALUE;
+TreeNode maxNode = null;
+
+public TreeNode maximumAverageSubtree(TreeNode root) {
+    if (root == null) return null;
+    helper(root);
+    return maxNode;
+}
+
+private double[] helper(TreeNode root) {
+    if (root == null) return new double[] {0, 0};
+
+    double curTotal = root.val;
+    double count = 1;
+    for (TreeNode child : root.children) {
+        double[] cur = helper(child);
+        curTotal += cur[0];
+        count += cur[1];
+    }        
+    double avg = curTotal / count;
+    if (count > 1 && avg > max) { //taking "at least 1 child" into account
+        max = avg;
+        maxNode = root;
+    }
+    return new double[] {curTotal, count};
+}
+}
+

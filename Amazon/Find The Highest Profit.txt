@@ -1,0 +1,29 @@
+import java.util.*;
+class Solution {
+    public static int findProfit(int numSuppliers, int[] inventory, int order) {
+        // WRITE YOUR BRILLIANT CODE HERE
+        int sum = 0;
+        PriorityQueue<Integer> pq = new PriorityQueue<>((a, b) -> b - a);
+        for(int i: inventory) {
+            pq.offer(i);
+        }
+        while(!pq.isEmpty() && order > 0) {
+            int curProfit = pq.poll();
+            sum = sum + curProfit;
+            if(curProfit != 2) {
+                pq.offer(curProfit - 1);
+            }
+            order--;
+        }
+        return sum;
+    }
+    public static void main(String[] args){
+        Scanner scanner = new Scanner(System.in);
+        int numSuppliers = Integer.parseInt(scanner.nextLine());
+        int[] inventory = Arrays.stream(scanner.nextLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+        int order = Integer.parseInt(scanner.nextLine());
+
+        scanner.close();
+        System.out.println(findProfit(numSuppliers, inventory, order));
+    }
+}

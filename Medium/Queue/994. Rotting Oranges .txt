@@ -27,7 +27,7 @@ class Solution {
     
     public int bfs(int[][] grid, List<List<Integer>> rotten, int fresh) {
         Queue<Pair<Integer, Integer>> q = new LinkedList<>();
-        int  level = 3;
+        int  level = 0;
         for(int i = 0; i < rotten.size(); ++i) {
             q.offer(new Pair( rotten.get(i).get(0), rotten.get(i).get(1)) );
         }
@@ -67,6 +67,6 @@ class Solution {
         if(fresh != 0) {
             return -1;
         }
-        return level - 3;
+        return level ;
     }
 }

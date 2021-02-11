@@ -1,0 +1,20 @@
+	private static int FindtheMaxAvailableDiskSpace(int vacationDays, List<Integer> temperature, int kDaysTrip) {
+		
+		PriorityQueue<Integer> pq = new PriorityQueue<>();
+		int curLess = 0;
+		int result = Integer.MIN_VALUE;
+		for(int i = 0; i < vacationDays; i++) {
+			 if(pq.size() < kDaysTrip) {
+				 pq.offer(temperature.get(i));
+			 }
+			 else {
+				 curLess = pq.peek();
+				 result = Math.max(result, curLess);
+				 pq.remove(temperature.get(i - kDaysTrip));
+				 pq.offer(temperature.get(i));
+			 }
+		}
+		curLess = pq.peek();
+		result = Math.max(result, curLess);
+		return result;
+	}

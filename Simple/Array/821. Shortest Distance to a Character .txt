@@ -1,0 +1,50 @@
+/*
+Given a string s and a character c that occurs in s, return an array of integers answer where answer.length == s.length and answer[i] is the shortest distance from s[i] to the character c in s.
+
+Example 1:
+Input: s = "loveleetcode", c = "e"
+Output: [3,2,1,0,1,0,0,1,2,2,1,0]
+Example 2:
+
+Input: s = "aaab", c = "b"
+Output: [3,2,1,0]
+*/
+class Solution {
+    public int[] shortestToChar(String s, char c) {
+        int[] arr = new int[s.length()];
+        for(int i = 0; i < s.length(); i++) {
+            if(s.charAt(i) == c) {
+                arr = helper(i, arr, s.length(), c, s);
+            }
+        }
+        return arr;
+    }
+    private int[] helper(int startIndex, int[] arr, int totalLength, char c, String s) {
+        int cnt = 1;
+        int downward = startIndex;
+        while(downward - 1 >= 0 && s.charAt(downward - 1) != c) {
+            if(arr[downward - 1] != 0 && arr[downward - 1] < cnt) {
+                break;
+            }
+            else {
+                arr[downward - 1] = cnt;
+            }
+            cnt++;
+            downward--;
+        }
+        cnt = 1;
+        int upward = startIndex;
+        while(upward + 1 < totalLength && s.charAt(upward + 1) != c) {
+            if(arr[upward + 1] != 0 && arr[upward + 1] < cnt) {
+                break;
+            }
+            else {
+                arr[upward + 1] = cnt;
+            
+            }
+            upward++;
+            cnt++;
+        }
+        return arr;
+    }
+}

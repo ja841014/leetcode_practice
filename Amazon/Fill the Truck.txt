@@ -1,0 +1,38 @@
+import java.util.*;
+import java.io.*;
+import java.lang.*;
+
+public class Solution {
+    
+    class itemClass {
+        int num;
+        int itemSize;
+        public itemClass(int num, int itemSize) {
+            this.num = num;
+            this.itemSize = itemSize;
+        }
+    }
+    
+    class Comp implements Comparator<itemClass> {
+        public int compare(itemClass i1, itemClass i2) {
+            return i2.itemSize - i1.itemSize;
+        }
+    }
+    
+    public int loadTheCargo(int num, int[] containers, int itemSize, int[] itemsPerContainer, long cargoSize) {
+        
+        PriorityQueue<Integer> pq = new PriorityQueue<>((a, b) -> b - a);
+        int result = 0;
+        for(int i = 0; i < num; i++) {
+            for(int j = 0; j < containers[i]; j++) {
+                pq.offer(itemsPerContainer[i]);
+            }
+        }
+        while(cargoSize > 0 && !pq.isEmpty()) {
+            result = result + pq.poll();
+            cargoSize--;
+        }
+        return result;
+    }
+}
+
