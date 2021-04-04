@@ -1,0 +1,72 @@
+// union find method  https://leetcode.com/problems/max-area-of-island/discuss/186891/Java.-BFSDFSUnion-Find.
+/*
+Given a non-empty 2D array grid of 0's and 1's, an island is a group of 1's (representing land) connected 4-directionally (horizontal or vertical.) You may assume all four edges of the grid are surrounded by water.
+
+Find the maximum area of an island in the given 2D array. (If there is no island, the maximum area is 0.)
+
+Example 1:
+
+[[0,0,1,0,0,0,0,1,0,0,0,0,0],
+ [0,0,0,0,0,0,0,1,1,1,0,0,0],
+ [0,1,1,0,1,0,0,0,0,0,0,0,0],
+ [0,1,0,0,1,1,0,0,1,0,1,0,0],
+ [0,1,0,0,1,1,0,0,1,1,1,0,0],
+ [0,0,0,0,0,0,0,0,0,0,1,0,0],
+ [0,0,0,0,0,0,0,1,1,1,0,0,0],
+ [0,0,0,0,0,0,0,1,1,0,0,0,0]]
+Given the above grid, return 6. Note the answer is not 11, because the island must be connected 4-directionally.
+Example 2:
+
+[[0,0,0,0,0,0,0,0]]
+*/
+class Solution {
+    private int maxArea = 0;
+    private int[][] direction = {{0,-1}, {0, 1}, {-1, 0}, {1, 0}};
+    int borderX;
+    int borderY;
+    public int maxAreaOfIsland(int[][] grid) {
+        borderX = grid.length;
+        borderY = grid[0].length;
+        for(int i = 0; i < borderX; i++) {
+            for(int j = 0; j < borderY; j++) {
+                if(grid[i][j] == 1) {
+                    bfs(grid, i , j);
+                }
+            }
+        }
+        return maxArea;
+    }
+    
+    private void bfs(int[][] grid, int x, int y) {
+        
+        Queue<int[]> q = new LinkedList<>();
+        q.offer(new int[]{x, y});
+        grid[x][y] = 0;
+        int area = 0;
+        
+        while(!q.isEmpty()) {
+            int[] curPos = q.poll();
+            area++;
+            
+            for(int[] dir: direction) {
+                int newX = curPos[0] + dir[0];
+                int newY = curPos[1] + dir[1];
+                if(validPos(newX, newY, borderX, borderY) && grid[newX][newY] == 1) {
+                    q.offer(new int[] {newX, newY});
+                    //To avoid duplicate, we set this location to 0 when we put it into queue.
+                    grid[newX][newY] = 0;
+                }
+            }
+        }
+        if(area > maxArea) {
+            maxArea = area;
+        }
+    }
+    // check whether current position is valid or not.
+    private boolean validPos(int x, int y, int borderX, int borderY) {
+        if(x < borderX && x >= 0 && y < borderY && y >= 0) {
+            return true;
+        }
+        return false;
+    }
+}
