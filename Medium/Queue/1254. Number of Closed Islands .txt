@@ -1,0 +1,62 @@
+/*
+Given a 2D grid consists of 0s (land) and 1s (water).  An island is a maximal 4-directionally connected group of 0s and a closed island is an island totally (all left, top, right, bottom) surrounded by 1s.
+
+Return the number of closed islands.
+*/
+class Solution {
+    int borderX;
+    int borderY;
+    int[][] dirctions = {{0, -1}, {0, 1}, {1, 0}, {-1, 0}};
+    public int closedIsland(int[][] grid) {
+        borderX = grid.length;
+        borderY = grid[0].length;
+        int count = 0;
+        for(int i = 0; i < borderX; i++) {
+            for(int j = 0; j < borderY; j++) {
+                if(grid[i][j] == 0) {
+                    if(bfs(grid, i, j)) {
+                        count++;
+                    }
+                }
+            }
+        }
+        return count;
+        
+    }
+    
+    private boolean bfs(int[][] grid, int x, int y) {
+        Queue<int[]> q = new LinkedList<>();
+        q.offer(new int[] {x, y});
+        grid[x][y] = 1;
+        boolean isClosed = true;
+        
+        while(!q.isEmpty()) {
+            int[] cur = q.poll();
+            
+            for(int[] dir : dirctions) {
+                int newX = dir[0] + cur[0];
+                int newY = dir[1] + cur[1];
+                if(validPos(newX, newY)  ) {
+                    if(grid[newX][newY] == 0) {
+                        q.offer(new int[]{newX, newY});
+                        grid[newX][newY] = 1;
+                        // seen.add(newStr);
+                    }                    
+                }
+                else {
+                    isClosed = false;
+                }
+            }
+        }
+        return isClosed;
+    }
+    
+    
+    private boolean validPos(int x, int y) {
+        if(x >= 0 && x < borderX && y >= 0 && y < borderY) {
+            return true;
+        }
+        return false;
+    }
+    
+}

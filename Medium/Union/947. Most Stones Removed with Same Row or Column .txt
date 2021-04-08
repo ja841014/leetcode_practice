@@ -1,0 +1,65 @@
+/*
+On a 2D plane, we place n stones at some integer coordinate points. Each coordinate point may have at most one stone.
+
+A stone can be removed if it shares either the same row or the same column as another stone that has not been removed.
+
+Given an array stones of length n where stones[i] = [xi, yi] represents the location of the ith stone, return the largest possible number of stones that can be removed.
+*/
+class Solution {
+    public int removeStones(int[][] stones) {
+        DSU dsu = new DSU(20000);
+        // first, we make the coordinates union
+        for(int[] stone: stones) {
+            // why we +10000, because we need to seperate the x and y axis,
+            // otherwise we need to use a HashMap
+            dsu.union(stone[0], stone[1] + 10000);
+        }
+        Set<Integer> seen = new HashSet<>();
+        // we go through again to count how many group
+        for(int[] stone:stones) {
+            seen.add(dsu.find(stone[0]));
+        }
+        // System.out.println(seen.size());
+        
+        return stones.length - seen.size();
+    }
+    
+    
+    class DSU {
+        int[] parent;
+        int[] size;
+        // in this method, we do not use the component
+        // int component;
+        public DSU(int n) {
+            // component = n;
+            parent = new int[n];
+            size = new int[n];
+            for(int i = 0; i < n; i++) {
+                parent[i] = i;
+                size[i] = 1;
+            }
+        }
+        
+        private int find(int n) {
+            while(parent[n] != n) {
+                parent[n] = parent[parent[n]];
+                n = parent[n];
+            }
+            return n;
+        }
+        
+        private void union(int p, int q) {
+            int pParent = find(p);
+            int qParent = find(q);
+            if(size[pParent] > size[qParent]) {
+                parent[qParent] = pParent;
+                size[pParent]++;
+            }
+            else {
+                parent[pParent] = qParent;
+                size[qParent]++;
+            }
+            // component--;
+        }
+    }
+}
