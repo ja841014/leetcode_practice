@@ -1,0 +1,79 @@
+class Solution {
+    int borderX;
+    int borderY;
+    int maxGold;
+    private int[][] direction = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+
+    public int getMaximumGold(int[][] grid) {
+        borderX = grid.length;
+        borderY = grid[0].length;
+        maxGold = 0;
+        // traverse the grid
+        for(int i = 0; i < grid.length; i++) {
+            for(int j = 0; j < grid[0].length; j++) {
+                if(grid[i][j] != 0 && isNotInMiddle(grid, i, j)) {
+                    int tmpScore = grid[i][j];
+                    maxGold = Math.max(maxGold, grid[i][j]);
+                    // we let the grid[i][j] = 0 to act as "seen"
+                    grid[i][j] = 0;
+                    backtracking(grid, i, j, tmpScore);
+                    // after backtracking we put the true value back
+                    grid[i][j] = tmpScore;
+                }
+            }
+        }
+        return maxGold;
+    }
+    // if we want to find the maximum gold, we will never choose a point which start at middle
+    // means that we will never choose a point which surrounded by 3 or 4 points
+    // but we could choose a point which surrounded by 2 points, such as
+    //  0 0 0 
+    //  1 3 0
+    //  4 5 0
+    private boolean isNotInMiddle(int[][] grid, int x, int y) {
+        int count = 0;
+        for(int[] dic: direction) {
+            int newX = x + dic[0];
+            int newY = y + dic[1];
+            if(isValid(newX, newY) && grid[newX][newY] != 0) {
+                count++;
+                if(count > 2) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    
+    /*
+    check the board boundary
+    */
+    private boolean isValid(int x, int y) {
+        if(x >= 0 && x < borderX && y >= 0 && y < borderY) {
+            return true;
+        }
+        return false;
+    }
+    // backtracking
+    private void backtracking(int[][] grid, int x, int y, int gold) {
+        
+        for(int[] dir: direction) {
+            int newX = x + dir[0];
+            int newY = y + dir[1];
+            
+            if(isValid(newX, newY) && grid[newX][newY] != 0 ) {
+                int tmp = grid[newX][newY];
+                // backtracking pattern
+                gold = gold + grid[newX][newY];
+                grid[newX][newY] = 0;
+                backtracking(grid, newX, newY, gold);
+                maxGold = Math.max(maxGold, gold);
+                grid[newX][newY] = tmp;
+                gold = gold - grid[newX][newY];
+                
+            }
+        }
+        
+    }
+    
+}
