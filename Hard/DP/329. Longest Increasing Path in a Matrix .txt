@@ -1,0 +1,74 @@
+/*
+similar question
+unique paths
+minimum path sum
+climbing stairs
+*/
+/*
+Given an m x n integers matrix, return the length of the longest increasing path in matrix.
+From each cell, you can either move in four directions: left, right, up, or down. You may not move diagonally or move outside the boundary (i.e., wrap-around is not allowed).
+
+Input: matrix = [[9,9,4],[6,6,8],[2,1,1]]
+Output: 4
+Explanation: The longest increasing path is [1, 2, 6, 9].
+
+Input: matrix = [[3,4,5],[3,2,6],[2,2,1]]
+Output: 4
+Explanation: The longest increasing path is [3, 4, 5, 6]. Moving diagonally is not allowed.
+*/
+class Solution {
+    private int boxX;
+    private int boxY;
+    private int longest;
+    private int[][] direction = {{1,0}, {-1,0}, {0,1}, {0,-1}};
+    private int[][] visited;
+    public int longestIncreasingPath(int[][] matrix) {
+        boxX = matrix.length;
+        boxY = matrix[0].length;
+        visited = new int[boxX][boxY];
+        longest = 0;
+        if(boxX == 1 && boxY == 1) {
+            return 1;
+        }
+        for(int i = 0; i < boxX; i++) {
+            for(int j = 0; j < boxY; j++) {
+                longest = Math.max(dfs(i, j, matrix, matrix[i][j]),longest);
+            }
+        }
+        return longest;
+    }
+    
+    private int dfs(int x, int y, int[][] matrix, int val) {
+        
+        if(visited[x][y] > 0) {
+            return visited[x][y] ;
+        }
+        if(visited[x][y] == -1) {
+            return 0;
+        }
+        int count = 1;
+        for(int[] dir : direction) {
+            int newX = dir[0] + x;
+            int newY = dir[1] + y;
+                        
+            if(validPos(newX, newY) &&  matrix[newX][newY] > val) {
+                // we set it to -1 to make sure we will visit the same pos second time. 
+                // finally we will set it to the longest path count, after finish the for loop.
+                visited[x][y] = -1;            
+                count =  Math.max(count, 1 + dfs(newX, newY, matrix, matrix[newX][newY]) );
+                
+                                
+            }
+        }
+        visited[x][y] = count;
+        return count;
+    }
+    
+    
+    private boolean validPos(int x, int y) {
+        if(x >= 0 && x < boxX && y >= 0 && y < boxY) {
+            return true;
+        }
+        return false;
+    }
+}
