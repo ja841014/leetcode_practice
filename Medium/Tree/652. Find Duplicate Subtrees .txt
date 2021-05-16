@@ -1,0 +1,55 @@
+/*
+Given the root of a binary tree, return all duplicate subtrees.
+
+For each kind of duplicate subtrees, you only need to return the root node of any one of them.
+
+Two trees are duplicate if they have the same structure with the same node values.
+
+
+*/
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    Map<String, Integer> table;
+    public List<TreeNode> findDuplicateSubtrees(TreeNode root) {
+        table = new HashMap<>();
+        List<TreeNode> res = new ArrayList<>();
+        helper(root, res);
+        return res;
+    }
+    
+    /*
+   1
+  / \
+ 2   3
+    / \
+   4   5
+1,2,#,#,3,4,#,#,5,#,#, 
+    */
+    private String helper(TreeNode root, List<TreeNode> res ) {
+        if(root == null) {
+            return "#";
+        }
+        String subtree = root.val + "," + helper(root.left, res) + helper(root.right, res);
+        table.put(subtree, table.getOrDefault(subtree, 0) + 1);
+        if(table.get(subtree) == 2) {
+            res.add(root);
+        }
+        
+        return subtree;
+    }
+    
+}

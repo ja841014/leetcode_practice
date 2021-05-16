@@ -1,0 +1,56 @@
+/*
+A valid number can be split up into these components (in order):
+
+A decimal number or an integer.
+(Optional) An 'e' or 'E', followed by an integer.
+A decimal number can be split up into these components (in order):
+
+(Optional) A sign character (either '+' or '-').
+One of the following formats:
+At least one digit, followed by a dot '.'.
+At least one digit, followed by a dot '.', followed by at least one digit.
+A dot '.', followed by at least one digit.
+An integer can be split up into these components (in order):
+
+(Optional) A sign character (either '+' or '-').
+At least one digit.
+
+*/
+class Solution {
+    public boolean isNumber(String s) {
+        boolean seenDigit = false;
+        boolean seenExp = false;
+        boolean seenDot = false;
+        
+        for(int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if(Character.isDigit(c) == true ) {
+                seenDigit = true;
+            }
+            else if(c == '+' || c == '-') {
+                // if sign is in hte middle of sting, it must have a e or E in front of it.
+                if(i > 0 && s.charAt(i - 1) != 'e' && s.charAt(i - 1) != 'E') {
+                    return false;
+                }
+            }
+            else if(c == 'e' || c == 'E') {
+                if(seenDigit == false || seenExp == true) {
+                    return false;
+                }
+                seenExp = true;
+                seenDigit = false;
+            }
+            else if(c == '.') {
+                if(seenExp || seenDot) {
+                    return false;
+                }
+                seenDot = true;
+            }
+            else {
+                return false;
+            }
+            
+        }
+        return seenDigit;
+    }
+}
