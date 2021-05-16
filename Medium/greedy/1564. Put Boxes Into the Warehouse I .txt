@@ -12,7 +12,25 @@ Return the maximum number of boxes you can put into the warehouse.
 class Solution {
     public int maxBoxesInWarehouse(int[] boxes, int[] warehouse) {
         Arrays.sort(boxes);
+        /*This method put the tallest box first */
+        int cnt = 0;
+        int boxIndex = boxes.length - 1;
+        int threshold = warehouse[0];
         
+        for(int roomHeight: warehouse) {
+            while(boxIndex >= 0 && boxes[boxIndex] > roomHeight) {
+                boxIndex--;
+            }
+            if(boxIndex < 0) {
+                return cnt;
+            }
+            cnt++;
+            boxIndex--;
+        }
+        
+        return cnt;
+        /* 
+        this method is to put the samllest box first
         // we propogation the bottle neck in this array.
         for(int i = 1; i < warehouse.length; i++) {
             warehouse[i] = Math.min(warehouse[i - 1], warehouse[i]);
@@ -32,5 +50,6 @@ class Solution {
         }
         
         return boxCount;
+        */
     }
 }

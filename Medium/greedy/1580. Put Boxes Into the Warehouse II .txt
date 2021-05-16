@@ -1,0 +1,112 @@
+/*
+You are given two arrays of positive integers, boxes and warehouse, representing the heights of some boxes of unit width and the heights of n rooms in a warehouse respectively. The warehouse's rooms are labeled from 0 to n - 1 from left to right where warehouse[i] (0-indexed) is the height of the ith room.
+
+Boxes are put into the warehouse by the following rules:
+
+Boxes cannot be stacked.
+You can rearrange the insertion order of the boxes.
+Boxes can be pushed into the warehouse from either side (left or right)
+If the height of some room in the warehouse is less than the height of a box, then that box and all other boxes behind it will be stopped before that room.
+Return the maximum number of boxes you can put into the warehouse.
+*/
+class Solution {
+    // this method we put the largest first.
+    public int maxBoxesInWarehouse(int[] boxes, int[] warehouse) {
+        Arrays.sort(boxes);
+        int leftHouseIndex = 0;
+        int RightHouseIndex = warehouse.length - 1;
+        int cnt = 0;
+        
+        // for each evry box in descending order
+        for(int i = boxes.length - 1; i >= 0 && leftHouseIndex <= RightHouseIndex; i--) {
+            // if left handside warehouse can fit the most largest one then put in it first
+            if(warehouse[leftHouseIndex] >= boxes[i]) {
+                leftHouseIndex++;
+                cnt++;
+            }
+            // otherwise, if right handside can fit the most largest one then put in it
+            else if(warehouse[RightHouseIndex] >= boxes[i]) {
+                RightHouseIndex--;
+                cnt++;
+            }
+            // if left and right cannot fit it, it means the box is too big. 
+            // so we pass this box go to next one which is smaller.
+            
+        }
+        return cnt;
+    }
+    // This is a very inefficient version
+    // we put the smallest first
+    /*
+    public int maxBoxesInWarehouse(int[] boxes, int[] warehouse) {
+        Arrays.sort(boxes);
+        int[] formLeftWareHouse = new int[warehouse.length];
+        int[] formRightWareHouse = new int[warehouse.length];
+        
+        formLeftWareHouse[0] = warehouse[0];
+        for(int i = 1; i < formLeftWareHouse.length; i++) {
+            formLeftWareHouse[i] = Math.min(warehouse[i], formLeftWareHouse[i - 1]);
+        }
+    
+        formRightWareHouse[warehouse.length - 1] = warehouse[warehouse.length - 1];
+        for(int i = warehouse.length - 2; i >= 0; i--) {
+            formRightWareHouse[i] = Math.min(warehouse[i], formRightWareHouse[i + 1]);
+        }
+        
+        int minHeight = Integer.MAX_VALUE;
+        int minLoc = -1;;
+        for(int i = 0; i < formLeftWareHouse.length; i++) {
+            warehouse[i] = Math.max(formLeftWareHouse[i], formRightWareHouse[i]);
+            if(minHeight > warehouse[i]) {
+                minHeight = warehouse[i];
+                minLoc = i;
+            }
+        }
+        
+        int box = 0;
+        int leftBound = minLoc;
+        int rightBound = minLoc+1;
+        
+        while(box < boxes.length && (leftBound >= 0 || rightBound < warehouse.length) ) {
+            
+            if(leftBound >= 0 && boxes[box] <= warehouse[leftBound]) {
+                while( rightBound < warehouse.length && boxes[box] > warehouse[rightBound]) {
+                    rightBound++;
+                }
+                // leftBound--;
+                // box++;
+            }
+            else if(rightBound < warehouse.length && boxes[box] <= warehouse[rightBound]) {
+                while( leftBound >= 0 && boxes[box] > warehouse[leftBound]) {
+                    leftBound--;
+                }
+                
+            }
+            if(leftBound >= 0 && boxes[box] <= warehouse[leftBound] && rightBound < warehouse.length && boxes[box] <= warehouse[rightBound]) {
+                if(warehouse[leftBound] - boxes[box] >=  warehouse[rightBound] - boxes[box]) {
+                    rightBound++;
+                    box++;
+                }
+                else {
+                    leftBound--;
+                    box++;
+                }
+            }
+            else if(leftBound >= 0 && boxes[box] <= warehouse[leftBound] && rightBound >= warehouse.length ) {
+                leftBound--;
+                box++;
+            }
+            else if(rightBound < warehouse.length && boxes[box] <= warehouse[rightBound] && leftBound < 0) {
+                rightBound++;
+                box++;
+            }
+            else {
+                leftBound--;
+                rightBound++;
+            }
+        }
+        
+        return box;
+    }
+    */
+}
