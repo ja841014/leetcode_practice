@@ -1,0 +1,87 @@
+/*
+Given a binary tree, we install cameras on the nodes of the tree. 
+
+Each camera at a node can monitor its parent, itself, and its immediate children.
+
+Calculate the minimum number of cameras needed to monitor all nodes of the tree.
+
+
+*/
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+// THIS method do not need a HashSet to record the Node
+class Solution {
+    private static final int NO_COVERED = 0, CAMERA_COVERED = 1, HAS_CAMERA = 2;
+    private int cameras = 0;
+
+    public int minCameraCover(TreeNode root) {
+        return (dfs(root) == NO_COVERED ? 1 : 0) + cameras;
+    }
+
+    private int dfs(TreeNode root) {
+        if (root == null) return CAMERA_COVERED;
+        if (root.left == null && root.right == null) return NO_COVERED;
+
+        int left = dfs(root.left), right = dfs(root.right);
+        if (left == NO_COVERED || right == NO_COVERED) {
+            cameras++;
+            return HAS_CAMERA;
+        }
+
+        return left == HAS_CAMERA || right == HAS_CAMERA ? CAMERA_COVERED : NO_COVERED;
+    }
+}
+
+// class Solution {
+//     int ans;
+//     Set<TreeNode> seen;
+    
+//     public int minCameraCover(TreeNode root) {
+//         if(root.left == null && root.right == null) {
+//             return 1;
+//         }
+//         ans = 0; 
+//         seen = new HashSet<>();
+//         // This is very important, because 
+//         seen.add(null);
+//         postOrder(root, null);
+        
+//         return ans;
+        
+//     }
+    
+//     private void postOrder(TreeNode currentNode, TreeNode parent) {
+//         if(currentNode == null) {
+//             return;
+//         }
+        
+//         postOrder(currentNode.left, currentNode);
+        
+//         postOrder(currentNode.right, currentNode);
+//         // 1. root condition -> if we do not seen this node before we need add camera.
+//         // 2. other node -> if there is a children we do not seen before, we must add a camera on current node!
+//         if((parent == null && !seen.contains(currentNode) ) || 
+//           !seen.contains(currentNode.left) || !seen.contains(currentNode.right) ) {
+//             ans++;
+//             seen.add(parent);
+//             seen.add(currentNode);
+//             seen.add(currentNode.left);
+//             seen.add(currentNode.right);
+//         }
+        
+//     }
+    
+}
