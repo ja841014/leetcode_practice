@@ -1,0 +1,48 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+
+// the "val" is append at the last of array
+// so it only cound be at right subtree
+class Solution {
+    public TreeNode insertIntoMaxTree(TreeNode root, int val) {
+        // the root is null
+        if(root == null) {
+            TreeNode node = new TreeNode(val);
+            return node;
+        }
+        
+        // bigger than the root
+        if(root.val < val) {
+            TreeNode node = new TreeNode(val);
+            // because the "val" is at the end
+            // every node is on the left hand side. Therefore, we let "node.left = root"
+            node.left = root;
+            return node;
+        }
+        
+        // smaller than the root
+        if(root.val > val) {
+            // we recursive down to find the suitable location ma dit only be on root.right
+            TreeNode tmp = insertIntoMaxTree(root.right, val);
+            root.right = tmp;
+            return root;
+        }
+        
+        return root;
+    }
+    
+   
+}

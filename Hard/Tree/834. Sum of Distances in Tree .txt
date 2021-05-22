@@ -1,0 +1,86 @@
+/*
+An undirected, connected tree with n nodes labelled 0...n-1 and n-1 edges are given.
+The ith edge connects nodes edges[i][0] and edges[i][1] together.
+Return a list ans, where ans[i] is the sum of the distances between node i and all other nodes.
+
+Example 1:
+Input: n = 6, edges = [[0,1],[0,2],[2,3],[2,4],[2,5]]
+Output: [8,12,6,10,10,10]
+Explanation: 
+Here is a diagram of the given tree:
+  0
+ / \
+1   2
+   /|\
+  3 4 5
+We can see that dist(0,1) + dist(0,2) + dist(0,3) + dist(0,4) + dist(0,5)
+equals 1 + 1 + 2 + 2 + 2 = 8.  Hence, answer[0] = 8, and so on.
+*/
+class Solution {
+    int totalNode;
+    public int[] sumOfDistancesInTree(int n, int[][] edges) {
+        if(n == 1) {
+            return new int[]{0};
+        }
+        totalNode = n;
+        int[] distance = new int[n];
+        int[] childNum = new int[n];
+        // At least, every node contain itself.
+        Arrays.fill(childNum, 1);
+        
+        
+        Set<Integer> seen = new HashSet<>();
+        Map<Integer, List<Integer>> table = new HashMap<>();
+        // built graph
+        builtGraph(table, edges);
+        // count chilld for each node
+        postOrder(childNum, distance, 0, -1, table);
+        
+        calculateAns(childNum, distance, 0 , -1, table);
+        return distance;
+    }
+    
+    private void builtGraph(Map<Integer, List<Integer>> table, int[][] edges) {
+        for(int[] edge: edges) {
+            if( !table.containsKey(edge[0]) ) {
+                table.put(edge[0], new ArrayList<>());
+            }
+            table.get(edge[0]).add(edge[1]);
+            if( !table.containsKey(edge[1]) ) {
+                table.put(edge[1], new ArrayList<>());
+            }
+            table.get(edge[1]).add(edge[0]);
+        }
+    }
+    
+    private void postOrder(int[] childNum, int[] distance, int curRoot, int parent, Map<Integer, List<Integer>> table) {
+    
+        for(int i : table.get(curRoot)) {
+            if(i != parent) {
+                postOrder(childNum, distance, i, curRoot, table);
+                // count number of child node
+                childNum[curRoot] = childNum[curRoot] + childNum[i];
+                // we need to add distance of child and child num of child
+                // because we are away from child. we need to conpensate the distance
+                distance[curRoot] = distance[curRoot] + distance[i] + childNum[i];
+            }
+        }
+    }
+    
+    
+    private void calculateAns(int[] childNum, int[] ans, int curRoot, int parent, Map<Integer, List<Integer>> table) {
+        
+        for(int child : table.get(curRoot) ) {
+            if(child != parent) {
+                //                         減掉縮晚的距離    ＋ 增長的距離
+                ans[child] = ans[curRoot] - childNum[child] +  (totalNode - childNum[child]);
+                calculateAns(childNum, ans, child, curRoot, table);
+            }
+        }
+        
+    }
+    
+    
+    
+    
+}
