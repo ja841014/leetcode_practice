@@ -1,0 +1,33 @@
+/*
+Given a string s, return the string after replacing every uppercase letter with the same lowercase letter.
+
+Example 1:
+Input: s = "Hello"
+Output: "hello"
+
+Example 2:
+Input: s = "here"
+Output: "here"
+
+Example 3:
+Input: s = "LOVELY"
+Output: "lovely"
+*/
+class Solution {
+    public String toLowerCase(String s) {
+        StringBuilder ans = new StringBuilder();
+        for(int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            // uppercase
+            if(c - 'a' <= -7 && c - 'a' >= -32) {
+                int compensate = c - 'A';
+                ans.append( (char)(compensate + 97) );
+            } 
+            else  {
+                ans.append(c);
+            }
+            
+        } 
+        return ans.toString();
+    }
+}

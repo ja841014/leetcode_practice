@@ -1,0 +1,49 @@
+/*
+Implement the class ProductOfNumbers that supports two methods:
+
+1. add(int num)
+
+Adds the number num to the back of the current list of numbers.
+2. getProduct(int k)
+
+Returns the product of the last k numbers in the current list.
+You can assume that always the current list has at least k numbers.
+At any time, the product of any contiguous sequence of numbers will fit into a single 32-bit integer without overflowing.
+*/
+class ProductOfNumbers {
+    
+    List<Integer> ls;
+    public ProductOfNumbers() {
+        ls = new ArrayList<>();
+        ls.add(1);
+    }
+    
+    public void add(int num) {
+        // !!!!Wehn we meet the number == 0, we make a new List
+        // because every element after this 0 is 0, so if our last "k" is larger than our List
+        // it means it will mutiply the 0 in some where.
+        if(num == 0) {
+            ls = new ArrayList<>();
+            ls.add(1);
+        }
+        // prefix product
+        else {
+            ls.add(ls.get(ls.size() - 1) * num);
+        }
+    }
+    
+    public int getProduct(int k) {
+        int range = ls.size() - 1 - k;
+        if(range < 0) {
+            return 0;
+        }
+        return ls.get(ls.size() - 1) / ls.get(range); 
+    }
+}
+
+/**
+ * Your ProductOfNumbers object will be instantiated and called as such:
+ * ProductOfNumbers obj = new ProductOfNumbers();
+ * obj.add(num);
+ * int param_2 = obj.getProduct(k);
+ */
