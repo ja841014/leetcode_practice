@@ -8,6 +8,23 @@
 // "C" -> "A". 
 // "A". 
 // Clearly the destination city is "A".
+
+// 100%
+class Solution {
+    public String destCity(List<List<String>> paths) {
+        Set<String> ls = new HashSet<>();
+        for(List<String> list : paths) {
+            ls.add(list.get(0));
+        }
+        for(List<String> list : paths) {
+            if(!ls.contains(list.get(1))) {
+                return list.get(1);
+            }
+        }
+        return null;
+    }
+}
+
 class Solution {
     public String destCity(List<List<String>> paths) {
         

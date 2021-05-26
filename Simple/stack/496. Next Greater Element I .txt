@@ -1,5 +1,6 @@
 // 503. Next Greater Element II
 // 1019. Next Greater Node In Linked List 
+// it's asking you to take an element in the first array and then find the same element in the second array and then look to the right in the second array to find a greater one. I couldn`t understand this until I looked into some solutions in the discussion, either. And the examples provided by this question are not explanatory at all.
 /*
 ou are given two arrays (without duplicates) nums1 and nums2 where nums1’s elements are subset of nums2. Find all the next greater numbers for nums1's elements in the corresponding places of nums2.
 
@@ -20,6 +21,41 @@ Explanation:
     For number 4 in the first array, there is no next greater number for it in the second array, so output -1.
 
 */
+class Solution {
+    public int[] nextGreaterElement(int[] nums1, int[] nums2) {
+        Map<Integer, Integer> map = new HashMap<>();
+        int[] arr = new int[nums1.length];
+        int arrIndex = 0;
+        
+        for(int i = 0; i < nums2.length; i++) {
+            map.put(nums2[i], i);
+        }
+        
+        for(int i : nums1) {
+            int index = map.get(i);
+            int val = Integer.MAX_VALUE;
+            int tmpIndex = -1;
+            
+            for(int j = index; j < nums2.length; j++) {
+                if(i < nums2[j]) {
+                    val = nums2[j];
+                    tmpIndex = j;
+                    break;
+                }
+            }
+            
+            if(val == Integer.MAX_VALUE) {
+                arr[arrIndex] = -1;
+            }
+            else {
+                arr[arrIndex] = val;
+            }
+            arrIndex++;
+        }
+        return arr;
+    }
+}
+
 class Solution {
     public int[] nextGreaterElement(int[] nums1, int[] nums2) {
         int[] arr = new int[nums2.length];
