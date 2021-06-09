@@ -1,0 +1,47 @@
+class AuthenticationManager {
+    int ttl;
+    Map<String, Integer> map;
+    
+    public AuthenticationManager(int timeToLive) {
+        ttl = timeToLive;
+        // LinkedHashMap is an order hashmap
+        map = new LinkedHashMap<>();
+    }
+    
+    public void generate(String tokenId, int currentTime) {
+        map.put(tokenId, currentTime + ttl);
+    }
+    
+    public void renew(String tokenId, int currentTime) {
+        cleanToken(currentTime);
+        if(map.containsKey(tokenId)) {
+            map.remove(tokenId);
+            map.put(tokenId, currentTime + ttl);
+        }
+    }
+    
+    public void cleanToken(int currentTime) {
+        for(Iterator<String> it = map.keySet().iterator(); it.hasNext(); ) {
+            String key = it.next();
+            if(map.get(key) <= currentTime) {
+                it.remove();
+            }
+            else {
+                break;
+            }
+        }
+    }
+    
+    public int countUnexpiredTokens(int currentTime) {
+        cleanToken(currentTime);
+        return map.size();
+    }
+}
+
+/**
+ * Your AuthenticationManager object will be instantiated and called as such:
+ * AuthenticationManager obj = new AuthenticationManager(timeToLive);
+ * obj.generate(tokenId,currentTime);
+ * obj.renew(tokenId,currentTime);
+ * int param_3 = obj.countUnexpiredTokens(currentTime);
+ */

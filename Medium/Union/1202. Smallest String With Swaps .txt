@@ -28,6 +28,88 @@ Swap s[0] and s[1], s = "abc"
 */
 class Solution {
     public String smallestStringWithSwaps(String s, List<List<Integer>> pairs) {
+        Union uf = new Union(s.length());
+        
+        for(List<Integer> ls : pairs) {
+            uf.union(ls.get(0), ls.get(1));
+        }
+        
+        Map<Integer, PriorityQueue<Character> > map = new HashMap<>();
+        
+        
+        char[] arr = s.toCharArray();
+        for(int i = 0; i < s.length(); i++) {
+            // find this index's root
+            int root = uf.find(i);
+            
+            if(map.containsKey(root)) {
+                map.get(root).offer(arr[i]);
+            }
+            else {
+                PriorityQueue<Character> pq = new PriorityQueue<>();
+                pq.offer(arr[i]);
+                map.put(root, pq);
+            }
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        
+        for(int i = 0; i < s.length(); i++) {
+            int root = uf.find(i);
+            char targetChar = map.get(root).poll();
+            sb.append(targetChar);
+        }
+        return sb.toString();
+        
+        
+    }
+    
+    class Union {
+        int[] parent;
+        int[] rank;
+        public Union(int size) {
+            parent = new int[size];
+            rank = new int[size];
+            for(int i = 0; i < size; i++) {
+                parent[i] = i;
+                rank[i] = 1;
+            }
+        }
+        
+        
+        public int find(int index) {
+            while(index != parent[index]) {
+                parent[index] = parent[parent[index]];
+                index = parent[index];
+            }
+            return index;
+        }
+        
+        public void union(int p, int q) {
+            int pRoot = find(p);
+            int qRoot = find(q);
+            if(pRoot == qRoot) {
+                return;
+            }
+            
+            if(rank[pRoot] > rank[qRoot]) {
+                parent[qRoot] = pRoot;
+                rank[pRoot]++;
+                return;
+            }
+            else {
+                parent[pRoot] = qRoot;
+                rank[qRoot]++;
+                return;
+            }
+        }
+    }
+    
+    
+}
+
+class Solution {
+    public String smallestStringWithSwaps(String s, List<List<Integer>> pairs) {
         //init the Union class
         Union uf = new Union(s.length());
         
