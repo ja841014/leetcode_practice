@@ -34,7 +34,7 @@ class Solution {
             else {
                 right = i;
             }
-            
+           
             if(min >= nums[size - i - 1]) {
                 min = nums[size - i - 1];
             }

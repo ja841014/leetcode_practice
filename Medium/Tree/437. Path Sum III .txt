@@ -1,0 +1,52 @@
+/*
+Given the root of a binary tree and an integer targetSum, return the number of paths where the sum of the values along the path equals targetSum.
+
+The path does not need to start or end at the root or a leaf, but it must go downwards (i.e., traveling only from parent nodes to child nodes).
+*/
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    int cnt = 0;
+    public int pathSum(TreeNode root, int targetSum) {
+        // in this question, list data structure might not be efficient
+        // because we may meet multiple same accumulate value in one path.
+        Map<Integer, Integer> table = new HashMap<>();
+        helper(table, root, targetSum, 0);
+        return cnt;
+    }
+    
+    public void helper(Map<Integer, Integer> table, TreeNode root, int targetSum, int currSum) {
+        if(root == null) {
+            return;
+        }
+        // we have to update currSum here!
+        // if we update inside recursive function. the structure will wrong
+        // we will always check the previous level not the current level we are stay.
+        currSum = currSum + root.val;
+        
+        if(currSum == targetSum) {
+            cnt++;
+        }
+        // we use "getOrDefault" to avoid NullPointer Error!! 
+        cnt = table.getOrDefault(currSum - targetSum, 0) + cnt;
+        
+        table.put(currSum, table.getOrDefault(currSum, 0) + 1);
+        
+        helper(table, root.left, targetSum, currSum);
+        helper(table, root.right, targetSum, currSum);
+        table.put(currSum, table.get(currSum) - 1);
+    }
+}
