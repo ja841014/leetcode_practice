@@ -1,0 +1,64 @@
+/*
+You are given an integer array matchsticks where matchsticks[i] is the length of the ith matchstick. You want to use all the matchsticks to make one square. You should not break any stick, but you can link them up, and each matchstick must be used exactly one time.
+Return true if you can make this square and false otherwise.
+
+Example 1:
+Input: matchsticks = [1,1,2,2,2]
+Output: true
+Explanation: You can form a square with length 2, one side of the square came two sticks with length 1.
+
+Example 2:
+Input: matchsticks = [3,3,3,3,4]
+Output: false
+Explanation: You cannot find a way to form a square with all the matchsticks.
+*/
+class Solution {
+    public boolean makesquare(int[] matchsticks) {
+        int sum = 0;
+        int maxLength = 0;
+        boolean[] used = new boolean[matchsticks.length];
+        for(int i: matchsticks) {
+            sum = sum + i;
+            maxLength = Math.max(maxLength, i);
+        }
+    
+        if(sum % 4 != 0 || maxLength > sum / 4 || matchsticks.length < 4) {
+            return false;
+        }
+        int sideLen = sum / 4;
+        return helper(matchsticks, used, sideLen, 0, 0, 4);
+    }
+    
+    private boolean helper(int[] matchsticks, boolean[] used, int sideLen, int curLen, int index, int left) {
+        if(left == 0) {
+            for(boolean check : used) {
+                if(check == false) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        else if(curLen > sideLen) {
+            return false;
+        }
+        else if(curLen == sideLen) {
+            // we find the one side length so our "left" need to minus one
+            return helper(matchsticks, used, sideLen, 0, 0, left - 1);
+        }
+        else {
+            // we will track the previous index. It can help us decrease some time.
+            for(int i = index; i < matchsticks.length; i++) {
+                if(used[i] == true) {
+                    continue;
+                }
+                used[i] = true;
+                if(helper(matchsticks, used, sideLen, curLen + matchsticks[i], i + 1, left)) {
+                    return true;
+                }
+                used[i] = false;
+            }
+        }
+        
+        return false;
+    }
+}
