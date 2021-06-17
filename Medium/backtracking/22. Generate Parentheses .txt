@@ -1,0 +1,77 @@
+/*
+Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses.
+
+Example 1:
+Input: n = 3
+Output: ["((()))","(()())","(())()","()(())","()()()"]
+
+Example 2:
+Input: n = 1
+Output: ["()"]
+*/
+class Solution {
+    /*
+    //This is a better approach
+    // Use two recurrsive function to handle the bracket
+    public List<String> generateParenthesis(int n) {
+        List<String> ans = new ArrayList<>();
+        helper(n, n, "", ans);
+        return ans;
+    }
+    
+    public void helper(int left, int right, String result, List<String> ans){
+        if(left == 0 && right == 0){
+            ans.add(result);
+            return;
+        }
+        if(left > 0){
+            //result.concat("(") or result + "(" 
+            helper(left - 1, right, result + "(", ans);
+        }
+        if(right > left){
+            //result.concat("(") or result + "(" 
+            helper(left, right - 1, result.concat(")"), ans);
+        }
+        
+    }
+    */
+    
+    Set<String> table;
+    Set<String> visited;
+    public List<String> generateParenthesis(int n) {
+        table = new HashSet<>();
+        visited = new HashSet<>();
+        helper(n, new StringBuilder() );
+        List<String> ls = new ArrayList<>(table);
+        
+        return ls;
+    }
+    
+    private void helper(int n, StringBuilder sb) {
+        if(n == 0) {
+            String endNode = sb.toString();
+            table.add(endNode);
+            // visited.add(endNode);
+            return;
+        }
+        if(visited.contains(sb.toString())) {
+            return;
+        }
+        
+        for(int i = 0; i <= sb.length(); i++) {
+            String tmp = sb.insert(i, "()").toString();
+            if(visited.contains(tmp)) {
+                sb.delete(i, i + 2);
+                continue;
+            }
+            
+            helper(n - 1, sb);
+            visited.add(tmp);
+            sb.delete(i, i + 2);
+            
+        }
+        return;
+    }
+}
+
+
