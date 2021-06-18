@@ -1,4 +1,3 @@
-// binary search
 /*
 You are given an array colors, in which there are three colors: 1, 2 and 3.
 You are also given some queries. Each query consists of two integers i and c, return the shortest distance between the given index i and the target color c. If there is no solution return -1.
@@ -19,122 +18,46 @@ Explanation: There is no 3 in the array.
 class Solution {
     public List<Integer> shortestDistanceColor(int[] colors, int[][] queries) {
         Map<Integer, List<Integer>> map = new HashMap<>();
-        // build up the map to record every color's index    (color, list color of index)
         for(int i = 0; i < colors.length; i++) {
-            if(map.containsKey(colors[i])) {
-                map.get(colors[i]).add(i);   
-            }
-            else {
-                map.put(colors[i], new ArrayList<>(Arrays.asList(i)));
-            }
+            map.putIfAbsent(colors[i], new ArrayList<>());
+            map.get(colors[i]).add(i);
         }
         
         List<Integer> ls = new ArrayList<>();
-        
         for(int i = 0; i < queries.length; i++) {
-            int ans = helper(queries[i][0], queries[i][1], colors, map);
-            ls.add(ans);
-        }
-        return ls;
-        
-    }
-    
-    public int helper(int start_index, int find_target, int[] colors, Map<Integer, List<Integer>> map) {
-        List<Integer> tmp = map.get(find_target);
-        if(tmp == null) {
-            return -1;
-        }
-        int index = binary_search(tmp, 0, tmp.size() - 1, start_index);
-        if(index == -1) {
-            return index;
-        }
-        // count the distance
-        return Math.abs(start_index - index);
-    }
-    
-    public int binary_search(List<Integer> ls, int left, int right, int target_index) {
-        while(right > left) {
-            // we start in the middle
-            int mid = (right - left)/2 + left;
-            if(ls.get(mid) == target_index) {
-                return ls.get(mid);
+            if(colors[queries[i][0]] == queries[i][1]) {
+                ls.add(0);
             }
-            else if(ls.get(mid) > target_index) {
-                right = mid;
+            else if(!map.containsKey(queries[i][1])) {
+                ls.add(-1);
             }
             else {
-               left = mid + 1; 
+                ls.add(binarySearch(colors, queries[i][0], queries[i][1], map.get(queries[i][1]) ));
             }
         }
-        // Situation: if the target is on the edge, but this index might be the second smallest, so we have to check
-        if(left == right) {
-            if(left - 1 >= 0) {
-                // check if the previous is smaller than current
-                if(Math.abs(target_index - ls.get(left)) > Math.abs(target_index - ls.get(left - 1))) {
-                    return ls.get(left - 1);
-                }
-            }
-            return ls.get(left);
-        }
+        return ls;
+    }
+    
+    public int binarySearch(int[] colors, int startIndex, int targetColor,  List<Integer> tmpLs){
+        int left = 0;
+        int right = tmpLs.size() - 1;
         
-        return -1;
+        while(left < right) {
+            int mid = (right - left) / 2 + left;
+            int midIndex = tmpLs.get(mid);
+            // be careful here
+            if(midIndex < startIndex) {
+                left = mid + 1;
+            }
+            else {
+                right = mid;
+            }
+        }
+        // because we just jump out of from while loop ===> now right <= left
+        if(left - 1 >= 0 && startIndex - tmpLs.get(left - 1) < tmpLs.get(left) - startIndex) {
+            return Math.abs(startIndex - tmpLs.get(left - 1));
+        }
+        return Math.abs(tmpLs.get(left) - startIndex);
+        
     }
 }
-
-// brute force
-// class Solution {
-//     public List<Integer> shortestDistanceColor(int[] colors, int[][] queries) {
-//         List<Integer> ls = new ArrayList<>();
-        
-//         for(int i = 0; i < queries.length; i++) {
-//             int ans = helper(queries[i][0], queries[i][1], colors);
-//             ls.add(ans);
-//         }
-//         return ls;
-//     }
-//     public int helper(int start, int find_target, int[] colors) {
-        
-//         int right_lev = 0;
-//         boolean check = false;
-//         int left_lev = 0;
-//         int level = 0;
-//         for(int i = start; i < colors.length; i++) {
-//             if(colors[i] == find_target) {
-//                 right_lev = level;
-//                 check = true;
-//                 break;
-//             }
-//             level++;
-//         }
-        
-//         if(check == false) {
-//             right_lev = -1;
-//         }
-//         else {
-//             check = false;
-//         }
-        
-//         level = 0;
-//         for(int i = start; i >= 0; i--) {
-//             if(colors[i] == find_target) {
-//                 left_lev = level;
-//                 check = true;
-//                 break;
-//             }
-//             level++;
-//         }
-//         if(check == false) {
-//             left_lev = -1;
-//         }
-        
-//         if(right_lev == -1 && left_lev != -1) {
-//             return left_lev;
-//         }
-//         else if (left_lev == -1 && right_lev != -1) {
-//             return right_lev;
-//         }
-//         return Math.min(right_lev, left_lev);
-
-        
-//     }
-// }
