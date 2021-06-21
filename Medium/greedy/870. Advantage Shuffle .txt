@@ -1,0 +1,97 @@
+/*
+Given two arrays nums1 and nums2 of equal size, the advantage of nums1 with respect to nums2 is the number of indices i for which nums1[i] > nums2[i].
+Return any permutation of nums1 that maximizes its advantage with respect to nums2.
+
+Example 1:
+Input: nums1 = [2,7,11,15], nums2 = [1,10,4,11]
+Output: [2,11,7,15]
+
+Example 2:
+Input: nums1 = [12,24,8,32], nums2 = [13,25,32,11]
+Output: [24,32,8,12]
+*/
+class Solution {
+    public int[] advantageCount(int[] nums1, int[] nums2) {
+        int[] ans = new int[nums1.length];
+        Arrays.fill(ans, -1);
+        // this map used to store the original array(nums2)
+        //  val, index
+        Map<Integer, Queue<Integer>> map = new HashMap<>();
+        for(int i = 0; i < nums2.length; i++) {
+            map.putIfAbsent(nums2[i], new LinkedList<>());
+            map.get(nums2[i]).offer(i);
+        }
+        
+        Arrays.sort(nums1);
+        Arrays.sort(nums2);
+        
+        Queue<Integer> notUsed = new LinkedList<>();
+        int ptr1 = 0;
+        int ptr2 = 0;
+        while(ptr1 < nums1.length && ptr2 < nums2.length) {
+            if(nums1[ptr1] > nums2[ptr2]) {
+                int orgIndex = map.get(nums2[ptr2]).poll();
+                ans[orgIndex] = nums1[ptr1];
+                ptr2++;
+            }
+            else {
+                notUsed.offer(nums1[ptr1]);
+            }
+            ptr1++;
+        }
+        
+        for(int i = 0; i < ans.length; i++) {
+            if(ans[i] == -1) {
+                ans[i] = notUsed.poll();
+            }
+        }
+        return ans;
+        
+        
+    }
+    
+//     public int[] advantageCount(int[] nums1, int[] nums2) {
+//         int[] arr = new int[nums1.length];
+//         List<Integer> ls = new ArrayList<>();
+//         Arrays.sort(nums1);
+//         // we want find the number which slightly bigger than num2
+//         for(int i = 0; i < nums1.length; i++) {
+//             ls.add(nums1[i]);
+//         }
+//         for(int i = 0; i < nums2.length; i++) {
+//             arr[i] = binarySearch(ls, nums2[i]);
+//         }
+        
+//         return arr;
+//     }
+//     private int binarySearch(List<Integer> ls, int target) {
+        
+//         int left = 0;
+//         int right = ls.size() - 1;
+//         int res = 0;
+        
+//         while(right > left) {
+            
+//             int mid = left + (right - left) / 2;
+//             // we do not accept equal to target this case in the question
+//             // so we add "=" in here
+//             if(ls.get(mid) <= target) {
+//                 left = mid + 1;
+//             }
+//             else {
+//                 right = mid;
+//             }
+//         }
+        
+//         if(left > 0 && ls.get(left) > target && ls.get(left - 1) <= target) {
+//             res = ls.get(left);
+//             ls.remove(left);
+//             return res;
+//         }
+        
+//         res = ls.get(0);
+//         ls.remove(0);
+//         return res;
+        
+//     }
+}
