@@ -7,46 +7,94 @@ words = ["a", "bb", "acd", "ace"]
 Output: 3
 Explanation: There are three words in words that are a subsequence of S: "a", "acd", "ace". */
 class Solution {
-    public int numMatchingSubseq(String S, String[] words) {
-        int result = 0;
-        Map<String, Boolean> memo = new HashMap<>();
-        boolean checkTF = false;
-        // go through all elements of string array
-        for(String tmp: words) {
-            // if HashMap already store the specific string
-            if(memo.containsKey(tmp) == true) {
-                // if that string is True, then ans++, otherwise go to next loop.
-                if( memo.get(tmp) == true) {
-                    result++;
+    public int numMatchingSubseq(String s, String[] words) {
+        int count = 0;
+        List<Node>[] table = new ArrayList[26];
+        // we have to init this first
+        for(int i = 0; i < 26; i++) {
+            table[i] = new ArrayList<>();
+        }
+        // we put all the words into ls first based on their first char 
+        for(String str: words) {
+            char firstWord = str.charAt(0);
+            table[firstWord - 'a'].add(new Node(str, 0));
+        }
+        // This is a very brilliant method, we do not need compare the original str and the words in expilcit way
+        for(int i = 0; i < s.length(); i++) {
+            char currChar = s.charAt(i);
+            List<Node> oldBucket = table[currChar - 'a'];
+            // give our table a new address.
+            table[currChar - 'a'] = new ArrayList<>();
+            
+            for(Node node : oldBucket) {
+                node.index++;
+                // if this is the last index => our compare process finish and the string is a sunstring
+                if(node.index == node.str.length()) {
+                    count++;
                 }
-                continue;
+                else {
+                    table[node.str.charAt(node.index) - 'a'].add(node);
+                }
             }
-            checkTF = check(S, tmp);
-            // if element length is longer than original string, it must be false
-            if(S.length() >= tmp.length() && checkTF == true) {
-                result++;
-            }
-            // add new string pattern in the HashMap
-            memo.put(tmp, checkTF);
         }
-        return result;
+        
+        return count;
     }
-    // two pointer method to check whether the target string is subsequence of original string.
-    public boolean check(String S, String target) {
-        int cnt_1 = 0;
-        int cnt_2 = 0;
-        while(cnt_1 != S.length() && cnt_2 != target.length()) {
-            if(target.charAt(cnt_2) == S.charAt(cnt_1)) {
-                cnt_1++;
-                cnt_2++;
-            }
-            else {
-                cnt_1++;
-            }
+    
+    public class Node {
+        String str;
+        int index;
+        public Node(String str, int index) {
+            this.str = str;
+            this.index = index;
         }
-        if(cnt_2 == target.length()) {
-            return true;
-        }
-        return false;
     }
+//     public int numMatchingSubseq(String s, String[] words) {
+//         int count = 0;
+//         // there is a testcase contains lots of same input
+//         Map<String, Boolean> memo = new HashMap<>();
+//         for(String str : words) {
+//             if(memo.containsKey(str)) {
+//                 if(memo.get(str) == true) {
+//                     count++;
+                    
+//                 }
+//                 continue;
+                
+//             }
+            
+//             if( check(s, str) ) {
+//                 memo.put(str, true);
+//                 count++;
+//             }
+//             else {
+//                 memo.put(str, false);
+//             }
+           
+//         }
+//         return count;
+        
+//     }
+    
+//     private boolean check(String org, String sub) {
+//         if(sub.length() > org.length()) {
+//             return false;
+//         }
+//         int cnt1 = 0;
+//         int cnt2 = 0;
+//         while(cnt1 != org.length() && cnt2 != sub.length()) {
+//             if(org.charAt(cnt1) == sub.charAt(cnt2) ) {
+//                 cnt2++;
+//                 cnt1++;
+//             }
+//             else {
+//                 cnt1++;
+//             }
+//         }
+//         if(cnt2 == sub.length()) {
+//             return true;
+//         }
+//         return false;
+//     }
+    
 }
