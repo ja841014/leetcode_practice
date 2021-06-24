@@ -38,7 +38,7 @@ class Solution {
         // reverse Listnode https://leetcode.com/problems/reorder-list/
         ListNode pre = null;
         ListNode curr = first;
-        ListNode tmp = first;
+        ListNode tmp = null;
         for(int i = m; i <= n; i++) {
             tmp = curr.next;
             
