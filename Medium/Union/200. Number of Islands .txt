@@ -1,0 +1,83 @@
+class Solution {
+    public int numIslands(char[][] grid) {
+        
+        UF unionFind = new UF(grid);
+        int rows = grid.length;
+        int cols = grid[0].length;
+        
+        for(int i = 0; i < rows; i++) {
+            for(int j = 0; j < cols; j++) {
+                if(grid[i][j] == '1') {
+                    int oneDArrayLoc = i * cols + j;
+                    // we only check the right and bottom cell
+                    // check right first
+                    if(j + 1 < cols && grid[i][j + 1] == '1') {
+                        unionFind.union(oneDArrayLoc, oneDArrayLoc + 1);
+                    }
+                    // check bottom
+                    if(i + 1 < rows && grid[i + 1][j] == '1') {
+                        unionFind.union(oneDArrayLoc, oneDArrayLoc + cols);
+                    }
+                }
+            }
+        }
+        
+        return unionFind.count;
+    }
+    
+    public class UF {
+        int[] parent;
+        int[] size;
+        int count;
+        
+        public UF(char[][] grid) {
+            int row = grid.length;
+            int col = grid[0].length;
+            int selfPar = 0;
+            
+            count = 0;
+            parent = new int[row * col];
+            size = new int[row * col];
+                        
+            for(int i = 0; i < row; i++) {
+                for(int j = 0; j < col; j++) {
+                   if(grid[i][j] == '1') {
+                        parent[selfPar] = selfPar;
+                        size[selfPar] = 1;
+                        count++;
+                    }
+                    selfPar++;
+                }                
+            }
+        }
+        
+        public int find(int node) {
+            while(node != parent[node]) {
+                parent[node] =  parent[parent[node]];
+                node =  parent[node];
+            }
+            return node;
+        }
+        
+        public void union(int p, int q) {
+            int pParent = find(p);
+            int qParent = find(q);
+            
+            if(pParent == qParent) {
+                return;
+            }
+            
+            if(size[pParent] > size[qParent]) {
+                parent[qParent] = pParent;
+                size[pParent] = size[pParent] + size[qParent];
+            } 
+            else {
+                parent[pParent] = qParent;
+                size[qParent] = size[qParent] + size[pParent];
+            }
+            count--;
+            
+        }
+        
+    }
+}
