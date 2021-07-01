@@ -1,0 +1,117 @@
+/*
+You have an inventory of different colored balls, and there is a customer that wants orders balls of any color.
+
+The customer weirdly values the colored balls. Each colored ball's value is the number of balls of that color you currently have in your inventory. For example, if you own 6 yellow balls, the customer would pay 6 for the first yellow ball. After the transaction, there are only 5 yellow balls left, so the next yellow ball is then valued at 5 (i.e., the value of the balls decreases as you sell more to the customer).
+
+You are given an integer array, inventory, where inventory[i] represents the number of balls of the ith color that you initially own. You are also given an integer orders, which represents the total number of balls that the customer wants. You can sell the balls in any order.
+
+Return the maximum total value that you can attain after selling orders colored balls. As the answer may be too large, return it modulo 1000000007.
+
+
+[2,4,6,8,10]
+10, 9 ,8, 7, 6, 5, 4, 3, 2, 1
+       8, 7, 6, 5, 4, 3, 2, 1
+             6, 5, 4, 3, 2, 1
+                   4, 3, 2, 1
+                         2, 1
+We have to really care "long" and "int"
+*/
+class Solution {
+    public int maxProfit(int[] inventory, int orders) {
+        int MOD = 1000000007;
+        Arrays.sort(inventory);
+        
+        long scalar = 1;
+        long sum = 0;
+        int index = inventory.length - 1;
+        while(orders > 0) {
+            // if orders are exzctly are the edge, it still go into this category
+            if(index > 0 && orders >= (inventory[index] - inventory[index - 1]) * scalar ) {
+                sum = sum + sumFromNtoX(inventory[index], inventory[index - 1]) * scalar ;
+                orders -= (inventory[index] - inventory[index - 1]) * scalar;
+            }
+            else if(index == 0 || inventory[index] - inventory[index - 1] > 0) {
+                long range = orders / scalar;
+                // System.out.println("range:" +range );
+                sum = sum + sumFromNtoX(inventory[index], inventory[index] - range ) * scalar;
+                long remain = orders % scalar;
+                sum = sum + remain * (inventory[index] - range );
+                orders = 0;
+            }
+            sum = sum % MOD;
+            scalar++;
+            index--;
+        }
+        
+        return (int)(sum % MOD);
+        // this method will cause TLE as well
+        
+//         int len = inventory.length;
+//         int cnt = 1;
+//         int[] table = new int[len + 1];
+//         for(int i = len; i > 0; i--) {
+//             table[i] = inventory[i - 1];
+//         }
+        
+//         int count = 0;
+//         for(int i = table.length - 1; i >= 0; i--) {
+//             int diff = 0;
+//             if(i == 0) {
+//                 diff = table[i] - 0;
+//             }
+//             else {
+//                 diff = table[i] - table[i - 1];
+//             }
+            
+//             count = count + diff * cnt;
+//             if(count >= orders) {
+//                 // 第cnt個 加上去會多出來
+//                 count = count - diff * cnt;
+//                 break;
+//             }
+//             cnt++;
+//         }
+        
+//         int val = 0;
+//         int scalar = 1;
+//         for(int i = table.length - 1; i > table.length  - 1 - cnt + 1; i--) {
+//             // System.out.println(table.length);
+//             int diff = table[i] - table[i - 1];
+//             val = val + ((table[i] + table[i - 1] + 1) * diff / 2) * scalar;
+//             scalar++;
+//         }
+        
+//         for(int i = table[table.length  - 1 - cnt + 1]; i >= 0; i--) {
+//             if(count + scalar > orders) {
+//                 int remain = orders - count;
+//                 val = (val + i * remain) % MOD;
+//                 break;
+//             }
+//             else {
+//                 val = (val + i * scalar) % MOD;
+//                 count = count + scalar;
+//             }
+//         }
+//         return val;
+        
+        
+        // PQ will TLE
+        // PriorityQueue<Integer> pq = new PriorityQueue<>((a, b) -> b - a);
+        // for(int i : inventory) {
+        //     pq.offer(i);
+        // }
+        // int cnt = 0;
+        // for(int i = 0; i < orders; i++) {
+        //     int curVal = pq.poll();
+        //     cnt = (cnt + curVal) % MOD;
+        //     if(curVal - 1 != 0) {
+        //         pq.offer(curVal - 1);
+        //     }
+        // }
+        // return 0;
+    }
+    private long sumFromNtoX(long n, long x){
+        //      height * (up + bottom) / 2
+        return (n - x) * (n + x + 1) / 2;
+    }
+}
