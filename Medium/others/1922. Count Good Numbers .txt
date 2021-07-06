@@ -1,0 +1,48 @@
+/*
+https://leetcode.com/problems/count-good-numbers/discuss/1317451/Java-or-Step-by-Step-clear-Explanation-with-Pictures-or-O(logN)
+
+A digit string is good if the digits (0-indexed) at even indices are even and the digits at odd indices are prime (2, 3, 5, or 7).
+For example, "2582" is good because the digits (2 and 8) at even positions are even and the digits (5 and 2) at odd positions are prime. However, "3245" is not good because 3 is at an even index but is not even.
+Given an integer n, return the total number of good digit strings of length n. Since the answer may be large, return it modulo 109 + 7.
+A digit string is a string consisting of digits 0 through 9 that may contain leading zeros.
+
+Example 1:
+Input: n = 1
+Output: 5
+Explanation: The good numbers of length 1 are "0", "2", "4", "6", "8".
+*/
+class Solution {
+    long MOD;
+    public int countGoodNumbers(long n) {
+        MOD = 1000000007;
+        // at even position need to be even 0 2 4 6 8,
+        // at odd position need to be prime number 2 3 5 7
+        long oddNum = n / 2;
+        long evenNum = n % 2 == 0 ? n / 2 : n / 2 + 1;
+        long sum = 1;
+        // sum *= evenNum == 0 ? 1: Math.pow(5, evenNum);
+        sum = (sum * selfPow(evenNum, 5)) % MOD ;
+        
+        sum = (sum * selfPow(oddNum, 4) ) % MOD;
+        // sum *= oddNum == 0 ? 1 : Math.pow(4, oddNum);
+        sum %= MOD;
+        
+        return (int)sum;
+    }
+    
+    // using divide and conque technique
+    public long selfPow(long val, int constant) {
+        if(val == 0) {
+            return 1;
+        }
+        long tmp = selfPow(val / 2, constant);
+        if(val % 2 == 0) {
+            return (tmp * tmp) % MOD;
+        }
+        return (constant * tmp * tmp) % MOD;
+        // if val is odd, constant power val = constant power val/2 * constant power val/2 * constant
+		// if val is even, constant power val = constant power val/2 * constant power val/2
+    }
+}
+
+
