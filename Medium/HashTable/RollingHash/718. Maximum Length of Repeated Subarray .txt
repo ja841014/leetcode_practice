@@ -1,0 +1,96 @@
+/*
+https://leetcode.com/problems/maximum-length-of-repeated-subarray/discuss/1181612/Java-Clean-O(N-logN)-Rolling-Hash-Solution-oror-with-comments
+
+Given two integer arrays nums1 and nums2, return the maximum length of a subarray that appears in both arrays.
+
+Example 1:
+Input: nums1 = [1,2,3,2,1], nums2 = [3,2,1,4,7]
+Output: 3
+Explanation: The repeated subarray with maximum length is [3,2,1].
+
+Example 2:
+Input: nums1 = [0,0,0,0,0], nums2 = [0,0,0,0,0]
+Output: 5
+*/
+class Solution {
+    private static final int PRIME = 101;
+    private static final int MOD = 1_000_000_007;
+    
+    public int findLength(int[] nums1, int[] nums2) {
+        // decide the target length that we want to find => binary search
+        // rolling hash to compare two arr => rolling hash
+        if(nums1.length < nums2.length) {
+            int[] tmp = nums1;
+            nums1 = nums2;
+            nums2 = tmp;
+        }
+        
+        return binarySearch(nums1, nums2);
+    }
+    // https://leetcode.com/problems/maximum-length-of-repeated-subarray/discuss/840100/Complex-Java-code-with-explanation-or-Binary-search-with-rolling-hash
+    private int binarySearch(int[] big, int[] small) {
+        int low = 1;
+        int high = small.length;
+        int cnt = 0;
+        while(low < high) {
+            int mid = (high - low) / 2 + low;
+            if(rollingHash(big, small, mid) == true) {
+                cnt = mid;
+                low = mid + 1;
+            }
+            else {
+                high = mid;
+            }            
+            
+        }
+        return rollingHash(big, small, low) == true ? low : low - 1;
+    }
+    
+    private boolean rollingHash(int[] big, int[] small, int size) {
+        Set<Integer> set = new HashSet<>();
+        // build up the rolling hash for big array
+        
+        // 1). Adding the first hash values of subarrays of big into set
+        long hash = 0;
+        for (int i = 0; i < size; i++) {
+            // why We use big[i] + 1 becuase we want avoid a case that contain 0
+            hash = hash * PRIME + (big[i] + 1);
+            hash %= MOD;
+        }
+        set.add((int) hash);
+        
+        // set up the "power"
+        long power = 1;
+        for (int i = 0; i < size - 1; i++) {
+            power = (power * PRIME) % MOD;
+        }
+        
+        // calculate others hash value => rolling hash. it is similar as sliding window
+        for (int i = 0, j = size; j < big.length; i++, j++) {
+            // hash minus the first value
+            hash = hash - ((big[i] + 1) * power % MOD) + MOD;
+            hash = hash * PRIME + (big[j] + 1);
+            hash %= MOD;
+            set.add((int) hash);
+        }
+        
+        // 2.) Check the hash values of subarrays of A
+        hash = 0;
+        for (int j = 0; j < size; j++) {
+            hash = hash * PRIME + (small[j] + 1);
+            hash %= MOD;
+        }
+        if (set.contains((int)hash)) return true;
+        
+        for (int i = 0, j = size; j < small.length; i++, j++) {
+            hash = hash - ((small[i] + 1) * power % MOD) + MOD;
+            hash = hash * PRIME + (small[j] + 1);
+            hash %= MOD;
+            if (set.contains((int)hash)) return true;
+        }
+        
+        return false;
+        
+        
+    }
+}
