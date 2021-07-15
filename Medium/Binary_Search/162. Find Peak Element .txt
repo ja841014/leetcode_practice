@@ -24,6 +24,8 @@ public class Solution {
         
         while(left < right) {
             int mid = (right - left) / 2 + left;
+	    // we cannot make sure that if you bigger than next element, you are a peak
+            // 6 7 6 5 | 4 3 2 (ex: mid is 5 right now)
             if(nums[mid] > nums[mid + 1]) {
                 right = mid;
             }
