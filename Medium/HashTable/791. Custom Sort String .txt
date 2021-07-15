@@ -1,0 +1,52 @@
+/*
+order and str are strings composed of lowercase letters. In order, no letter occurs more than once.
+
+order was sorted in some custom order previously. We want to permute the characters of str so that they match the order that order was sorted. More specifically, if x occurs before y in order, then x should occur before y in the returned string.
+
+Return any permutation of str (as a string) that satisfies this property.
+
+Example:
+Input: 
+order = "cba"
+str = "abcd"
+Output: "cbad"
+Explanation: 
+"a", "b", "c" appear in order, so the order of "a", "b", "c" should be "c", "b", and "a". 
+Since "d" does not appear in order, it can be at any position in the returned string. "dcba", "cdba", "cbda" are also valid outputs.
+*/
+class Solution {
+    // no letter occurs more than once in order string.
+    public String customSortString(String order, String str) {
+        int[] table = new int[26];
+        int rank = 1;
+        for(char c : order.toCharArray()) {
+            table[c - 'a'] = rank;
+            rank++;
+        }
+        
+        PriorityQueue<Node> pq = new PriorityQueue<>((a, b) -> a.rank - b.rank);
+        int rk = 100;
+        for(char c: str.toCharArray()) {
+            
+            Node tmp = new Node(table[c - 'a'] == 0 ? rk++ : table[c - 'a'], c);
+            // System.out.println(tmp.rank + ", " + tmp.c);
+            pq.offer(tmp);
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        // System.out.println("fjdksfh");
+        while(!pq.isEmpty()) {
+            // System.out.println(n.rank + ", " + n.c);
+            sb.append(pq.poll().c);
+        }
+        return sb.toString();
+    }
+    public class Node {
+        int rank;
+        char c;
+        public Node(int rank, char c) {
+            this.rank = rank;
+            this.c = c;
+        }
+    }
+}
