@@ -18,35 +18,57 @@ class Solution {
     // no letter occurs more than once in order string.
     public String customSortString(String order, String str) {
         int[] table = new int[26];
-        int rank = 1;
-        for(char c : order.toCharArray()) {
-            table[c - 'a'] = rank;
-            rank++;
-        }
-        
-        PriorityQueue<Node> pq = new PriorityQueue<>((a, b) -> a.rank - b.rank);
-        int rk = 100;
-        for(char c: str.toCharArray()) {
-            
-            Node tmp = new Node(table[c - 'a'] == 0 ? rk++ : table[c - 'a'], c);
-            // System.out.println(tmp.rank + ", " + tmp.c);
-            pq.offer(tmp);
-        }
-        
         StringBuilder sb = new StringBuilder();
-        // System.out.println("fjdksfh");
-        while(!pq.isEmpty()) {
-            // System.out.println(n.rank + ", " + n.c);
-            sb.append(pq.poll().c);
+        for(int i = 0; i < str.length(); i++) {
+            table[str.charAt(i) - 'a']++;
+        }
+        
+        for(char c: order.toCharArray()) {
+            for(int i = 0;i < table[c - 'a']; i++) {
+                sb.append(c);
+            }
+            table[c - 'a'] = 0;
+        }
+        
+        // append remain character in alphabetical order.
+        for(char c = 'a'; c <= 'z'; c++) {
+            for(int i = 0; i < table[c - 'a']; i++) {
+                sb.append(c);
+            }
         }
         return sb.toString();
     }
-    public class Node {
-        int rank;
-        char c;
-        public Node(int rank, char c) {
-            this.rank = rank;
-            this.c = c;
-        }
-    }
+//     public String customSortString(String order, String str) {
+//         int[] table = new int[26];
+//         int rank = 1;
+//         for(char c : order.toCharArray()) {
+//             table[c - 'a'] = rank;
+//             rank++;
+//         }
+        
+//         PriorityQueue<Node> pq = new PriorityQueue<>((a, b) -> a.rank - b.rank);
+//         int rk = 100;
+//         for(char c: str.toCharArray()) {
+            
+//             Node tmp = new Node(table[c - 'a'] == 0 ? rk++ : table[c - 'a'], c);
+//             // System.out.println(tmp.rank + ", " + tmp.c);
+//             pq.offer(tmp);
+//         }
+        
+//         StringBuilder sb = new StringBuilder();
+//         // System.out.println("fjdksfh");
+//         while(!pq.isEmpty()) {
+//             // System.out.println(n.rank + ", " + n.c);
+//             sb.append(pq.poll().c);
+//         }
+//         return sb.toString();
+//     }
+//     public class Node {
+//         int rank;
+//         char c;
+//         public Node(int rank, char c) {
+//             this.rank = rank;
+//             this.c = c;
+//         }
+//     }
 }

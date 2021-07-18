@@ -1,32 +1,33 @@
 /*
 Given an integer array nums, return the number of triplets chosen from the array that can make triangles if we take them as side lengths of a triangle.
 
- 
-
 Example 1:
-
 Input: nums = [2,2,3,4]
 Output: 3
 Explanation: Valid combinations are: 
 2,3,4 (using the first 2)
 2,3,4 (using the second 2)
 2,2,3
-Example 2:
 
+Example 2:
 Input: nums = [4,2,3,4]
 Output: 4
 */
 class Solution {
+    // this method decrease lots of redundant calculation!!!
     public int triangleNumber(int[] nums) {
         Arrays.sort(nums);
         int count = 0;
+        // i is First num
         for(int i = 0; i < nums.length - 2; i++) {
             if(nums[i] == 0) {
                 continue;
             }
+            // Third num
             int k = i + 2;
+            // j is Second num
             for(int j = i + 1; j < nums.length - 1; j++) {
-                
+                // when the j move forward, we will check whether k can move forward as well
                 while(k < nums.length && nums[i] + nums[j] > nums[k]) {
                     k++;
                 }
@@ -35,4 +36,21 @@ class Solution {
         }
         return count;
     }
+    // Extremely slow
+//     public int triangleNumber(int[] nums) {
+//         Arrays.sort(nums);
+//         int count = 0;
+//         for(int i = 0; i < nums.length - 2; i++) {
+//             // two sides bigger than one side.
+            
+//             for(int right = nums.length - 1; right >= i + 2; right--) {
+//                 int tmp = right - 1;
+//                 while(tmp > i && nums[i] + nums[tmp] > nums[right]) {
+//                     count++;
+//                     tmp--;
+//                 }
+//             }
+//         }
+//         return count;
+//     }
 }

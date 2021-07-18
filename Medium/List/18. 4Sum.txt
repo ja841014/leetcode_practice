@@ -1,83 +1,61 @@
 /*
-List<List<Type>> 題型
-list.addAll()
-可以把另外一個list裡的東西全部 + 到另外一個list的後面
-*//*
-Given an array nums of n integers and an integer target, are there elements a, b, c, and d in nums such that a + b + c + d = target? Find all unique quadruplets in the array which gives the sum of target.
+Given an array nums of n integers, return an array of all the unique quadruplets [nums[a], nums[b], nums[c], nums[d]] such that:
+0 <= a, b, c, d < n
+a, b, c, and d are distinct.
+nums[a] + nums[b] + nums[c] + nums[d] == target
+You may return the answer in any order.
 
-Note:
+Example 1:
+Input: nums = [1,0,-1,0,-2,2], target = 0
+Output: [[-2,-1,1,2],[-2,0,0,2],[-1,0,0,1]]
 
-The solution set must not contain duplicate quadruplets.
-
-Example:
-
-Given array nums = [1, 0, -1, 0, -2, 2], and target = 0.
-
-A solution set is:
-[
-  [-1,  0, 0, 1],
-  [-2, -1, 1, 2],
-  [-2,  0, 0, 2]
-]
+Example 2:
+Input: nums = [2,2,2,2,2], target = 8
+Output: [[2,2,2,2]]
 */
 class Solution {
     public List<List<Integer>> fourSum(int[] nums, int target) {
         Arrays.sort(nums);
-        List<List<Integer>> result = new ArrayList<>();
-        for(int i = 0; i < nums.length; ++i){
+        List<List<Integer>> res = new ArrayList<>();
+        for(int i = 0; i < nums.length - 3; i++) {
             // avoid duplicate
-            if(i > 0 && nums[i] == nums[i-1]){
+            if(i > 0 && nums[i] == nums[i - 1]) {
                 continue;
             }
-            // avoid run through impossible answer
-            if(!(nums.length - i >= 3)){
-                continue;
-            }
-            int remain = nums[i] - target;
-            int[] split = Arrays.copyOfRange(nums, i + 1, nums.length);           
-            result.addAll(threesum(split, remain, target));
+            res.addAll(threeSum(nums, target - nums[i], i + 1, nums[i]));
         }
-        return result;
+        return res;
     }
-    public List<List<Integer>> threesum(int [] matrix, int sum_target, int org_target){
-        List<List<Integer>> list = new ArrayList();
-        int org_num = sum_target + org_target;
-        for(int i = 0; i < matrix.length; ++i){
+    
+    public List<List<Integer>> threeSum(int[] nums, int target, int index, int val) {
+        List<List<Integer>> res = new ArrayList<>();
+        for(int i = index; i < nums.length - 2; i++) {
+            int left = i + 1;
+            int right = nums.length - 1;
             // avoid duplicate
-            if( i > 0 && matrix[i] == matrix[i - 1]) {
-	        		continue;
-	        	}
-            // avoid run through impossible answer
-            if(!(matrix.length - i >= 3)){
+            if(i > index && nums[i] == nums[i - 1]) {
                 continue;
             }
-            int j = i + 1;
-            int k = matrix.length - 1;    
-            while( j < k ){
-                if( k < matrix.length - 1 && matrix[k] == matrix[k + 1] ){
-                    k--;
+            while(left < right) {
+                // avoid duplicate
+                if(right < nums.length - 1 && nums[right] == nums[right + 1]) {
+                    right--;
                     continue;
-                }             
-                if(matrix[i] + matrix[j] + matrix[k] + sum_target > 0){
-                    k--;
                 }
-                else if(matrix[i] + matrix[j] + matrix[k] + sum_target < 0){
-                    j++;
+                if(nums[left] + nums[right] + nums[i] == target) {
+                    List<Integer> ls = new ArrayList<>(Arrays.asList(val, nums[left], nums[right], nums[i]));
+                    res.add(ls);
+                    right--;
+                    left++;
                 }
-                else{
-                    
-                    ArrayList<Integer> ans = new ArrayList<Integer>();
-                    ans.add(org_num);
-                    ans.add(matrix[i]);
-                    ans.add(matrix[j]);
-                    ans.add(matrix[k]);
-                    list.add(ans);
-                    j++;
-                    k--;
-                }           
-            }         
+                else if(nums[left] + nums[right] + nums[i] > target) {
+                    right--;
+                }
+                else {
+                    left++;
+                }
+            }
         }
-        return list;
+        return res;
     }
-   
 }

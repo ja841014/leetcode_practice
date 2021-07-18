@@ -1,0 +1,106 @@
+/*
+Given the root of a binary tree, collect a tree's nodes as if you were doing this:
+
+Collect all the leaf nodes.
+Remove all the leaf nodes.
+Repeat until the tree is empty.
+
+EX1:
+Input: root = [1,2,3,4,5]
+Output: [[4,5,3],[2],[1]]
+        1
+      /   \
+     2     3
+   /   \
+  4     5 
+Explanation:
+[[3,5,4],[2],[1]] and [[3,4,5],[2],[1]] are also considered correct answers since per each level it does not matter the order on which elements are returned.
+*/
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+
+/* Time Complexity : O(n)
+This is a better Idea to calculate its depth. we compute its depth from the bottom.
+class Solution {
+    
+    private List<List<Integer>> solution;
+    
+    private int getHeight(TreeNode root) {
+        
+        // return -1 for null nodes
+        if (root == null) {
+            return -1;
+        }
+        
+        // first calculate the height of the left and right children
+        int leftHeight = getHeight(root.left);
+        int rightHeight = getHeight(root.right);
+        
+        int currHeight = Math.max(leftHeight, rightHeight) + 1;
+        
+        if (this.solution.size() == currHeight) {
+            this.solution.add(new ArrayList<>());
+        }
+        
+        this.solution.get(currHeight).add(root.val);
+        
+        return currHeight;
+    }
+    
+    public List<List<Integer>> findLeaves(TreeNode root) {
+        this.solution = new ArrayList<>();
+        
+        getHeight(root);
+        
+        return this.solution;
+    }
+}
+*/
+
+class Solution {
+    public List<List<Integer>> findLeaves(TreeNode root) {
+        List<List<Integer>> res = new ArrayList<>();
+        // Time Complexity: nlog(n)
+        while(root.left != null || root.right != null) {
+            
+            List<Integer> ls = new ArrayList<>();
+            findDepth(root, ls);
+            res.add(ls);
+        }
+        res.add(Arrays.asList(root.val));
+        
+        return res;
+    }
+    
+    public TreeNode findDepth(TreeNode root, List<Integer> ls) {
+        
+        if(root.left == null && root.right == null) {
+            ls.add(root.val);
+            // return null can change the original tree structure.
+            return null;
+        }
+        
+        if(root.left != null) {
+            // we return left and make it null when we reach the bottom of the tree.
+            root.left = findDepth(root.left, ls);
+        }
+        if(root.right != null) {
+            root.right = findDepth(root.right, ls);
+        }
+        
+        return root;
+    }
+}
