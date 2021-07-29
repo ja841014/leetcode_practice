@@ -1,0 +1,80 @@
+/*
+There are n dominoes in a line, and we place each domino vertically upright. In the beginning, we simultaneously push some of the dominoes either to the left or to the right.
+After each second, each domino that is falling to the left pushes the adjacent domino on the left. Similarly, the dominoes falling to the right push their adjacent dominoes standing on the right.
+When a vertical domino has dominoes falling on it from both sides, it stays still due to the balance of the forces.
+For the purposes of this question, we will consider that a falling domino expends no additional force to a falling or already fallen domino.
+
+You are given a string dominoes representing the initial state where:
+
+dominoes[i] = 'L', if the ith domino has been pushed to the left,
+dominoes[i] = 'R', if the ith domino has been pushed to the right, and
+dominoes[i] = '.', if the ith domino has not been pushed.
+Return a string representing the final state.
+
+Example1:
+Input: dominoes = "RR.L"
+Output: "RR.L"
+Explanation: The first domino expends no additional force on the second domino.
+
+Example2: 
+Input: dominoes = ".L.R...LR..L.."
+Output: "LL.RR.LLRRLL.."
+
+*/
+class Solution {
+    public String pushDominoes(String dominoes) {
+        int size = dominoes.length();
+        char[] arr = new char[size + 2];
+        arr[0] = 'L';
+        arr[arr.length - 1] = 'R';
+        int leftIdx = 0;
+        int rightIdx = 1;
+        
+        for(int i = 0; i < size; i++) {
+            arr[i + 1] = dominoes.charAt(i);
+        }
+        
+        while(rightIdx < arr.length) {
+            while(arr[rightIdx] == '.') {
+                rightIdx++;
+            }
+            
+            if(arr[leftIdx] == 'L' && arr[rightIdx] == 'L') {
+                while(leftIdx != rightIdx) {
+                    arr[leftIdx] = 'L';
+                    leftIdx++;
+                }
+                rightIdx++;
+            }
+            else if(arr[leftIdx] == 'R' && arr[rightIdx] == 'R') {
+                while(leftIdx != rightIdx) {
+                    arr[leftIdx] = 'R';
+                    leftIdx++;
+                }
+                rightIdx++;
+            }
+            else if(arr[leftIdx] == 'R' && arr[rightIdx] == 'L') {
+                int leftTmp = leftIdx + 1;
+                int rightTmp = rightIdx - 1;
+                while(leftTmp < rightTmp) {
+                    arr[leftTmp] = 'R';
+                    arr[rightTmp] = 'L';
+                    
+                    leftTmp++;
+                    rightTmp--;
+                }
+                leftIdx = rightIdx;
+                rightIdx++;
+            } // it is no any effect in this scenario.
+            else if(arr[leftIdx] == 'L' && arr[rightIdx] == 'R') {
+                leftIdx = rightIdx;
+                rightIdx++;
+            }            
+            
+        }
+        String str = new String(arr);
+        
+        return str.substring(1, str.length() - 1);
+        
+    }
+}
