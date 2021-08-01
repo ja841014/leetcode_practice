@@ -1,0 +1,91 @@
+/*
+Given an m x n binary matrix mat, return the distance of the nearest 0 for each cell.
+
+The distance between two adjacent cells is 1.
+
+Ex1:
+Input: mat = [[0,0,0],[0,1,0],[0,0,0]]
+Output: [[0,0,0],[0,1,0],[0,0,0]]
+
+EX2:
+Input: mat = [[0,0,0],[0,1,0],[1,1,1],[1,1,1]]
+Output: [[0,0,0],[0,1,0],[1,2,1],[2,3,2]]
+
+*/
+
+class Solution {
+    
+    public int[][] updateMatrix(int[][] mat) {
+        int[][] res = mat.clone();
+        int[][] DIR = {{0, -1}, {-1, 0} };
+        int[][] DIR2 = {{0, 1}, {1, 0} };
+        
+        updateTableTopLeft(mat, res, DIR);
+        updateTableBottomRight(mat, res, DIR2);
+        
+        return res;
+    }
+    public void updateTableBottomRight(int[][] mat, int[][] res, int[][] DIR) {
+        // traverse from bottom right! And see the left, up cell
+        for(int i = mat.length - 1; i >= 0 ; i-- ) {
+            for(int j = mat[0].length - 1; j >= 0; j--) {
+                if(mat[i][j] == 0) {
+                    continue;
+                }
+                else {
+                    // if we use Integer.MAX_VALUE, we cannot plus 1. because it will overflow 
+                    int minVal = Integer.MAX_VALUE - 1;
+                    for(int[] dir: DIR) {
+                        int x = i + dir[0];
+                        int y = j + dir[1];
+                        if(boudaryCheck(x, y, mat)) {
+                            minVal = Math.min(minVal, res[x][y]);
+                            if(minVal == 0) {
+                                break;
+                            }
+                        }
+                    }
+                    // this is second pass. Therefore, we have to check whether 
+                    // current value is smaller or previous value is smaller.
+                    res[i][j] = Math.min(res[i][j], minVal + 1);
+                }
+            }
+        }
+    }
+    
+    public void updateTableTopLeft(int[][] mat, int[][] res, int[][] DIR) {
+        // traverse from top left! See right, bottom cell 
+        for(int i = 0; i < mat.length; i++ ) {
+            for(int j = 0; j < mat[0].length; j++) {
+                if(mat[i][j] == 0) {
+                    continue;
+                }
+                else {
+                    int minVal = Integer.MAX_VALUE - 1;
+                    for(int[] dir: DIR) {
+                        int x = i + dir[0];
+                        int y = j + dir[1];
+                        if(boudaryCheck(x, y, mat)) {
+                            minVal = Math.min(minVal, res[x][y]);
+                            if(minVal == 0) {
+                                break;
+                            }
+                        }
+                        
+                    }
+                    res[i][j] = minVal + 1;
+                }
+            }
+        }
+    }
+    
+    public boolean boudaryCheck(int x, int y, int[][] mat) {
+        if(x >= 0 && x < mat.length && y >= 0 && y < mat[0].length) {
+            return true;
+        }
+        return false;
+    }
+    
+}
+
+
