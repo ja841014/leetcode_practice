@@ -1,0 +1,156 @@
+/*
+You are given an n x n binary matrix grid. You are allowed to change at most one 0 to be 1.
+Return the size of the largest island in grid after applying this operation.
+An island is a 4-directionally connected group of 1s.
+ 
+
+Example 1:
+Input: grid = [[1,0],[0,1]]
+Output: 3
+Explanation: Change one 0 to 1 and connect two 1s, then we get an island with area = 3.
+
+Example 2:
+Input: grid = [[1,1],[1,0]]
+Output: 4
+Explanation: Change the 0 to 1 and make the island bigger, only one island with area = 4.
+
+Example 3:
+Input: grid = [[1,1],[1,1]]
+Output: 4
+Explanation: Can't change any 0 to 1, only one island with area = 4.
+
+*/
+class Solution {
+                        //  上       左       下       右
+    final int[][] DIR = {{-1, 0}, {0, -1}, {1, 0}, {0, 1}};
+    public int largestIsland(int[][] grid) {
+        
+        int res = 0;
+        int row = grid.length;
+        int col = grid[0].length;
+        int size = row * col;
+        UnionFind uf = new UnionFind(size, grid);
+        
+        /*
+        [[1,1]
+        [1,1]]
+        */
+        int checkAllOne = 0;
+        
+        
+        for(int i = 0; i < grid.length; i++) {
+            for(int j = 0; j < grid[0].length; j++) {
+                int idx = i * grid.length + j;
+                // 我們只把 1 的做union 
+                if(grid[i][j] == 1) {
+                    checkAllOne++;
+                    //我們只需要上 左 的 1做連結
+                    for(int k = 0; k < 2; k++) {
+                        int x = i + DIR[k][0];
+                        int y = j + DIR[k][1];
+                        if(checkBoundary(row, col, x, y) == false || grid[x][y] != 1) {
+                            continue;
+                        }
+                        uf.union(idx, x * grid.length + y);
+                    }
+                }
+            }
+        }
+        
+        // if there do not have 0 in the grid => all grid is a big island
+        if(checkAllOne == size) {
+            return size;
+        }
+        
+        
+        for(int i = 0; i < grid.length; i++) {
+            for(int j = 0; j < grid[0].length; j++) {
+                int idx = i * grid.length + j;
+                //看每一個
+                if(grid[i][j] == 0) {
+                    int tmp = 0;
+                    Set<Integer> seen = new HashSet<>();
+                    //我們需要4個方向找所有可能連結
+                    for(int k = 0; k < 4; k++) {
+                        int x = i + DIR[k][0];
+                        int y = j + DIR[k][1];
+                        if(checkBoundary(row, col, x, y) == false || grid[x][y] != 1) {
+                            continue;
+                        }
+                        // 找出此點最parent的index => 然後把他的size加起來
+                        int parentIdx = uf.findParent(x * grid.length + y);
+                        if(seen.contains(parentIdx)) {
+                            continue;
+                        }
+                        seen.add(parentIdx);
+                        tmp = tmp + uf.size[parentIdx];
+                    }
+                    
+                    res = Math.max(res, tmp + 1);
+                    
+                }
+            }
+        }
+        return res;
+        
+    }
+    
+    public boolean checkBoundary(int row, int col, int x, int y) {
+        if(x >= 0 && x < row && y >= 0 && y < col) {
+            return true;
+        }
+        return false;
+    }
+    
+    public class UnionFind {
+        int[] parent;
+        int[] size;
+        int[] rank;
+        public UnionFind(int sz, int[][] grid) {
+            parent = new int[sz];
+            size = new int[sz];
+            rank = new int[sz];
+            for(int i = 0; i < sz; i++) {
+                parent[i] = i;
+                size[i] = 1;
+            }
+        }
+        
+        public int findParent(int n) {
+            // path compression
+            if(parent[n] != n) {
+                parent[n] = findParent(parent[n]);
+            }
+            return parent[n];
+            // while(parent[n] != n) {
+            //     parent[n] = parent[parent[n]];
+            //     n = parent[n];
+            // }
+            // return n;
+        }
+        
+        public void union(int p, int q) {
+            int pParent = findParent(p);
+            int qParent = findParent(q);
+            
+            if(pParent == qParent) {
+                return;
+            }
+            
+            // 往 p 群靠攏
+            if(rank[pParent] == rank[qParent]) {
+                parent[qParent] = pParent;
+                size[pParent] = size[pParent] + size[qParent];
+                rank[pParent]++;
+            } // q rank大 往q靠攏
+            else if(rank[pParent] < rank[qParent]) {
+                parent[pParent] = qParent;
+                size[qParent] = size[qParent] + size[pParent];
+            } // p rank大 往p靠攏
+            else {
+                parent[qParent] = pParent;
+                size[pParent] = size[pParent] + size[qParent];
+            }
+        }
+    } 
+}
