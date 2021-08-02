@@ -1,0 +1,101 @@
+/*
+There are n houses in a village. We want to supply water for all the houses by building wells and laying pipes.
+For each house i, we can either build a well inside it directly with cost wells[i - 1] (note the -1 due to 0-indexing), or pipe in water from another well to it. The costs to lay pipes between houses are given by the array pipes, where each pipes[j] = [house1j, house2j, costj] represents the cost to connect house1j and house2j together using a pipe. Connections are bidirectional.
+Return the minimum total cost to supply water to all houses.
+
+Example 1:
+Input: n = 3, wells = [1,2,2], pipes = [[1,2,1],[2,3,1]]
+Output: 3
+Explanation: 
+The image shows the costs of connecting houses using pipes.
+The best strategy is to build a well in the first house with cost 1 and connect the other houses to it with cost 2 so the total cost is 3.
+
+*/
+class Solution {
+    public int minCostToSupplyWater(int n, int[] wells, int[][] pipes) {
+        /*
+        1. make itself
+        2. take from neighbor
+        buildMap -> we should make a virtual node to connect to every node(for wells array)
+        */
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> a[2] - b[2]);
+        int res = 0;
+        // put virtual node first
+        for(int i = 0; i < wells.length; i++) {
+            int[] tmp = new int[]{0, i + 1, wells[i]};
+            pq.offer(tmp);
+        }
+        // put pipes array
+        for(int i = 0; i < pipes.length; i++) {
+            pq.offer(pipes[i]);
+        }
+        
+        UnioFind uf = new UnioFind(n);
+        // n city => we just need n - 1 connection
+        // be careful! we have one more virtual node => total n+ 1 nodes => n connection
+        while(!pq.isEmpty()) {
+            int[] curConnection = pq.poll();
+            if(uf.union(curConnection[0], curConnection[1]) == true) {
+                res = res + curConnection[2];
+            }
+        }
+        
+        return res;
+        
+        
+    }
+    
+    public class UnioFind {
+        int[] parent;
+        int[] rank;
+        int[] group;
+        public UnioFind(int size) {
+            parent = new int[size + 1];
+            rank = new int[size + 1];
+            group = new int[size + 1];
+            for(int i = 0; i < size + 1; i++) {
+                parent[i] = i;
+                group[i] = 1;
+            }
+        }
+        
+        
+        public int findParent(int n) {
+            // path compression
+            if(parent[n] != n) {
+                parent[n] = findParent(parent[n]);
+            }
+            return parent[n];   
+        }
+        
+        public boolean union(int p, int q) {
+            int pParnet = findParent(p);
+            int qParnet = findParent(q);
+            
+            // already union together
+            if(pParnet == qParnet) {
+                return false;
+            }
+            
+            if(rank[pParnet] > rank[qParnet]) {
+                parent[qParnet] = pParnet;
+                group[pParnet] = group[pParnet] + group[qParnet];
+                
+            }
+            else if(rank[pParnet] < rank[qParnet]) {
+                parent[pParnet] = qParnet;
+                group[qParnet] = group[qParnet] + group[pParnet];
+            }
+            else {
+                parent[qParnet] = pParnet;
+                group[pParnet] = group[pParnet] + group[qParnet];
+                rank[pParnet]++;
+            }
+            return true;
+        }
+    }
+    
+    
+    
+    
+}
