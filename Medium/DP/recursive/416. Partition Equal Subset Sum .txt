@@ -46,3 +46,36 @@ class Solution {
         return dpTable[index][target];
     }
 }
+class Solution {
+    public boolean canPartition(int[] nums) {
+        int sum = 0;
+        for(int i: nums) {
+            sum += i;
+        }
+        if(sum % 2 != 0) {
+            return false;
+        }
+        int target = sum / 2;
+        Boolean[][] dp = new Boolean[nums.length][target + 1];
+        return helepr(target, 0, nums, 0, dp);
+        
+    }
+    
+    public boolean helepr(int target, int sum, int[] nums, int index, Boolean[][] dp ) {
+        
+        if(sum == target) {
+            return true;
+        }
+        if(sum > target || index == nums.length) {
+            return false;
+        }
+        // we need memo here to avoid TLE
+        if(dp[index][sum] != null) {
+            return dp[index][sum];
+        }
+        
+        boolean res = helepr(target, sum + nums[index], nums, index + 1, dp) || helepr(target, sum, nums, index + 1, dp) ;
+        dp[index][sum] = res;
+        return res;
+    }
+}

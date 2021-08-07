@@ -1,0 +1,88 @@
+/*
+You are given an integer n, which indicates that there are n courses labeled from 1 to n. You are also given an array relations where relations[i] = [prevCoursei, nextCoursei], representing a prerequisite relationship between course prevCoursei and course nextCoursei: course prevCoursei has to be taken before course nextCoursei.
+In one semester, you can take any number of courses as long as you have taken all the prerequisites in the previous semester for the courses you are taking.
+Return the minimum number of semesters needed to take all courses. If there is no way to take all the courses, return -1.
+
+
+Example 1:
+Input: n = 3, relations = [[1,3],[2,3]]
+Output: 2
+Explanation: The figure above represents the given graph.
+In the first semester, you can take courses 1 and 2.
+In the second semester, you can take course 3.
+
+Example 2:
+Input: n = 3, relations = [[1,2],[2,3],[3,1]]
+Output: -1
+Explanation: No course can be studied because they are prerequisites of each other.
+
+*/
+class Solution {
+    public int minimumSemesters(int n, int[][] relations) {
+        // topology -> post order dfs
+        // cycle detection
+        //  to        from
+        Map<Integer, List<Integer>> edgeMap = new HashMap<>(); 
+        int res = 0;
+        int[] inDegree = new int[n + 1];
+        
+        // init the edgeMap
+        for(int i = 1; i <= n; i++) {
+            edgeMap.put(i, new ArrayList<>());
+        }
+        buildMap(edgeMap, relations, inDegree);
+        
+        // find head
+        Queue<Integer> q = new LinkedList<>();
+        // we cannot use HashSet to solve there is a cyclie or not!!
+        /*
+            * - * - *
+                |   |
+                * _ *
+                if indegree is not 0, we will not add new element into queue
+                therefore, our while loop will quit because we do not have elements in queue => then return "res" but never show the error.
+        */
+        for(int i = 1; i < inDegree.length; i++) {
+            if(inDegree[i] == 0)  {
+                q.offer(i);
+            }
+        }
+        // there is a cycle
+        if(q.isEmpty()) {
+            return -1;
+        }
+        // c will equal to n == node num
+        int c = 0;
+        // bfs
+        while(!q.isEmpty()) {
+            int size = q.size();
+            res++;
+            for(int i = 0; i < size; i++) {
+                int curCourse = q.poll();
+                c++;
+                for(int nextCourse: edgeMap.get(curCourse)) {
+                    inDegree[nextCourse]--; 
+                    
+                    if(inDegree[nextCourse] == 0) {
+                        q.offer(nextCourse);
+                    }
+                }
+            }
+            
+        }
+        // cycle detect
+        if(c != n) {
+            return -1;
+        }
+        return res;
+        
+    }
+    
+    public void buildMap(Map<Integer, List<Integer>> edgeMap, int[][] relations, int[] inDegree ) {
+        for(int i = 0; i < relations.length; i++) {
+            edgeMap.get(relations[i][0]).add(relations[i][1]);
+            // to 
+            inDegree[relations[i][1]]++;
+        }
+    }
+}

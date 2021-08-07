@@ -13,6 +13,62 @@ Explanation: transactions = [buy, sell, cooldown, buy, sell]
 */
 class Solution {
     public int maxProfit(int[] prices) {
+        
+        int[][] dp = new int[prices.length][2];
+        for(int i = 0; i < dp.length; i++) {
+            Arrays.fill(dp[i], -1);
+        }
+        int res = helper(prices, 0, 0, dp);
+        res = Math.max(res, 0);
+        return res;
+    }
+    
+    public int helper(int[] prices, int index, int haveStock, int[][] dp) {
+        if(index >= prices.length) {
+            return 0;
+        }
+        // 這裡仍然可以選擇 買 不買 賣 => 所以這if是錯的
+//         if(index == prices.length - 1) {
+//             if(haveStock == 0) {
+//                 return Integer.MIN_VALUE;
+//             }
+//             else {
+//                 return prices[index];
+//             }
+            
+//         }
+        if(dp[index][haveStock] != -1) {
+            return dp[index][haveStock];
+        }
+        
+        int res = 0;
+        // even: buy  odd: sold
+        int curCost = haveStock == 0 ? -prices[index] : prices[index];
+        
+        // buy
+        if(haveStock == 0) {
+            //                  remain                                  buy                         
+            int remain = helper(prices, index + 1, haveStock, dp);
+            int buy = curCost + helper(prices, index + 1, 1, dp);
+            res = Math.max(remain, buy);
+        }
+        // I have stock on hand. what I can do is "sold stock" or "don't sold stock"
+        else {
+            //                  remain                                  sold   
+            int remain = helper(prices, index + 1, haveStock, dp);
+            int sold = curCost + helper(prices, index + 2, 0, dp);
+            res = Math.max(remain, sold);
+        }
+        
+        dp[index][haveStock] = res;
+        
+        return dp[index][haveStock];
+    }
+    
+}
+/*
+class Solution {
+    public int maxProfit(int[] prices) {
         if(prices.length <= 1) {
             return 0;
         }
@@ -36,3 +92,4 @@ class Solution {
         return Math.max(sold[prices.length - 1], noStock[prices.length - 1]);
     }
 }
+*/
