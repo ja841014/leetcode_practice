@@ -1,0 +1,23 @@
+class Solution {
+    public int minFlipsMonoIncr(String s) {
+        int OneCount = 0;
+        int ZeroCount = 0;
+        for(int i = 0; i < s.length(); i++) {
+            if(s.charAt(i) == '0') {
+                if(OneCount == 0) {
+                    continue;
+                }
+                else {
+                    ZeroCount++;
+                }
+            }
+            else {
+                OneCount++;
+            }
+            if(ZeroCount > OneCount) {
+                ZeroCount = OneCount;
+            }
+        }
+        return ZeroCount;
+    }
+}

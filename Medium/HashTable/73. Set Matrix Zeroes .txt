@@ -1,0 +1,37 @@
+/*
+Given an m x n integer matrix matrix, if an element is 0, set its entire row and column to 0's, and return the matrix.
+
+You must do it in place.
+*/
+class Solution {
+    public void setZeroes(int[][] matrix) {
+        Set<Integer> seenRows = new HashSet<>();
+        Set<Integer> seenCols = new HashSet<>();
+        ArrayList<int[]> ls = new ArrayList<>();
+        for(int i = 0; i < matrix.length; i++) {
+            for(int j = 0; j < matrix[0].length; j++) {
+                if(matrix[i][j] == 0) {
+                    ls.add(new int[] {i ,j});
+                }
+            }
+        }
+        
+        for(int[] loc : ls) {
+            int row = loc[0];
+            int col = loc[1];
+            if(!seenRows.contains(row)) {
+                for(int c = 0; c < matrix[0].length; c++) {
+                    matrix[row][c] = 0; 
+                }
+                seenRows.add(row);
+            }
+            if(!seenCols.contains(col)) {
+                for(int r = 0; r < matrix.length; r++) {
+                    matrix[r][col] = 0; 
+                }
+                seenCols.add(col);
+            }
+        }
+                
+    }
+}

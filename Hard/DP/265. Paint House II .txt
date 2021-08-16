@@ -1,0 +1,49 @@
+/* It is same as Paint House I
+There are a row of n houses, each house can be painted with one of the k colors. The cost of painting each house with a certain color is different. You have to paint all the houses such that no two adjacent houses have the same color.
+The cost of painting each house with a certain color is represented by an n x k cost matrix costs.
+For example, costs[0][0] is the cost of painting house 0 with color 0; costs[1][2] is the cost of painting house 1 with color 2, and so on...
+Return the minimum cost to paint all houses.
+
+Example 1:
+Input: costs = [[1,5,3],[2,9,4]]
+Output: 5
+Explanation:
+Paint house 0 into color 0, paint house 1 into color 2. Minimum cost: 1 + 4 = 5; 
+Or paint house 0 into color 2, paint house 1 into color 0. Minimum cost: 3 + 2 = 5.
+
+Example 2:
+Input: costs = [[1,3],[2,4]]
+Output: 5
+*/
+
+
+class Solution {
+    public int minCostII(int[][] costs) {
+        int color = costs[0].length;
+        // i := current house
+        for(int i = 1; i < costs.length; i++) {
+            
+            // we will loop through colors
+            // the k means => what color I will pick to paint "current house"
+            for(int k = 0; k < color; k++) {
+                int localSmall = Integer.MAX_VALUE;
+            // what color I will pick to paint "previous house", and this j color is based on which the "current house" paint
+                for(int j = 0; j < color; j++) {
+                    // if the j == k => it means there are two adjacent houses have the same color.
+                    if(j == k) {
+                        continue;
+                    }
+                    localSmall = Math.min(localSmall, costs[i - 1][j]);
+                }
+                costs[i][k] = costs[i][k] + localSmall;
+            }
+            
+            
+        }
+        int res = Integer.MAX_VALUE;
+        for(int i = 0; i < color; i++) {
+            res = Math.min(res, costs[costs.length - 1][i]);
+        }
+        return res;
+    }
+}

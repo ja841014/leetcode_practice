@@ -11,60 +11,55 @@ If there is such window, you are guaranteed that there will always be only one u
 */
 class Solution {
     public String minWindow(String s, String t) {
-        if(s.length() < t.length()) {
+        if(t.length() > s.length()) {
             return "";
         }
+        Map<Character, Integer> map = new HashMap<>();
         
-        int start = 0;
-        int end = 0;
+        for(char c: t.toCharArray()) {
+            map.put(c, map.getOrDefault(c, 0) + 1);
+        }
+        int right = 0;
+        int left = 0;
         int tSize = t.length();
         int minLength = Integer.MAX_VALUE;
-        int subStringStartIndex = 0;
-        int subStringEndIndex = 0;
+        int startIdx = 0;
+        int endIdx = 0;
         
-        
-        Map<Character, Integer> map = new HashMap<>();
-        // put all the String t element into map
-        for (char c : t.toCharArray()) {
-		    map.put(c, map.getOrDefault(c, 0) + 1);
-	    }
-        
-        while(end < s.length()) {
-            char curr = s.charAt(end);
-            
-            if(map.containsKey(curr)) {
-                // so we will maintain the tSize always >= 0
-                if(map.get(curr) > 0) {
+        while(right != s.length()) {
+            char currChar = s.charAt(right);
+            if(map.containsKey(currChar) == true) {
+                if(map.get(currChar) > 0) {
                     tSize--;
                 }
-                map.put(curr, map.get(curr) - 1);
-                
+                map.put(currChar, map.get(currChar) - 1);
             }
-            // currently the substring contain all the String t, so we can start moving start point to trim the substring.
             
             while(tSize == 0) {
-                if(minLength > end - start + 1) {
-                    minLength = end - start + 1;
-                    subStringStartIndex = start;
-                    subStringEndIndex = end;
+                char leftCurChar = s.charAt(left);
+                if(minLength > right - left + 1) {
+                    minLength = right - left + 1;
+                    startIdx = left;
+                    endIdx = right;
                 }
-                char startChar = s.charAt(start);
-                if(map.containsKey(startChar)) {
-                    map.put(startChar, map.get(startChar) + 1);
-                    // only when the value is bigger than zero will increase the "tSize"
-                    if(map.get(startChar) > 0) {
+                
+                if(map.containsKey(leftCurChar) == true) {
+                    if(map.get(leftCurChar) >= 0) {
                         tSize++;
                     }
+                    
+                    map.put(leftCurChar, map.get(leftCurChar) + 1);
                 }
-                // moving start point
-                start++;
+                
+                left++;
             }
-            
-            end++;
+            right++;
         }
+        
         if(minLength == Integer.MAX_VALUE) {
             return "";
         }
-        return s.substring(subStringStartIndex, subStringEndIndex + 1);
+        
+        return s.substring(startIdx, endIdx + 1);
     }
 }
