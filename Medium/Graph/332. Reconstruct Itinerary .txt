@@ -1,0 +1,106 @@
+/*
+You are given a list of airline tickets where tickets[i] = [fromi, toi] represent the departure and the arrival airports of one flight. Reconstruct the itinerary in order and return it.
+
+All of the tickets belong to a man who departs from "JFK", thus, the itinerary must begin with "JFK". If there are multiple valid itineraries, you should return the itinerary that has the smallest lexical order when read as a single string.
+
+For example, the itinerary ["JFK", "LGA"] has a smaller lexical order than ["JFK", "LGB"].
+You may assume all tickets form at least one valid itinerary. You must use all the tickets once and only once.
+*/
+// Another solution => using priority queue
+class Solution {
+    private Map<String, PriorityQueue<String>> m;
+    private List<String> res;
+    
+    public List<String> findItinerary(List<List<String>> tickets) {
+        m = new HashMap<>();
+        res =  new ArrayList<>();
+        
+        int ticketSize = tickets.size();
+        
+        if (ticketSize == 0) return res;
+        if (ticketSize == 1) return tickets.get(0);
+        
+        // build table
+        for (List<String> trip : tickets){
+            String start = trip.get(0);
+            String end = trip.get(1);
+            PriorityQueue<String> pq = new PriorityQueue<String>();
+            
+            if (m.containsKey(start)){
+                pq = m.get(start);
+            }
+            pq.add(end);
+            m.put(start, pq);
+        }
+        
+        
+        dfs("JFK");
+        return res;
+    }
+
+    private void dfs(String dep){
+        PriorityQueue<String> q = m.get(dep);
+        while(q != null && !q.isEmpty()){
+            dfs(q.poll());
+        }
+        res.add(0, dep);
+    }
+}
+// this solution is very slow because we use String of set to record whether we visite or not.
+/*
+class Solution {
+    List<String> res = new ArrayList<>();
+    public List<String> findItinerary(List<List<String>> tickets) {
+        // built table
+        Map<String, List<String>> map = new HashMap<>();
+        List<String> ls = new ArrayList<>();
+        builtTable(map, tickets);
+        for(Map.Entry<String, List<String>> m : map.entrySet()) {
+            Collections.sort(m.getValue());
+        }
+        dfs(map, tickets.size(), ls, "JFK", new HashSet<>());
+        res.add(0, "JFK");
+        return res;
+    }
+    
+    public void dfs(Map<String, List<String>> map, int ticketNum, List<String> ls, String start, Set<String> seen) {
+        if(ls.size() == ticketNum) {
+            res.addAll(ls);
+            return;
+        }
+        if(map.get(start) == null) {
+            return;
+        }
+        
+        for(int i = 0; i < map.get(start).size(); i++) {
+            String nextStart = map.get(start).get(i);
+            String loc = start + i;
+            if(seen.contains(loc)) {
+                continue;
+            }
+            
+            seen.add(loc);
+            ls.add(nextStart);
+            dfs(map, ticketNum, ls, nextStart, seen);
+            if(res.size() > 0) {
+                return;
+            }
+            
+            seen.remove(loc);
+            ls.remove(ls.size() - 1);
+        }
+        
+    }
+    
+    
+    public void builtTable(Map<String, List<String>> map, List<List<String>> tickets) {
+        for(List<String> ls : tickets) {
+            if(!map.containsKey(ls.get(0))) {
+                map.put(ls.get(0), new ArrayList<>());
+            }
+            map.get(ls.get(0)).add(ls.get(1));
+        }
+    }
+    
+    */
+}

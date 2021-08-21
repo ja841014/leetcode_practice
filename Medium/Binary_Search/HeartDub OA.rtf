@@ -1,0 +1,240 @@
+{\rtf1\ansi\ansicpg950\cocoartf2580
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Arial-BoldMT;\f1\froman\fcharset0 Times-Roman;\f2\fswiss\fcharset0 ArialMT;
+\f3\froman\fcharset0 Times-Bold;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red29\green38\blue42;\red255\green255\blue255;
+}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0;\cssrgb\c14902\c19608\c21961;\cssrgb\c100000\c100000\c100000;
+}
+\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\deftab720
+\pard\pardeftab720\sl404\partightenfactor0
+
+\f0\b\fs29\fsmilli14667 \cf2 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Cut Pipes
+\f1\b0\fs24 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \
+\pard\pardeftab720\sl404\partightenfactor0
+
+\f2\fs29\fsmilli14667 \cf2 You are given a set of pipes L with length L[i]. Now you need to cut them into pieces and guarantee that there are at least k pieces with the same length. Find out what is the longest length you can get from n pieces of pipes. Please write a method to return the maximum length of the pieces.
+\f1\fs24 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \
+\
+\pard\pardeftab720\sl386\partightenfactor0
+
+\f3\b\fs28 \cf3 \cb4 \strokec3 Example 1:
+\f1\b0\fs24 \cf2 \strokec2 \
+\pard\pardeftab720\sl386\partightenfactor0
+
+\fs28 \cf3 \strokec3 Input : L = [10, 5, 23], k = 3
+\fs24 \cf2 \strokec2 \
+
+\fs28 \cf3 \strokec3 Output: 10
+\fs24 \cf2 \strokec2 \
+
+\fs28 \cf3 \strokec3 Explanation:\'a0
+\fs24 \cf2 \strokec2 \
+
+\fs28 \cf3 \strokec3 Cut 1 piece of pipe with length 10 from the first pipe (10 = 10)
+\fs24 \cf2 \strokec2 \
+
+\fs28 \cf3 \strokec3 Leave the second pipe along
+\fs24 \cf2 \strokec2 \
+
+\fs28 \cf3 \strokec3 Cut 2 pieces from the third (23 = 10 * 2 + 3)
+\fs24 \cf2 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb1 \
+\
+\pard\pardeftab720\sl386\partightenfactor0
+
+\f3\b\fs28 \cf3 \cb4 \strokec3 Example 2:
+\f1\b0\fs24 \cf2 \strokec2 \
+\pard\pardeftab720\sl386\partightenfactor0
+
+\fs28 \cf3 \strokec3 Input : L = [232, 123, 456], k = 7
+\fs24 \cf2 \strokec2 \
+
+\fs28 \cf3 \strokec3 Output: 114
+\fs24 \cf2 \strokec2 \
+
+\fs28 \cf3 \strokec3 Explanation:\'a0
+\fs24 \cf2 \strokec2 \
+
+\fs28 \cf3 \strokec3 Cut 2 pieces of pipes with length 114 from the first pipe (232 = 114 * 2 + 4)
+\fs24 \cf2 \strokec2 \
+
+\fs28 \cf3 \strokec3 Cut 1 piece from the second (123 = 114 + 9)
+\fs24 \cf2 \strokec2 \
+
+\fs28 \cf3 \strokec3 Cut 4 pieces from the third (456 = 114 * 4)
+\fs24 \cf2 \strokec2 \
+\pard\pardeftab720\sl331\partightenfactor0
+\cf2 \'a0\
+\'a0\
+\pard\pardeftab720\sl404\partightenfactor0
+
+\f2\fs29\fsmilli14667 \cf2 \cb1 // at least k pieces with the same length.
+\f1\fs24 \
+\pard\pardeftab720\sl386\partightenfactor0
+
+\fs28 \cf3 \cb4 \strokec3 L = [10, 5, 23], k = 3
+\fs24 \cf2 \strokec2 \
+
+\fs28 \cf3 \strokec3 Left 1
+\fs24 \cf2 \strokec2 \
+
+\fs28 \cf3 \strokec3 Right 23
+\fs24 \cf2 \strokec2 \
+
+\fs28 \cf3 \strokec3 1: mid = 12 => right = mid -1 = 11
+\fs24 \cf2 \strokec2 \
+
+\fs28 \cf3 \strokec3 2: mid = 6 => left = 6;
+\fs24 \cf2 \strokec2 \
+
+\fs28 \cf3 \strokec3 3 mid = 8 => left = 8
+\fs24 \cf2 \strokec2 \
+
+\fs28 \cf3 \strokec3 4 mid = 9 => left = 9;
+\fs24 \cf2 \strokec2 \
+
+\fs28 \cf3 \strokec3 5 mid = 10 => left = 10;
+\fs24 \cf2 \strokec2 \
+
+\fs28 \cf3 \strokec3 6 mid = 10
+\fs24 \cf2 \strokec2 \
+\pard\pardeftab720\sl404\partightenfactor0
+
+\f2\fs29\fsmilli14667 \cf2 \cb1 Public int CutPipes(int[] L, int k) \{
+\f1\fs24 \
+
+\f2\fs29\fsmilli14667 	Int maxVal = 0
+\f1\fs24 \
+\pard\pardeftab720\fi960\sl404\partightenfactor0
+
+\f2\fs29\fsmilli14667 \cf2 Int minVal = Integer.MaxValue; 	
+\f1\fs24 \
+\pard\pardeftab720\sl404\partightenfactor0
+
+\f2\fs29\fsmilli14667 \cf2 	for(int i = 0; i < L; i++) \{
+\f1\fs24 \
+
+\f2\fs29\fsmilli14667 		maxVal = Math.max(maxVal, L[i]);
+\f1\fs24 \
+\pard\pardeftab720\li960\fi960\sl404\partightenfactor0
+
+\f2\fs29\fsmilli14667 \cf2 minVa = Math.min(minVal, L[i]);
+\f1\fs24 \
+\pard\pardeftab720\fi960\sl404\partightenfactor0
+
+\f2\fs29\fsmilli14667 \cf2 \}
+\f1\fs24 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \
+\pard\pardeftab720\sl404\partightenfactor0
+
+\f2\fs29\fsmilli14667 \cf2 	// at least
+\f1\fs24 \
+
+\f2\fs29\fsmilli14667 	Int left = 1;
+\f1\fs24 \
+
+\f2\fs29\fsmilli14667 	Int right = maxVal;
+\f1\fs24 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \
+\pard\pardeftab720\sl404\partightenfactor0
+
+\f2\fs29\fsmilli14667 \cf2 	while(left < right) \{
+\f1\fs24 \
+\pard\pardeftab720\li960\fi960\sl404\partightenfactor0
+
+\f2\fs29\fsmilli14667 \cf2 Int cnt = 0;
+\f1\fs24 \
+\pard\pardeftab720\sl404\partightenfactor0
+
+\f2\fs29\fsmilli14667 \cf2 		Int mid =(right - left) / 2 + left;
+\f1\fs24 \
+
+\f2\fs29\fsmilli14667 	
+\f1\fs24 \
+\pard\pardeftab720\li960\fi960\sl404\partightenfactor0
+
+\f2\fs29\fsmilli14667 \cf2 // traverse the ropes
+\f1\fs24 \
+\pard\pardeftab720\sl404\partightenfactor0
+
+\f2\fs29\fsmilli14667 \cf2 		for(int j = 0; j < L.length - 1; j++) \{
+\f1\fs24 \
+
+\f2\fs29\fsmilli14667 			if(L[j] >=\'a0 mid) \{
+\f1\fs24 \
+
+\f2\fs29\fsmilli14667 				cnt = cnt + L[j] / mid;
+\f1\fs24 \
+
+\f2\fs29\fsmilli14667 				if(cnt >= k) \{
+\f1\fs24 \
+
+\f2\fs29\fsmilli14667 					break;
+\f1\fs24 \
+\pard\pardeftab720\li3840\sl404\partightenfactor0
+
+\f2\fs29\fsmilli14667 \cf2 ]
+\f1\fs24 \
+\pard\pardeftab720\li1920\fi960\sl404\partightenfactor0
+
+\f2\fs29\fsmilli14667 \cf2 \}
+\f1\fs24 \
+\pard\pardeftab720\li960\fi960\sl404\partightenfactor0
+
+\f2\fs29\fsmilli14667 \cf2 \}
+\f1\fs24 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \
+\pard\pardeftab720\li960\fi960\sl404\partightenfactor0
+
+\f2\fs29\fsmilli14667 \cf2 if(cnt >= k) \{
+\f1\fs24 \
+
+\f2\fs29\fsmilli14667 	left = mid;
+\f1\fs24 \
+
+\f2\fs29\fsmilli14667 \}
+\f1\fs24 \
+
+\f2\fs29\fsmilli14667 Else \{
+\f1\fs24 \
+
+\f2\fs29\fsmilli14667 	right = mid - 1;
+\f1\fs24 \
+
+\f2\fs29\fsmilli14667 \}
+\f1\fs24 \
+\pard\pardeftab720\sl404\partightenfactor0
+
+\f2\fs29\fsmilli14667 \cf2 		
+\f1\fs24 \
+\pard\pardeftab720\fi960\sl404\partightenfactor0
+
+\f2\fs29\fsmilli14667 \cf2 \}
+\f1\fs24 \
+
+\f2\fs29\fsmilli14667 Return\'a0 left;
+\f1\fs24 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \
+\
+\
+\
+\pard\pardeftab720\sl404\partightenfactor0
+
+\f2\fs29\fsmilli14667 \cf2 \}
+\f1\fs24 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \
+\
+\
+}

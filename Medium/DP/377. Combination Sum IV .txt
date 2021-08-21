@@ -1,11 +1,11 @@
 // https://www.youtube.com/watch?v=oPV58JzVfS4 
 // backtracking will cause memory Limit exceeded
 // this problem is slightly same as climbing stairs
+// this problem is really like coin change II
 class Solution {
     public int combinationSum4(int[] nums, int target) {
         int[] dynamic_table = new int[target + 1];
         for(int i = 1 ;i <= target; i++) {
-            // 事實上這個j是用來減的
             for(int j = 0; j < nums.length; j++) {
                 if(i == nums[j]) {
                     dynamic_table[i]++;

@@ -15,48 +15,46 @@ Output: [1,2,4,8]
 */
 class Solution {
     public List<Integer> largestDivisibleSubset(int[] nums) {
-        List<Integer> result = new ArrayList<>();
         
-        if(nums.length == 0) {
-            return result;
-        }
-        
-        int[] count = new int[nums.length];
-        Arrays.fill(count, 1);
         Arrays.sort(nums);
-        // first step: build up the count table, use the bigger one to check the smaller whether MOD it == 0
+        int[] table = new int[nums.length];
         int maxSize = 0;
-        for(int i = 1; i < nums.length ; i++) {
+        int maxIndex = 0;
+        
+        // every element is its factor
+        Arrays.fill(table, 1);
+        // first step: build up the count table, use the bigger one to check the smaller whether % it == 0 or not.
+        for(int i = 1; i < nums.length; i++) {
             for(int j = 0; j < i; j++) {
-                if(nums[i] % nums[j] == 0) {
-                    count[i] = Math.max(count[i], count[j] + 1);
-                    maxSize = Math.max(maxSize, count[i]);
+                if(nums[i] % nums[j] == 0 ) {
+                    // we want to find the biggest subset
+                    table[i] = Math.max(table[i], table[j] + 1);
+                    if(maxSize < table[i]) {
+                        maxSize = table[i];
+                        maxIndex = i;
+                    }
                 }
             }
         }
-        // find Maximum index
-        int findMaxIndex = 0;
-        for(int i = 0; i < count.length; i++) {
-            if(count[i] == maxSize) {
-                findMaxIndex = i;
-            }
-        }
-        // fix the start value
-        int maxValue = nums[findMaxIndex];
-        int currentCount = count[findMaxIndex];
         
-        for(int i = findMaxIndex; i >= 0; i--) {
+        
+        List<Integer> ls = new ArrayList<>();
+        int curVal = nums[maxIndex];
+        int curCount = table[maxIndex];
+        curCount--;
+        ls.add(curVal);
+        for(int i = maxIndex - 1; i >= 0; i--) {
             // we need to use these two conditions two make sure the element is fit in out ArrayList
             // for exampla: [4,8,10,240] if we do not have "currentCount == count[i])" we will get [240, 10]
             // But, [4,8,240] is the answer.
-            if(maxValue % nums[i] == 0 && currentCount == count[i]) {
-                result.add(nums[i]);
+            if(curVal % nums[i] == 0 && curCount == table[i]) {
                 // if they can fit smaller nember than bigger number can fit it either 
-                maxValue = nums[i];
-                currentCount--;
+                curVal = nums[i];
+                curCount--;
+                ls.add(nums[i]);
             }
         }
-        
-        return result;
+       
+        return ls;
     }
 }

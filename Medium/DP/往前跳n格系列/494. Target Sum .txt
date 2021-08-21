@@ -1,5 +1,6 @@
 /*
 https://leetcode.com/problems/target-sum/discuss/689346/Java(4-ms)-DP-solution-for-both-2d-array-and-1d-array
+It pattern is similar as coin change 往前跳n格
 
 You are given an integer array nums and an integer target.
 

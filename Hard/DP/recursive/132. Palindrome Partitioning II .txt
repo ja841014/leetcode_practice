@@ -1,0 +1,41 @@
+class Solution {
+    Integer[][] table;
+    public int minCut(String s) {
+        
+        table = new Integer[s.length()][s.length()];
+        
+        return helper(s, 0, s.length() - 1);
+    }
+    
+    public int helper( String s, int startIdx, int endIdx) {
+        
+        // every time we need to check previously, because we want to find the minimum cut
+        // Therefore, if the string is the palindrome, we want to terminate as early as we can.
+        if(startIdx >= endIdx || isPali(s, startIdx, endIdx + 1) ) {
+            return 0;
+        }
+        
+        if(table[startIdx][endIdx] != null) {
+            return table[startIdx][endIdx];
+        }
+        int minCut = Integer.MAX_VALUE;
+        for(int i = startIdx; i < s.length(); i++) {            
+            if( isPali(s, startIdx, i + 1) == true ) {
+                minCut = Math.min(minCut, helper( s , i + 1, endIdx) + 1);
+            }
+        }
+        table[startIdx][endIdx] = minCut;
+        return minCut;
+        
+    }
+    
+    public boolean isPali(String s, int start, int end) {
+        if(start >= end) {
+            return true;
+        }
+        String sub = s.substring(start, end);
+        StringBuilder sb = new StringBuilder(sub);
+        
+        return sb.reverse().toString().equals(sub);
+    }
+}

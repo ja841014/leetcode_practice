@@ -34,7 +34,7 @@ class Solution {
         for(int i = 0; i < costs.length; i++) {
             sum = sum + costs[i][0];
         }
-        // using the comparator => the sort the array in increasing order by b city's cost - a city's cost
+        // using the comparator => the sort the array in increasing order by b city's cost - a city's cost => 若越小表示 對於這個人去 A city 面試比去 B city 面試還貴 
         Arrays.sort(costs, new comp());
         for(int i = 0; i < costs.length / 2; i++) {
             // sum minus A city cost and plus B city cost

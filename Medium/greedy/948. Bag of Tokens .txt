@@ -40,7 +40,7 @@ class Solution {
         int score = 0;
         int ans = 0;
         while(left <= right && P >= tokens[0]) {
-            // 從右邊買 買到Ｐ不能再買為止
+            // 從左邊買 買到Ｐ不能再買為止
             while(left <= right && P >= tokens[left] ) {
                 P = P - tokens[left];
                 score++;
@@ -48,7 +48,7 @@ class Solution {
             }
             // 紀錄最大max
             ans = Math.max(score, ans);
-            // 從左邊用score買一個最大token加值Ｐ
+            // 從右邊用score買一個最大token加值Ｐ
             if( left <= right && score > 0) {
                 P = P + tokens[right];
                 score--;
