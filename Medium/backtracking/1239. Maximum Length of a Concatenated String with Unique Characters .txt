@@ -1,0 +1,61 @@
+/*
+Given an array of strings arr. String s is a concatenation of a sub-sequence of arr which have unique characters.
+Return the maximum possible length of s.
+
+Example 1:
+Input: arr = ["un","iq","ue"]
+Output: 4
+Explanation: All possible concatenations are "","un","iq","ue","uniq" and "ique".
+Maximum length is 4.
+
+Example 2:
+Input: arr = ["cha","r","act","ers"]
+Output: 6
+Explanation: Possible solutions are "chaers" and "acters".
+
+Example 3:
+Input: arr = ["abcdefghijklmnopqrstuvwxyz"]
+Output: 26
+
+*/
+class Solution {
+    int maxSize;
+    public int maxLength(List<String> arr) {
+        maxSize = 0;
+        int[] table = new int[26];
+        helper(arr, table, 0, 0);
+        return maxSize;
+    }
+    public void helper(List<String> arr,int[] table, int index, int curSize) {
+        
+        maxSize = Math.max(maxSize, curSize);
+        
+        for(int i = index; i < arr.size(); i++) {
+            String curStr = arr.get(i);
+            if(isValid(curStr, table)) {
+                helper(arr, table, i + 1, curSize + curStr.length() );
+            }
+            remove(curStr, table);
+        }
+        
+    }
+    
+    public boolean isValid(String str, int[] table) {
+        boolean check = true;
+        for(int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            table[c - 'a']++;
+            if(table[c - 'a'] > 1) {
+                check = false;
+            }
+        }
+        return check;
+    }
+    
+    public void remove(String str, int[] table) {
+        for(int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            table[c - 'a']--;
+        }
+    }
+}

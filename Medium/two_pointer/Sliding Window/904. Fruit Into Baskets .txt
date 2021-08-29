@@ -1,0 +1,88 @@
+/*
+You are visiting a farm that has a single row of fruit trees arranged from left to right. The trees are represented by an integer array fruits where fruits[i] is the type of fruit the ith tree produces.
+
+You want to collect as much fruit as possible. However, the owner has some strict rules that you must follow:
+
+You only have two baskets, and each basket can only hold a single type of fruit. There is no limit on the amount of fruit each basket can hold.
+Starting from any tree of your choice, you must pick exactly one fruit from every tree (including the start tree) while moving to the right. The picked fruits must fit in one of your baskets.
+Once you reach a tree with fruit that cannot fit in your baskets, you must stop.
+Given the integer array fruits, return the maximum number of fruits you can pick.
+
+Example 1:
+Input: fruits = [1,2,1]
+Output: 3
+Explanation: We can pick from all 3 trees.
+
+Example 2:
+Input: fruits = [0,1,2,2]
+Output: 3
+Explanation: We can pick from trees [1,2,2].
+If we had started at the first tree, we would only pick from trees [0,1].
+
+Example 3:
+Input: fruits = [1,2,3,2,2]
+Output: 4
+Explanation: We can pick from trees [2,3,2,2].
+If we had started at the first tree, we would only pick from trees [1,2].
+
+Example 4:
+Input: fruits = [3,3,3,1,2,1,1,2,3,3,4]
+Output: 5
+Explanation: We can pick from trees [1,2,1,1,2].
+*/
+class Solution {
+    public int totalFruit(int[] fruits) {
+        // two baskets =>  each basket can only hold a single type
+        // you must pick exactly one fruit from every tree
+        
+        // we have to find the longest subArray which only contains two unique number
+        // slinding window
+        // How?  
+        // if right pointer find the third type of fruit => 
+        // left pointer have to go right to eliminate one fruit
+        
+        int maxVal = fruits.length;
+        //  idx:type  val: freq
+        int[] arr = new int[maxVal];
+        int type = 0;
+        int left = 0;
+        int right = 0;
+        int distance = 0;
+        int res = 0;
+        
+        while(right < maxVal) {
+            int curType = fruits[right];
+            if(type == 2) {
+                if(arr[curType] != 0) {
+                    arr[curType]++;
+                    distance++;
+                }
+                else {
+                    // move left pointer
+                    while(true) {
+                        arr[fruits[left]]--;
+                        distance--;
+                        if(arr[fruits[left]] == 0) {
+                            left++;
+                            arr[curType]++;
+                            distance++;
+                            break;
+                        }
+                        left++;
+                    }
+                }
+            }
+            else {
+                if(arr[curType] == 0) {
+                    type++;
+                }
+                arr[curType]++;
+                distance++;
+            }
+            // every loop we move one step of right pointer
+            right++;
+            res = Math.max(res, distance);
+        }
+        return res;
+    }
+}

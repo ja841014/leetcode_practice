@@ -1,0 +1,128 @@
+/*
+O( (9!)^9 )
+Write a program to solve a Sudoku puzzle by filling the empty cells.
+A sudoku solution must satisfy all of the following rules:]
+Each of the digits 1-9 must occur exactly once in each row.
+Each of the digits 1-9 must occur exactly once in each column.
+Each of the digits 1-9 must occur exactly once in each of the 9 3x3 sub-boxes of the grid.
+The '.' character indicates empty cells.
+*/
+class Solution {
+    Set<Character>[] squareSetArr;
+    Set<Character>[] rowSetArr;
+    Set<Character>[] colSetArr;
+    char[][] board;
+    int remain = 0;
+    public void solveSudoku(char[][] board) {
+        this.board = board;
+         // check square
+        squareSetArr = new HashSet[9]; 
+        // check row
+        rowSetArr = new HashSet[9]; 
+        // check col
+        colSetArr = new HashSet[9]; 
+        
+        for(int i = 0; i < 9; i++) {
+            squareSetArr[i] = new HashSet<>();
+            rowSetArr[i] = new HashSet<>();
+            colSetArr[i] = new HashSet<>();
+        }
+        initBoard();
+        
+        
+        helper(0, 0, remain);
+        
+        
+        
+    }
+    
+    private boolean helper(int row, int col, int remain) {        
+        if(remain == 0) {
+            return true;
+        }
+        if(row > 8 || col > 8) {
+            return false;
+        }
+        if(board[row][col] != '.') {
+            if(col == 8) {
+                return helper(row + 1, 0, remain);
+            }
+            return helper(row, col + 1, remain);
+        }
+        
+        int boxIndex = (row/3) * 3 + (col / 3);
+        for(int k = 1; k <= 9; k++) {
+            char kChar = (char)(k + '0');
+            boolean rowValid = isRowValid(kChar, rowSetArr[row]);
+            boolean colValid = isColValid(kChar, colSetArr[col]);
+            boolean squareValid = isSquareValid(kChar, squareSetArr[boxIndex]);
+
+            if(rowValid == true && colValid == true && squareValid == true) {
+                
+                board[row][col] = kChar;
+                squareSetArr[boxIndex].add(board[row][col] );
+                rowSetArr[row].add(board[row][col] );
+                colSetArr[col].add(board[row][col] );
+                
+                boolean check = false;
+                if(col == 8) {
+                    check = helper(row + 1, 0, remain - 1);
+                }
+                else {
+                    check = helper(row, col + 1, remain - 1);
+                }
+                if(check == true) {
+                    return true;
+                }
+
+                rowSetArr[row].remove(board[row][col] );
+                colSetArr[col].remove(board[row][col] );
+                squareSetArr[boxIndex].remove(board[row][col] );
+                board[row][col] = '.';
+            }
+        }
+        return false;
+          
+    }
+    
+    private void initBoard() {
+        for(int i = 0; i < 9; i++) {
+            for(int j = 0; j < 9; j++) {
+                if(board[i][j] == '.') {
+                    remain++;
+                    continue;
+                }
+                
+                int boxIndex = (i/3) * 3 + (j / 3);
+                squareSetArr[boxIndex].add(board[i][j]);
+                rowSetArr[i].add(board[i][j]);
+                colSetArr[j].add(board[i][j]);
+                
+            }
+        }
+    }
+    
+    
+    private boolean isSquareValid(char k, Set<Character> squareSetArr) {
+        if(squareSetArr.contains(k)) {
+            return false;
+        }
+        return true;
+    }
+        
+    private boolean isRowValid(char k, Set<Character> rowSetArr) {
+        if(rowSetArr.contains(k)) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isColValid(char k, Set<Character> colSetArr) {
+        if(colSetArr.contains(k)) {
+            return false;
+        }
+        
+        return true;
+    }
+}
+

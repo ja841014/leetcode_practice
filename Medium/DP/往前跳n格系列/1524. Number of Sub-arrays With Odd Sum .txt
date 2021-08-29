@@ -1,0 +1,75 @@
+
+/*
+https://www.youtube.com/watch?v=vGTm8rjlDTQ&ab_channel=HuaHua
+odd + even = odd
+odd + odd = even
+even + even = even
+*/
+class Solution {
+    public int numOfSubarrays(int[] arr) {
+        int MOD = 1000000007;
+        // number of previous odd.
+        int preOdd = 0;
+        int preEven = 0;
+        int res = 0;
+        
+        for(int i = 0; i < arr.length; i++) {
+            if(arr[i] % 2 == 0) {
+                // two option
+                // pre even + even => get EVEN 這裡會多一組arr[i]自身
+                // pre odd + even => get ODD
+                preEven = preEven + 1;
+                preOdd = preOdd;
+                
+            }
+            else {
+                // two option
+                // even + odd => get ODD => So, preEven + 1(cur element) = number of next odd
+                // odd + odd => get EVEN => So, preOdd = number if next even
+                int tmp = preEven;
+                preEven = preOdd;
+                preOdd = tmp + 1;
+                
+            }
+            res = (res + preOdd) % MOD;
+        }
+       
+       return res;
+    }
+    
+}
+
+// 2D table
+// class Solution {
+//     public int numOfSubarrays(int[] arr) {
+//         int MOD = 1000000007;
+//         //                    elements  ,odd or even
+//         int[][] dp = new int[arr.length][2];
+        
+//         dp[0][0] = arr[0] % 2 == 0 ? 1 : 0;
+//         dp[0][1] = arr[0] % 2 == 0 ? 0 : 1;
+//         int res = dp[0][1];
+//         for(int i = 1; i < arr.length; i++) {
+            
+//             if(arr[i] % 2 == 0) {
+//                 // two option
+//                 // pre even + even => get EVEN
+//                 // pre odd + even => get ODD
+//                 dp[i][0] = dp[i - 1][0] + 1;
+//                 dp[i][1] = dp[i - 1][1];
+//             }
+//             else {
+//                 // two option
+//                 // pre even + odd => get ODD
+//                 // pre odd + odd => get EVEN
+//                 dp[i][0] = dp[i - 1][1];
+//                 dp[i][1] = dp[i - 1][0] + 1;
+//             }
+//             res = (res + dp[i][1]) % MOD;
+//         }
+       
+//        return res;
+//     }
+    
+// }
+

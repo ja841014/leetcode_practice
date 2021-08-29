@@ -1,0 +1,38 @@
+/*
+Given the root of a Binary Search Tree and a target number k, return true if there exist two elements in the BST such that their sum is equal to the given target.
+*/
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public boolean findTarget(TreeNode root, int k) {
+        return helper(root, k, new HashSet<>());
+        
+    }
+    public boolean helper(TreeNode root, int k, Set<Integer> seen) {
+        if(root == null) {
+            return false;
+        }
+        
+        if(seen.contains(k - root.val)) {
+            return true;
+        }
+        seen.add(root.val);
+        boolean left = helper(root.left, k, seen);
+        boolean right = helper(root.right, k, seen);
+        
+        return (left || right) == true;
+    }
+}

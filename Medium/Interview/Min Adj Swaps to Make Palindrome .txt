@@ -1,0 +1,118 @@
+package tets;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
+
+/*
+ * 
+ Given a string, what is the minimum number of adjacent swaps required to convert a string into a palindrome. If not possible, return -1.
+
+Example 1:
+Input: "mamad"
+Output: 3
+
+Example 2:
+Input: "asflkj"
+Output: -1
+
+Example 3:
+Input: "aabb"
+Output: 2
+
+Example 4:
+Input: "ntiin"
+Output: 1
+
+Example 5:
+Input: "qaabb"
+Output: 4
+
+Example 5:
+Input: "ayxzazxy"
+Output: 3
+
+
+Explanation: swap 't' with 'i' => "nitin"
+ * */
+
+public class test {
+
+	public static void main(String[] args)  {
+		String str = "ayxzazxy";
+		System.out.println(minAdjSwaptoMakePalidrome(str));
+	}
+	
+	public static int minAdjSwaptoMakePalidrome(String str) {
+		int minimumMove = 0;
+		int size = str.length();
+		boolean isEven = size % 2 == 0 ? true : false;
+		int[] table = new int[26];
+		char[] charArr = str.toCharArray();
+		int oddFreqCount = 0;
+		// ensure the string can be make palidrome
+		for(char c: charArr ) {
+			table[c - 'a']++;
+			if(table[c - 'a'] % 2 != 0) {
+				oddFreqCount++;
+			}
+			else if(table[c - 'a'] % 2 == 0) {
+				oddFreqCount--;
+			}
+		}
+		if( (isEven == true && oddFreqCount != 0) || (isEven == false && oddFreqCount != 1) ) {
+			return -1;
+		}
+		
+		int left = 0;
+		int right = str.length() - 1;
+		
+		while(left < right) {
+			// shrink the window
+			if(charArr[left] == charArr[right]) {
+				left++;
+				right--;
+			}
+			else {
+				int k = right;
+				// if we find the character we want => swap it
+				while(k > left) {
+					if(charArr[k] == charArr[left] ) {
+						minimumMove = minimumMove + swap(charArr, k, right);
+						break;
+					}
+					k--;
+				}
+				// no Found
+				if(k == left) {
+					minimumMove = minimumMove + swap(charArr, k, k + 1);
+				}
+
+			}
+		}
+		return minimumMove;
+		
+	}
+	
+	public static int swap(char[] charArr, int idx1, int idx2) {
+		
+		char tmp =  charArr[idx1];
+		int distance = idx2 - idx1;
+		
+		for(int i = 1; i <= distance; i++) {
+			charArr[idx1] = charArr[idx1 + 1];
+			idx1++;
+		}
+		charArr[idx2] = tmp;
+		return distance;
+		
+	}
+	
+	
+}
+	
