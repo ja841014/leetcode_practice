@@ -1,0 +1,70 @@
+// There is a better solution. Think about it.
+/*
+You are given an integer n. You have an n x n binary grid grid with all values initially 1's except for some indices given in the array mines. The ith element of the array mines is defined as mines[i] = [xi, yi] where grid[xi][yi] == 0.
+
+Return the order of the largest axis-aligned plus sign of 1's contained in grid. If there is none, return 0.
+
+An axis-aligned plus sign of 1's of order k has some center grid[r][c] == 1 along with four arms of length k - 1 going up, down, left, and right, and made of 1's. Note that there could be 0's or 1's beyond the arms of the plus sign, only the relevant area of the plus sign is checked for 1's.
+*/
+class Solution {
+    public int orderOfLargestPlusSign(int n, int[][] mines) {
+        int size = mines.length;
+        int[][] table = new int[n][n];
+        for(int i = 0; i < n; i++) {
+            for(int j = 0; j < n; j++) {
+                table[i][j] = 1;
+            }
+        }
+        for(int[] mine : mines) {
+            table[mine[0]][mine[1]] = 0;
+        }
+        int res = 0;
+        for(int i = 0; i < n; i++) {
+            for(int j = 0; j < n; j++) {
+                int left = checkLeft(table, i, j);
+                int right = checkRight(table, i, j);
+                int up = checkUp(table, i, j);
+                int down = checkDown(table, i, j);
+                int localMin = Math.min(Math.min(left, right), Math.min(up, down));
+                res = Math.max(res, localMin);
+            }
+        }
+        return res;
+        
+        
+        
+    }
+    
+    private int checkLeft(int[][] mines, int row, int col) {
+        int cnt = 0;
+        while(col >= 0 && mines[row][col] == 1) {
+            col--;
+            cnt++;
+        }
+        return cnt;
+    }
+    private int checkRight(int[][] mines, int row, int col) {
+        int cnt = 0;
+        while(col < mines.length && mines[row][col] == 1) {
+            col++;
+            cnt++;
+        }
+        return cnt;
+    }
+    private int checkUp(int[][] mines, int row, int col) {
+        int cnt = 0;
+        while(row >= 0 && mines[row][col] == 1) {
+            row--;
+            cnt++;
+        }
+        return cnt;
+    }
+    private int checkDown(int[][] mines, int row, int col) {
+        int cnt = 0;
+        while(row < mines.length && mines[row][col] == 1) {
+            row++;
+            cnt++;
+        }
+        return cnt;
+    }
+}
