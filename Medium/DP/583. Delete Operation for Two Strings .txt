@@ -1,0 +1,50 @@
+/*
+Given two strings word1 and word2, return the minimum number of steps required to make word1 and word2 the same.
+In one step, you can delete exactly one character in either string.
+
+Example 1:
+Input: word1 = "sea", word2 = "eat"
+Output: 2
+Explanation: You need one step to make "sea" to "ea" and another step to make "eat" to "ea".
+
+Example 2:
+Input: word1 = "leetcode", word2 = "etco"
+Output: 4
+It is same as 72. Edit Distance and 1143. Longest Common Subsequence
+*/
+class Solution {
+    public int minDistance(String word1, String word2) {
+        int row = word1.length();
+        int col = word2.length();
+        int[][] table = new int[row + 1][col + 1];
+        // base case:: empty String
+        for(int i = 0; i < row + 1; i++) {
+            table[i][0] = i;
+        }
+        for(int i = 0; i < col + 1; i++) {
+            table[0][i] = i;
+        }
+        
+        for(int i = 1; i < row + 1; i++) {
+            for(int j = 1; j < col + 1; j++) {
+                // if the character is the same => no chaneg
+                if(word1.charAt(i - 1) == word2.charAt(j - 1)) {
+                    table[i][j] = table[i - 1][j - 1];
+                }
+                else {
+                    // 扣掉word1 or word2 選一個小的 ＋ 1
+                    table[i][j] = Math.min( table[i-1][j], table[i][j-1])  + 1;
+                }
+            }
+        }
+        return table[row][col];
+    }
+}
+
+/*
+    _   s   e   a
+  _ 0   1   2   3
+  e 1   2   1   2  
+  a 2   3   2   1
+  t 3   4   3   2
+*/

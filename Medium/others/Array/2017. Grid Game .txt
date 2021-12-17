@@ -1,0 +1,53 @@
+/*
+You are given a 0-indexed 2D array grid of size 2 x n, where grid[r][c] represents the number of points at position (r, c) on the matrix. Two robots are playing a game on this matrix.
+Both robots initially start at (0, 0) and want to reach (1, n-1). Each robot may only move to the right ((r, c) to (r, c + 1)) or down ((r, c) to (r + 1, c)).
+At the start of the game, the first robot moves from (0, 0) to (1, n-1), collecting all the points from the cells on its path. For all cells (r, c) traversed on the path, grid[r][c] is set to 0. Then, the second robot moves from (0, 0) to (1, n-1), collecting the points on its path. Note that their paths may intersect with one another.
+The first robot wants to minimize the number of points collected by the second robot. In contrast, the second robot wants to maximize the number of points it collects. If both robots play optimally, return the number of points collected by the second robot.
+
+In this problem, Robot 1 need to minimize the maximum ponts which Robot 2 can get. If we do greedily by finding the path which has the maximum points for Robot 1, it's not garantee that we can minimize points of Robot 2.
+Can consider this testcase:
+
+10 50 50 30
+50 50 10 10
+If you find the maximum path for Robot 1 and set those cells into 0, then the path became:
+
+00 00 00 00
+50 50 10 00
+The Robot 2 can get maximum of 110 points.
+
+But if Robot 1 goes by this path:
+
+00 00 50 30
+50 00 00 00
+Then Robot 2 can get maximum of 80 points.
+*/
+class Solution {
+    public long gridGame(int[][] grid) {
+        // grid.length == 2
+        int row = grid.length;
+        int col = grid[0].length;
+        
+        long res = 0;
+        for(int i = 0; i < col; i++) {
+            res = res + grid[0][i];
+        }
+        long bottomSum = 0;
+        for(int i = 0; i < col; i++) {
+            /*
+            Every time we have one pair of value => top accumulate value and bottom accumulate value
+            And Every time we want to find the largest value from this pair, 
+            because we want the maximum value which robot 2 can earn.
+            according the index: i 
+            top sum:    res - grig[0][i]
+            bottom sum: bottomSum
+            The outer Math.min() is used for record the minimum score that robot 2 can get. 
+            */
+            res = Math.min(res, Math.max(res - grid[0][i], bottomSum) );
+            bottomSum = bottomSum + grid[1][i];
+        }
+        return res;
+        
+    }
+    
+    
+}

@@ -1,0 +1,80 @@
+/*
+There is an m x n rectangular island that borders both the Pacific Ocean and Atlantic Ocean. The Pacific Ocean touches the island's left and top edges, and the Atlantic Ocean touches the island's right and bottom edges.
+The island is partitioned into a grid of square cells. You are given an m x n integer matrix heights where heights[r][c] represents the height above sea level of the cell at coordinate (r, c).
+The island receives a lot of rain, and the rain water can flow to neighboring cells directly north, south, east, and west if the neighboring cell's height is less than or equal to the current cell's height. Water can flow from any cell adjacent to an ocean into the ocean.
+Return a 2D list of grid coordinates result where result[i] = [ri, ci] denotes that rain water can flow from cell (ri, ci) to both the Pacific and Atlantic oceans.
+
+
+*/
+class Solution {
+    private int[][] DIR = new int[][]{{0, -1}, {-1, 0}, {0, 1}, {1, 0}};
+    private int row;
+    private int col;
+    public List<List<Integer>> pacificAtlantic(int[][] heights) {
+        row = heights.length;
+        col = heights[0].length;
+        
+        List<List<Integer>> res = new ArrayList<>();
+        boolean[][] tableP = new boolean[row][col];
+        boolean[][] tableA = new boolean[row][col];
+        
+        Queue<int[]> pacific = new LinkedList<>();
+        Queue<int[]> atlantic = new LinkedList<>();
+        
+        // The edge cell always belong to one Ocean
+        // The TopRight and BottomLeft cell always belong to both Ocean
+        for(int i = 0; i < row; i++) {
+            pacific.offer(new int[]{i, 0});
+            atlantic.offer(new int[]{i, col - 1});
+            tableP[i][0] = true;
+            tableA[i][col - 1] = true;
+        }
+        for(int i = 0; i < col; i++) {
+            pacific.offer(new int[]{0, i});
+            atlantic.offer(new int[]{row - 1, i});
+            tableP[0][i] = true;
+            tableA[row - 1][i] = true;
+        }
+        
+        bfs(heights, tableP, pacific);
+        bfs(heights, tableA, atlantic);
+        
+        for(int i = 0; i < row; i++) {
+            for(int j = 0; j < col; j++) {
+                if(tableP[i][j] && tableA[i][j]) {
+                    List<Integer> ls = new ArrayList<>();
+                    ls.add(i);
+                    ls.add(j);
+                    res.add(ls);
+                }
+            }
+        }
+        
+        return res;
+        
+    }
+    
+    public void bfs(int[][] heights, boolean[][] table, Queue<int[]> land) {
+        while(!land.isEmpty()) {
+            int[] curLand = land.poll();
+            int curHeight = heights[curLand[0]][curLand[1]];
+            for(int[] dir : DIR) {
+                int newX = curLand[0] + dir[0];
+                int newY = curLand[1] + dir[1];
+                if(checkBoundary(row, col, newX, newY) && heights[newX][newY] >= curHeight && table[newX][newY] == false) {
+                    land.offer(new int[]{newX, newY});
+                    table[newX][newY] = true;
+                }
+            }
+            
+        }
+        
+    }
+    
+    public boolean checkBoundary(int row, int col, int curRow, int curCol) {
+        if(curRow < row && curCol < col && curRow >= 0 && curCol >= 0) {
+            return true;
+        }
+        return false;
+    }
+}

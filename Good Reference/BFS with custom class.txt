@@ -1,0 +1,87 @@
+/*
+You are given an m x n integer matrix grid where each cell is either 0 (empty) or 1 (obstacle). You can move up, down, left, or right from and to an empty cell in one step.
+
+Return the minimum number of steps to walk from the upper left corner (0, 0) to the lower right corner (m - 1, n - 1) given that you can eliminate at most k obstacles. If it is not possible to find such walk return -1.
+
+
+*/
+class Solution {
+    private int[][] DIR = new int[][]{{1,0}, {-1, 0}, {0 ,1}, {0, -1}};
+    int rows;
+    int cols;
+    public int shortestPath(int[][] grid, int k) {
+        rows = grid.length;
+        cols = grid[0].length;
+        
+        Queue<StepState> q = new LinkedList<>();
+        Set<StepState> seen = new HashSet<>();
+        StepState firstStep = new StepState(0 ,0, k, 0);
+        q.offer(firstStep);
+        seen.add(firstStep);
+        
+        while(!q.isEmpty()) {
+            int size = q.size();
+            for(int i = 0; i < size; i++) {
+                StepState curStep = q.poll();
+                
+                if(curStep.x == rows - 1 && curStep.y == cols - 1) {
+                    return curStep.step;
+                }
+                
+                for(int[] dir : DIR) {
+                    int newX = curStep.x + dir[0];
+                    int newY = curStep.y + dir[1];
+                    if(checkBoundary(newX, newY) == false) {
+                        continue;
+                    }
+                    
+                    int newEliminate = curStep.elimination - grid[newX][newY];
+                    StepState nxtStep = new StepState(newX, newY, newEliminate, curStep.step + 1);
+                    int a = curStep.step + 1;
+                    
+                    if( !seen.contains(nxtStep) && newEliminate >= 0 ) {
+                        q.offer(nxtStep);
+                        seen.add(nxtStep);
+                    }                    
+                    
+                }
+            }
+        }
+        
+        return -1;
+    }
+    
+    private boolean checkBoundary(int curX, int curY) {
+        if(curX >= 0 && curX < rows && curY >= 0 && curY < cols) {
+            return true;
+        }
+        return false;
+    }
+    
+    public class StepState {
+        int x;
+        int y;
+        int elimination;
+        int step;
+        public StepState (int x, int y, int elimination, int step) {
+            this.x = x;
+            this.y = y;
+            this.elimination = elimination;
+            this.step = step;
+        }
+        
+        @Override
+        public int hashCode() {
+            return (this.x + 1) * (this.y + 1) * this.elimination;
+        }
+        
+        @Override
+        public boolean equals(Object other) {
+            if(!(other instanceof StepState) ) {
+                return false;
+            }
+            StepState newState = (StepState)other;
+            return (newState.x == this.x) && (newState.y == this.y) && (newState.elimination == this.elimination);
+        }
+    }
+}

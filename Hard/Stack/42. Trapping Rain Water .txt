@@ -26,24 +26,25 @@ class Solution {
         int res = 0;
         while(count < height.length) {
             Cell preCell = null;
-            // System.out.println("new round:" + "===========");
+            System.out.println("new round:" + "===========");
             while(!st.isEmpty() && height[count] >= st.peek().val ) {
                 preCell = st.pop();
-                // System.out.println("preCell pop: " + preCell.idx);
+                System.out.println("preCell pop: " + preCell.idx);
             }
             if(preCell != null) {
                 int thisRound;
+                // According the stack is empty or not, put left boundary will change.
                 if(!st.isEmpty()) {
                     thisRound = calHelper(height, count, st.peek().idx);
                 } 
                 else {
                     thisRound = calHelper(height, count, preCell.idx);
                 }
-                // System.out.println("thisRound sum: " + thisRound);
+                System.out.println("thisRound sum: " + thisRound);
                 res = res + thisRound;
             }
             st.push(new Cell(count, height[count]));
-            // System.out.println("Cell push: " + st.peek().idx);
+            System.out.println("Cell push: " + st.peek().idx);
             count++;
         }
         
@@ -53,14 +54,14 @@ class Solution {
     
     public int calHelper(int[] height, int rightIdx, int leftIdx) {
         
-        int minBorder = Math.min(height[leftIdx], height[rightIdx]);
-        
+        int minHeight = Math.min(height[leftIdx], height[rightIdx]);
+        System.out.println("calHelper: " + leftIdx + " " + rightIdx);
         int sum = 0;
         rightIdx--;
        
         while(rightIdx > leftIdx) {
-            sum = sum + minBorder - height[rightIdx];
-            height[rightIdx] = minBorder;
+            sum = sum + minHeight - height[rightIdx];
+            height[rightIdx] = minHeight;
             rightIdx--;
         }
         return sum;

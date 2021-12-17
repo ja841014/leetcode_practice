@@ -13,6 +13,8 @@
 // horse -> rorse (replace 'h' with 'r')
 // rorse -> rose (remove 'r')
 // rose -> ros (remove 'e')
+
+// it is really same as 583. Delete Operation for Two Strings
 class Solution {
     public int minDistance(String word1, String word2) {
         int size1 = word1.length();
