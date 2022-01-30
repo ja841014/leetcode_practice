@@ -25,9 +25,10 @@ class Solution {
         
         List<Integer> ls = new ArrayList<>();
         for(int i = 0; i < queries.length; i++) {
+	    // if we stand on the color we want
             if(colors[queries[i][0]] == queries[i][1]) {
                 ls.add(0);
-            }
+            } // we do not have this color
             else if(!map.containsKey(queries[i][1])) {
                 ls.add(-1);
             }

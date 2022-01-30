@@ -26,38 +26,44 @@ Explanation: The -2 and -1 are moving left, while the 1 and 2 are moving right. 
 */
 class Solution {
     public int[] asteroidCollision(int[] asteroids) {
-        Stack<Integer> st = new Stack<>();// put positive
-        List<Integer> ls = new ArrayList<>();
-        boolean flag = false;
-        for(int i : asteroids) {
-            
-            if(i > 0 || st.isEmpty()) {
-                st.push(i);
+        Stack<Integer> st = new Stack<>();
+        for(int stone : asteroids) {
+            if(stone > 0 || st.isEmpty()) {
+                st.add(stone);
             }
             else {
-                if(i < 0 && !st.isEmpty()) {
-                    flag = false;
-                    while(!st.isEmpty() && st.peek() > 0 && st.peek() <= Math.abs(i)) {
-                        int tmp = st.pop();
-                        if(tmp == Math.abs(i)) {
+                if(stone < 0 || !st.isEmpty()) {
+                    boolean flag = false;
+                    while(!st.isEmpty() && st.peek() > 0 && st.peek() <= Math.abs(stone)) {
+                        int curTop = st.pop();
+                        // both are disappeared
+                        if( curTop == Math.abs(stone)) {
                             flag = true;
                             break;
                         }
-                    } // stack not empty && stack peek() is negative
-                    if(!st.isEmpty()  && st.peek() < 0 && flag == false) {
-                        st.add(i);
                     }
-                    else if(st.isEmpty() && flag == false) {
-                        st.add(i);
+                    /*
+                        1. curStone is crashed lots of stone and meet same direction stone
+                        2. curStone meet same direction stone 
+                    */
+                    if(!st.isEmpty() && st.peek() < 0 && flag == false) {
+                        st.push(stone);
                     }
+                    /*
+                        1. curStone is crashed all of stones and need to add into stack
+                        2. nothing in stack, nothing to crash
+                    */
+                    else if(st.isEmpty() && flag  == false) {
+                        st.push(stone);
+                    }
+                    
                 }
             }
-            
         }
-        int[] ans = new int[st.size()];
-        for(int i = st.size() - 1; i >= 0; i--) {
-            ans[i] = st.pop();
+        int[] res = new int[st.size()];
+        for(int i = res.length - 1; i >= 0; i--) {
+            res[i] = st.pop();
         }
-        return ans; 
+        return res;
     }
 }
