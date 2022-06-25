@@ -11,6 +11,35 @@ Input: height = [4,2,0,3,2,5]
 Output: 9
 */
 class Solution {
+    public int trap(int[] height) {
+        Stack<Integer> st = new Stack<>();
+        int curIdx = 0;
+        int res = 0;
+        
+        while(curIdx < height.length) {
+            // if next height is greater than current height
+            while(!st.isEmpty() && height[st.peek()] < height[curIdx] ) {
+                // bottom height
+                int stackTopIdx = st.pop();
+                if(st.isEmpty()) {
+                    break;
+                }
+                // 計算填平所需距離
+                int length = curIdx - st.peek() - 1;
+                // 計算中間需要填平的高度
+                int localHeight = Math.min(height[curIdx], height[st.peek()]) - height[stackTopIdx];
+                
+                res = res + length * localHeight;
+                
+            }
+            st.push(curIdx++);
+        }
+        return res;
+            
+    }
+}
+/*
+class Solution {
 
     public int trap(int[] height) {
         // if next is bigger -> alter
@@ -75,4 +104,4 @@ class Solution {
             this.idx = idx;
         }
     }
-}
+}*/

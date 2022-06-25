@@ -29,9 +29,18 @@ Explanation: You can finish all the tasks in one work session.
 class Solution {
     public int minSessions(int[] tasks, int sessionTime) {
         Arrays.sort(tasks);
-        
+        int s = 0;
+        int t = tasks.length - 1;
+        // decreasing order a >= b >= c
+        while (s <= t) {
+            int temp = tasks[s];
+            tasks[s] = tasks[t];
+            tasks[t] = temp;
+            s++;
+            t--;
+        }
         int size = tasks.length;
-        
+        // we traverse the tasks length, becasue at most we need "tasks length" work sessions
         for(int i = 1; i < size; i++) {
             int[] minWorkSession = new int[i];
             Arrays.fill(minWorkSession, sessionTime);
@@ -48,10 +57,13 @@ class Solution {
             return true;
         }
         
-        for(int i = minWorkSession.length - 1; i >= 0 ; i--) {
-            if(minWorkSession.length - 1 - i > tasksIdx) {
+        for(int i = 0; i < minWorkSession.length; i++) {
+            // if i th bucket's index is bigger than current task's index, we break as it's impossible.
+            // Because the worst case is that i == index when worksession is equal to task time.
+            if(i > tasksIdx) {
                 break;
             }
+            
             if(minWorkSession[i] >= tasks[tasksIdx]) {
                 minWorkSession[i] = minWorkSession[i] - tasks[tasksIdx];
                 if(checkValid(minWorkSession, tasks, tasksIdx + 1)) {
@@ -60,6 +72,7 @@ class Solution {
                 minWorkSession[i] = minWorkSession[i] + tasks[tasksIdx];
             }
         }
+        
         
         return false;
     }

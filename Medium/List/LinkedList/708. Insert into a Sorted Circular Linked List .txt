@@ -27,38 +27,34 @@ class Node {
 
 class Solution {
     public Node insert(Node head, int insertVal) {
-        // no element
+        boolean flag = true;
+        Node tmpHead = head;
         if(head == null) {
-            Node emptyHead = new Node(insertVal);
-            emptyHead.next = emptyHead;
-            return emptyHead;
-        }
-        // one element
-        else if(head.next == head){
+            head = new Node(insertVal, null);
+            head.next = head;
+            return head;
+        } // only one node
+        else if(head == head.next) {
             head.next = new Node(insertVal, head);
             return head;
         }
         else {
-            Node pre = head;
-            Node cur = head.next;
-            
             while(true) {
                 // a b x c
-                if(pre.val <= insertVal && insertVal <= cur.val) {
-                    pre.next = new Node(insertVal, cur);
+                if(tmpHead.val <= tmpHead.next.val && insertVal >= tmpHead.val && insertVal <= tmpHead.next.val) {
+                    tmpHead.next = new Node(insertVal, tmpHead.next);
                     break;
                 }
-                // a b c x
-                else if(pre.val > cur.val && (insertVal >= pre.val || insertVal <= cur.val)) {
-                    pre.next = new Node(insertVal, cur);
+                // b c x a
+                else if(tmpHead.val > tmpHead.next.val && (insertVal > tmpHead.val || insertVal < tmpHead.next.val)) {
+                    tmpHead.next = new Node(insertVal, tmpHead.next);
+                    break;
+                }// find one round and could not find a suitable position
+                else if(tmpHead.next == head){
+                    tmpHead.next = new Node(insertVal, head);
                     break;
                 }
-                if(pre.next == head) {
-                   pre.next = new Node(insertVal, head); 
-                    break;
-                }
-                pre = pre.next;
-                cur = cur.next;
+                tmpHead = tmpHead.next;
             }
         }
         

@@ -1,0 +1,63 @@
+/*
+A valid encoding of an array of words is any reference string s and array of indices indices such that:
+
+words.length == indices.length
+The reference string s ends with the '#' character.
+For each index indices[i], the substring of s starting from indices[i] and up to (but not including) the next '#' character is equal to words[i].
+Given an array of words, return the length of the shortest reference string s possible of any valid encoding of words.
+
+Example 1:
+Input: words = ["time", "me", "bell"]
+Output: 10
+Explanation: A valid encoding would be s = "time#bell#" and indices = [0, 2, 5].
+words[0] = "time", the substring of s starting from indices[0] = 0 to the next '#' is underlined in "time#bell#"
+words[1] = "me", the substring of s starting from indices[1] = 2 to the next '#' is underlined in "time#bell#"
+words[2] = "bell", the substring of s starting from indices[2] = 5 to the next '#' is underlined in "time#bell#"
+
+Example 2:
+Input: words = ["t"]
+Output: 2
+Explanation: A valid encoding would be s = "t#" and indices = [0].
+*/
+class Solution {
+    public int minimumLengthEncoding(String[] words) {
+        // The reference string s ends with the '#' character.
+        // Therefore, a word must be same as suffix of one word
+        int res = 0;
+        TrieNode root = new TrieNode();
+        Map<TrieNode, Integer> cache = new HashMap<>();
+        for(int j = 0 ; j < words.length; j++) {
+            TrieNode curTrie = root;
+            for(int i = words[j].length() - 1; i >= 0; i--) {
+                curTrie = curTrie.getChildNode(words[j].charAt(i));
+            }
+            cache.put(curTrie, j);
+        }
+
+        for(TrieNode curTrieNode : cache.keySet()) {
+            if(curTrieNode.count == 0) {
+                res = res + words[cache.get(curTrieNode)].length() + 1;
+            }
+        }
+        
+        
+        return res;
+    }
+    
+    public class TrieNode {
+        TrieNode[] children;
+        int count;
+        public TrieNode() {
+            children = new TrieNode[26];
+            count = 0;
+        }
+        
+        private TrieNode getChildNode(char c) {
+            if(children[c - 'a'] == null) {
+                children[c - 'a'] = new TrieNode();
+                count++;
+            }
+            return children[c - 'a'];
+        }
+    }
+}

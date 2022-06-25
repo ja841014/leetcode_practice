@@ -17,31 +17,43 @@ Input: nums = [3,2,20,1,1,3], x = 10
 Output: 5
 Explanation: The optimal solution is to remove the last three elements and the first two elements (5 operations in total) to reduce x to zero.
 */
+/*
+we cannot copy the input array twice becasuse it will encounter
+this edge case
+[1,1]
+3
+
+*/
 class Solution {
-    
     public int minOperations(int[] nums, int x) {
-        // find the maximum length subarray
-        int maxSize = -1;
         int sum = 0;
         for(int i : nums) {
             sum += i;
         }
         int target = sum - x;
-        
-        int currentSum = 0;
-        int left = 0;
-        for(int right = 0; right < nums.length; right++) {
-            currentSum = currentSum + nums[right];
-            while(currentSum > target && left <= right) {
-                currentSum = currentSum - nums[left];
-                left++;
-            }
-            if(currentSum == target) {
-                maxSize = Math.max(maxSize, right - left + 1);
+        if(target < 0) {
+            return -1;
+        }
+        // now we want find the maximum sub Array
+        int rightPtr = 0;
+        int leftPtr = 0;
+        int curSum = 0;
+        int maxLengthArr = Integer.MIN_VALUE;
+        while(rightPtr < nums.length) {
+            
+            curSum = curSum + nums[rightPtr];
+            
+            while(leftPtr <= rightPtr && curSum > target ) {
+                curSum = curSum - nums[leftPtr];
+                leftPtr++;
             }
             
+            if(curSum == target) {
+                maxLengthArr = Math.max(maxLengthArr,rightPtr - leftPtr + 1);
+            }
+            
+            rightPtr++;
         }
-        return maxSize == -1 ? -1 : nums.length - maxSize;
+        return maxLengthArr == Integer.MIN_VALUE ? -1 :  nums.length - maxLengthArr;
     }
-   
 }

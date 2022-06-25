@@ -1,0 +1,51 @@
+/*
+Given a string array words, return the maximum value of length(word[i]) * length(word[j]) where the two words do not share common letters. If no such two words exist, return 0.
+
+Example 1:
+
+Input: words = ["abcw","baz","foo","bar","xtfn","abcdef"]
+Output: 16
+Explanation: The two words can be "abcw", "xtfn".
+Example 2:
+
+Input: words = ["a","ab","abc","d","cd","bcd","abcd"]
+Output: 4
+Explanation: The two words can be "ab", "cd".
+Example 3:
+
+Input: words = ["a","aa","aaa","aaaa"]
+Output: 0
+Explanation: No such pair of words.
+*/
+class Solution {
+    public int maxProduct(String[] words) {
+        int inputSize = words.length;
+        int[] maskVal = new int[inputSize]; 
+        int[] len = new int[inputSize];
+        
+        for(int i = 0; i < inputSize; i++) {
+            
+            int bitMask = 0;
+            
+            for(char c : words[i].toCharArray()) {
+                //                  讓 1 往左移x位
+                bitMask = bitMask | (1 << ( (int)c - (int)'a' ));
+            }
+            maskVal[i] = bitMask;
+            len[i] = words[i].length();
+        }
+        
+        int maxVal = 0;
+        for (int i = 0; i < inputSize; ++i){
+            for (int j = i + 1; j < inputSize; ++j) {
+                // if the two string do not have same character
+                if ((maskVal[i] & maskVal[j]) == 0) {
+                    maxVal = Math.max(maxVal, len[i] * len[j]);
+                }
+            }
+        }
+ 
+        return maxVal;
+        
+    }
+}

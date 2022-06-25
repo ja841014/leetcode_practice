@@ -10,6 +10,7 @@ class Solution {
         for(int totalNode = 2; totalNode <= n; totalNode++) {
             // every node can be a root node
             for(int root = 1; root <= totalNode; root++) {
+		// 1 2 3 4 root(5) 6 7 8 9...
                                             //  left subtree * right subtree
                 dp[totalNode] = dp[totalNode] + dp[root - 1] * dp[totalNode - root];
             }

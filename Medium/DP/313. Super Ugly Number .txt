@@ -1,0 +1,31 @@
+class Solution {
+    public int nthSuperUglyNumber(int n, int[] primes) {
+        // this 0 array store the number from small to big
+        int[] resDP = new int[n];
+        // 每個primes裡面的值用了幾次
+        int[] freq = new int[primes.length];
+        // this one is base case index 0 as 1
+        resDP[0] = 1;
+        // so we start from 1
+        for(int i = 1; i < n; i++) {
+            // this one is base case
+            int min = resDP[freq[0]] * primes[0];
+            // so we start at 1
+            for(int j = 1; j < primes.length; j++) {
+                int curVal = resDP[freq[j]] * primes[j];
+                if(min > curVal) {
+                    min = curVal;
+                }
+            }
+            // this step is uesd to avoid duplicate calculation
+            for(int j = 0; j < primes.length; j++) {
+                if(min == resDP[freq[j]] * primes[j]) {
+                    freq[j]++;
+                }
+            }
+            resDP[i] = min;
+        }
+        
+        return resDP[n - 1];
+    }
+}

@@ -21,28 +21,26 @@ Follow up: Solve the problem if repeated values on the tree are allowed.
 
 class Solution {
     public final TreeNode getTargetCopy(final TreeNode original, final TreeNode cloned, final TreeNode target) {
-        Queue<TreeNode> org = new LinkedList<>();
-        Queue<TreeNode> clone = new LinkedList<>();
-        org.offer(original);
-        clone.offer(cloned);
+        return dfsFindNode(original, cloned, target);
+    }
+    
+    private TreeNode dfsFindNode(TreeNode original, TreeNode cloned, TreeNode target) {
         
-        while(!org.isEmpty()) {
-            int size = org.size();
-            for(int i = 0; i < size; i++) {
-                TreeNode orgCurr = org.poll();
-                TreeNode cloneCurr = clone.poll();
-                if(orgCurr == target) {
-                    return cloneCurr;
-                }
-                if(orgCurr.left != null) {
-                    org.offer(orgCurr.left);
-                    clone.offer(cloneCurr.left);
-                }
-                if(orgCurr.right != null) {
-                    org.offer(orgCurr.right);
-                    clone.offer(cloneCurr.right);
-                }
-            }
+        if(original == null) {
+            return null;
+        }
+        if(original.equals(target)) {
+            return cloned;
+        }
+        
+        TreeNode left = dfsFindNode(original.left, cloned.left, target);
+        TreeNode right = dfsFindNode(original.right, cloned.right, target);
+        
+        if(left != null) {
+            return left;
+        }
+        else if(right != null) {
+            return right;
         }
         return null;
     }
