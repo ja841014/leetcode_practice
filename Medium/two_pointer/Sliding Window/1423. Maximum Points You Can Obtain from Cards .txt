@@ -50,3 +50,39 @@ class Solution {
         return accumulateArray[accumulateArray.length - 1] - result;
     }
 }
+/*
+class Solution {
+    public int maxScore(int[] cardPoints, int k) {
+        // Find window of minimum value;
+        int totalSum = 0;
+        int windowSize = cardPoints.length - k;
+        int leftPtr = 0;
+        int rightPtr = 0;
+        int curWindowSize = 0;
+        int curWindowVal = 0;
+        int res = Integer.MAX_VALUE;
+        for(int i : cardPoints) {
+            totalSum += i;
+        }
+        if(leftPtr == windowSize) {
+            return totalSum;
+        }
+        while(leftPtr <= k && rightPtr < cardPoints.length ) {
+            if(curWindowSize == windowSize) {
+                res = Math.min(res, curWindowVal);
+                curWindowVal = curWindowVal - cardPoints[leftPtr] + cardPoints[rightPtr];
+                leftPtr++;
+                
+            }
+            else {
+                curWindowVal = curWindowVal + cardPoints[rightPtr];
+                curWindowSize++;
+            }
+            
+            rightPtr++;
+        }
+        res = Math.min(res, curWindowVal);
+        return totalSum - res;
+    }
+}
+*/
