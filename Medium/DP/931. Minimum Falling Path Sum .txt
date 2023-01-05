@@ -1,46 +1,46 @@
-/*
-Given a square array of integers A, we want the minimum sum of a falling path through A.
-A falling path starts at any element in the first row, and chooses one element from each row.  The next row's choice must be in a column that is different from the previous row's column by at most one.
+/**
+Given an n x n array of integers matrix, return the minimum sum of any falling path through matrix.
+A falling path starts at any element in the first row and chooses the element in the next row that is either directly below or diagonally left/right. Specifically, the next element from position (row, col) will be (row + 1, col - 1), (row + 1, col), or (row + 1, col + 1).
+
 Example 1:
-Input: [[1,2,3],[4,5,6],[7,8,9]]
-Output: 12
-Explanation: 
-The possible falling paths are:
-[1,4,7], [1,4,8], [1,5,7], [1,5,8], [1,5,9]
-[2,4,7], [2,4,8], [2,5,7], [2,5,8], [2,5,9], [2,6,8], [2,6,9]
-[3,5,7], [3,5,8], [3,5,9], [3,6,8], [3,6,9]
-*/
+Input: matrix = [[2,1,3],[6,5,4],[7,8,9]]
+Output: 13
+Explanation: There are two falling paths with a minimum sum as shown.
+
+Example 2:
+Input: matrix = [[-19,57],[-40,-5]]
+Output: -59
+Explanation: The falling path with a minimum sum is shown.
+ */
 class Solution {
-    public int minFallingPathSum(int[][] A) {
-//         int[][] table = new int[A.length][A[0].length];
-//         for(int[] arr : table) {
-//             Arrays.fill(arr, Integer.MAX_VALUE);
-//         }
-        
-//         for(int y = 0; y < A[0].length; y++) {
-//             table[A.length - 1][y] = A[A.length - 1][y];
-//         }
-        
-        for(int x = A.length - 2; x >= 0; x--) {
-            for(int y = 0; y < A[0].length; y++) {
-                if(y == 0) {
-                    // if we have another table, we can wrote like this
-            //table[x][y] = Math.min(table[x + 1][y] + A[x][y], table[x + 1][y + 1] + A[x][y]);
-                    A[x][y] = Math.min(A[x + 1][y] , A[x + 1][y + 1] ) + A[x][y];
+    public int minFallingPathSum(int[][] matrix) {
+        /**
+        In this dynamic programming problem
+        we only consider the previous level value(upper left, upper, upeer right)
+        and take the smallest one and add to current value.
+         */
+        int size = matrix.length;
+        int res = Integer.MAX_VALUE;
+        for(int i = 1; i < size; i++) {
+            for(int j = 0; j < size; j++) {
+                if(j == 0) {
+                    matrix[i][j] = matrix[i][j] + Math.min(matrix[i - 1][j], matrix[i - 1][j + 1]);
                 }
-                else if(y == A[0].length - 1) {
-                    A[x][y] = Math.min(A[x + 1][y - 1] , A[x + 1][y] ) + A[x][y];
+                else if(j == size - 1) {
+                    matrix[i][j] = matrix[i][j] + Math.min(matrix[i - 1][j - 1], matrix[i - 1][j]);
                 }
                 else {
-                    A[x][y] = Math.min(A[x + 1][y - 1] , Math.min(A[x + 1][y] , A[x + 1][y + 1]  )) + A[x][y];
+                    matrix[i][j] = matrix[i][j] + Math.min( Math.min(matrix[i - 1][j - 1], matrix[i - 1][j]), matrix[i - 1][j + 1]);
                 }
             }
         }
-        
-        int min_ = Integer.MAX_VALUE;
-        for(int x = 0; x < A.length; x++) {
-            min_ = Math.min(min_, A[0][x]);
+
+        for(int i = 0; i < size; i++) {
+            res = Math.min(res, matrix[size - 1][i]);
         }
-        return min_;
+        return res;
     }
 }
+/**
+
+ */

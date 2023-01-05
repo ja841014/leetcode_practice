@@ -1,0 +1,107 @@
+/**
+You are given a string s and a robot that currently holds an empty string t. Apply one of the following operations until s and t are both empty:
+Remove the first character of a string s and give it to the robot. The robot will append this character to the string t.
+Remove the last character of a string t and give it to the robot. The robot will write this character on paper.
+Return the lexicographically smallest string that can be written on the paper.
+
+Example 1:
+Input: s = "zza"
+Output: "azz"
+Explanation: Let p denote the written string.
+Initially p="", s="zza", t="".
+Perform first operation three times p="", s="", t="zza".
+Perform second operation three times p="azz", s="", t="".
+
+Example 2:
+Input: s = "bac"
+Output: "abc"
+Explanation: Let p denote the written string.
+Perform first operation twice p="", s="c", t="ba". 
+Perform second operation twice p="ab", s="c", t="". 
+Perform first operation p="ab", s="", t="c". 
+Perform second operation p="abc", s="", t="".
+
+Example 3:
+Input: s = "bdda"
+Output: "addb"
+Explanation: Let p denote the written string.
+Initially p="", s="bdda", t="".
+Perform first operation four times p="", s="", t="bdda".
+Perform second operation four times p="addb", s="", t="".
+ */
+class Solution {
+    public String robotWithString(String s) {
+        /**
+        dddacccacba
+
+        bydizfve
+
+        bd
+        y
+         */
+        StringBuilder res = new StringBuilder();
+        /**
+        cache[] is used for record the smallest character after current index
+         */
+        int[] cache = new int[s.length()];
+        cache[s.length() - 1] = s.charAt(s.length() - 1) - 'a';
+
+        for(int i = s.length() - 2; i >= 0; i--) {
+            int curSmallestChar = cache[i + 1];
+            if(curSmallestChar < s.charAt(i) - 'a') {
+                cache[i] = curSmallestChar;
+            }
+            else {
+                cache[i] = s.charAt(i) - 'a';
+            }
+        }
+
+        Stack<Character> st = new Stack<>();
+        for(int i = 0; i < s.length(); i++) {
+            char curChar = s.charAt(i);
+            // the minimum character in this segment and stack need to empty
+            /** if stack is not empty
+            ex:     bac
+            step 1:
+                stack: b
+                res  : 
+            Step 2:
+                stack: b
+                res  : a
+            STEP 3:
+                stack: b
+                res  : ac
+            STEP 4:
+                stack:
+                res  : acb (wrong)
+             */
+            if(curChar - 'a' == cache[i] && st.isEmpty()) {
+                res.append(curChar);
+            }
+            /** 
+            ex: d...kb
+            cache   b
+            ori..   k
+            peek.   d
+             */
+            // all character which is samller than cache value need to push into stack for future process
+            else if(st.isEmpty() || cache[i] < st.peek() - 'a') {
+                st.add(curChar);
+            }
+            else {
+                while(!st.isEmpty() && st.peek() - 'a' <= cache[i]) {
+                    res.append(st.pop());
+                }
+                st.add(curChar);
+            }
+        }
+
+        while(!st.isEmpty()) {
+            res.append(st.pop());
+        }
+
+
+        return res.toString();
+
+    }
+}

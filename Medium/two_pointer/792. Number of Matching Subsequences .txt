@@ -1,44 +1,57 @@
-/*Given string S and a dictionary of words words, find the number of words[i] that is a subsequence of S.
+/*
+Given a string s and an array of strings words, return the number of words[i] that is a subsequence of s.
+A subsequence of a string is a new string generated from the original string with some characters (can be none) deleted without changing the relative order of the remaining characters.
+For example, "ace" is a subsequence of "abcde".
+ 
 
-Example :
-Input: 
-S = "abcde"
-words = ["a", "bb", "acd", "ace"]
+Example 1:
+Input: s = "abcde", words = ["a","bb","acd","ace"]
 Output: 3
-Explanation: There are three words in words that are a subsequence of S: "a", "acd", "ace". */
+Explanation: There are three strings in words that are a subsequence of s: "a", "acd", "ace".
+
+Example 2:
+Input: s = "dsahjpjauf", words = ["ahjpjau","ja","ahbwzgqnuk","tnmlanowax"]
+Output: 2
+*/
 class Solution {
     public int numMatchingSubseq(String s, String[] words) {
-        int count = 0;
-        List<Node>[] table = new ArrayList[26];
-        // we have to init this first
+        
+        int res = 0;
+        List<Node>[] cache = new ArrayList[26];
+        // initialize
         for(int i = 0; i < 26; i++) {
-            table[i] = new ArrayList<>();
+            cache[i] = new ArrayList<>();
         }
-        // we put all the words into ls first based on their first char 
+        
         for(String str: words) {
-            char firstWord = str.charAt(0);
-            table[firstWord - 'a'].add(new Node(str, 0));
+            char firstCharacter = str.charAt(0);
+            // build up base case
+            // Node: {str: original string, index: 0}
+            cache[firstCharacter - 'a'].add(new Node(str, 0));
         }
-        // This is a very brilliant method, we do not need compare the original str and the words in expilcit way
+        
+        // This is a very brilliant method, we do not need compare the original str and the words in expilcit way, we compare parallel
+        // traverse "s"
         for(int i = 0; i < s.length(); i++) {
-            char currChar = s.charAt(i);
-            List<Node> oldBucket = table[currChar - 'a'];
-            // give our table a new address.
-            table[currChar - 'a'] = new ArrayList<>();
+            char curChar = s.charAt(i);
             
-            for(Node node : oldBucket) {
-                node.index++;
-                // if this is the last index => our compare process finish and the string is a sunstring
-                if(node.index == node.str.length()) {
-                    count++;
+            List<Node> oldBucket = cache[curChar - 'a'];
+            cache[curChar - 'a'] = new ArrayList<>();
+            
+            for(Node curNode : oldBucket) {
+                curNode.index++;
+                // if we found that the length equals to the index => means this words is target string subsequence
+                if(curNode.isStrSizeSameAsIdx()) {
+                    res++;
                 }
                 else {
-                    table[node.str.charAt(node.index) - 'a'].add(node);
+                    char nextChar = curNode.getChar(curNode.index);
+                    cache[nextChar - 'a'].add(curNode);
                 }
             }
         }
-        
-        return count;
+        return res;
+
     }
     
     public class Node {
@@ -47,6 +60,14 @@ class Solution {
         public Node(String str, int index) {
             this.str = str;
             this.index = index;
+        }
+        
+        public char getChar(int index) {
+            return str.charAt(index);
+        }
+        
+        public boolean isStrSizeSameAsIdx() {
+            return str.length() == index;
         }
     }
 //     public int numMatchingSubseq(String s, String[] words) {

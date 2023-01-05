@@ -1,3 +1,4 @@
+// Same as 1405
 // First, build up the HashMap of character and frequency
 // Second, build up the maxHeap based on HashMap keySet => MaxHeap.addAll(Map.keySet());
 // Third, each loop pop out two element from Maxheap and add in the the StringBuilder
@@ -12,6 +13,50 @@
 // Example 2:
 // Input: S = "aaab"
 // Output: ""
+
+class Solution {
+    public String reorganizeString(String s) {
+        char[] charArr = s.toCharArray();
+        int[] freqArr = new int[26];
+        char[] res = new char[s.length()];
+        int maxFreq = Integer.MIN_VALUE;
+        char maxChar = '_';
+        
+        for(char c : charArr) {
+            int charToInt = c - 'a';
+            freqArr[charToInt]++;
+            if(freqArr[charToInt] > maxFreq) {
+                maxFreq = freqArr[charToInt];
+                maxChar = c;
+            }
+        }
+        
+        if(maxFreq > (s.length() + 1) / 2) {
+            return "";
+        }
+        
+        int idx = 0;
+        for(int i = 0; i < maxFreq; i++) {
+            res[idx] = maxChar;
+            idx+=2;
+            freqArr[maxChar - 'a']--;
+        }
+        
+        for(int i = 0; i < 26; i++) {
+            while(freqArr[i] > 0) {
+                if(idx >= s.length()) {
+                    idx = 1;
+                }
+                res[idx] = (char)(i + 'a');
+                idx += 2;
+                freqArr[i]--;
+            }
+        }
+        return String.valueOf(res);
+        
+        
+    }
+}
 class Solution {
     public String reorganizeString(String S) {
         // build up the Map

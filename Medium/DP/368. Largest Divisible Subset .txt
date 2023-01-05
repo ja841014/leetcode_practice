@@ -15,46 +15,44 @@ Output: [1,2,4,8]
 */
 class Solution {
     public List<Integer> largestDivisibleSubset(int[] nums) {
-        
         Arrays.sort(nums);
-        int[] table = new int[nums.length];
-        int maxSize = 0;
-        int maxIndex = 0;
         
-        // every element is its factor
-        Arrays.fill(table, 1);
-        // first step: build up the count table, use the bigger one to check the smaller whether % it == 0 or not.
-        for(int i = 1; i < nums.length; i++) {
+        int size = nums.length; 
+        int maxValIdx = 0;
+        int maxFreqVal = Integer.MIN_VALUE;
+        int[] countTable = new int[size];
+        countTable[0]  = 1;
+        
+        
+        for(int i = 1; i < size; i++) {
+            countTable[i] = 1; 
             for(int j = 0; j < i; j++) {
-                if(nums[i] % nums[j] == 0 ) {
-                    // we want to find the biggest subset
-                    table[i] = Math.max(table[i], table[j] + 1);
-                    if(maxSize < table[i]) {
-                        maxSize = table[i];
-                        maxIndex = i;
-                    }
+                if(nums[i] % nums[j] != 0 ) { continue; }
+                // this "count table" is not count for how many element that can be mod by current element
+                // thus table record the "longest mod chain"
+                countTable[i] = Math.max(countTable[i], countTable[j] + 1);
+                if(countTable[i] > maxFreqVal)  {
+                    maxValIdx = i;
+                    maxFreqVal = countTable[i];
                 }
             }
         }
         
         
-        List<Integer> ls = new ArrayList<>();
-        int curVal = nums[maxIndex];
-        int curCount = table[maxIndex];
-        curCount--;
-        ls.add(curVal);
-        for(int i = maxIndex - 1; i >= 0; i--) {
+        List<Integer> res = new ArrayList<>();
+        res.add(nums[maxValIdx]);
+        for(int i = maxValIdx - 1; i >= 0; i--) {
             // we need to use these two conditions two make sure the element is fit in out ArrayList
             // for exampla: [4,8,10,240] if we do not have "currentCount == count[i])" we will get [240, 10]
             // But, [4,8,240] is the answer.
-            if(curVal % nums[i] == 0 && curCount == table[i]) {
-                // if they can fit smaller nember than bigger number can fit it either 
-                curVal = nums[i];
-                curCount--;
-                ls.add(nums[i]);
+            // That is, if current element can mod by max value && current "mod chain" is same as maxChain - 1
+            // and we have to update the "maxFreqVal" and "maxValIdx"
+            if(nums[maxValIdx] % nums[i] == 0 && countTable[i] == maxFreqVal - 1) {
+                maxFreqVal--;
+                maxValIdx = i;
+                res.add(nums[i]);
             }
         }
-       
-        return ls;
+        return res;
     }
 }

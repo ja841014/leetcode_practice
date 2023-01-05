@@ -1,0 +1,64 @@
+/**
+There is a bi-directional graph with n vertices, where each vertex is labeled from 0 to n - 1 (inclusive). The edges in the graph are represented as a 2D integer array edges, where each edges[i] = [ui, vi] denotes a bi-directional edge between vertex ui and vertex vi. Every vertex pair is connected by at most one edge, and no vertex has an edge to itself.
+You want to determine if there is a valid path that exists from vertex source to vertex destination.
+Given edges and the integers n, source, and destination, return true if there is a valid path from source to destination, or false otherwise.
+
+Example 1:
+Input: n = 3, edges = [[0,1],[1,2],[2,0]], source = 0, destination = 2
+Output: true
+Explanation: There are two paths from vertex 0 to vertex 2:
+- 0 → 1 → 2
+- 0 → 2
+
+Example 2:
+Input: n = 6, edges = [[0,1],[0,2],[3,5],[5,4],[4,3]], source = 0, destination = 5
+Output: false
+Explanation: There is no path from vertex 0 to vertex 5.
+
+could use union find
+ */
+class Solution {
+    public boolean validPath(int n, int[][] edges, int source, int destination) {
+        Map<Integer, List<Integer>> map = new HashMap<>();
+        buildMap(map, edges);
+        return bfs(map, source, destination);
+    }
+
+    private boolean bfs(Map<Integer, List<Integer>> map, int source, int destination) {
+        Deque<Integer> q = new LinkedList<>();
+        Set<Integer> seen = new HashSet<>();
+        seen.add(source);
+        q.offer(source);
+
+        while(!q.isEmpty()) {
+            int size = q.size();
+            for(int i = 0; i < size; i++) {
+                int curNode = q.poll();
+                if(curNode == destination) {
+                    return true;
+                }
+                for(int nextNode : map.get(curNode)) {
+                    if(seen.contains(nextNode)) {
+                        continue;
+                    }
+                    q.add(nextNode);
+                    seen.add(nextNode);
+                }
+            }
+        }
+        return false;
+    }
+
+    private void buildMap(Map<Integer, List<Integer>> map, int[][] edges) {
+        for(int i = 0; i < edges.length; i++) {
+            if(!map.containsKey(edges[i][0])) {
+                map.put(edges[i][0], new ArrayList<>());
+            }
+            if(!map.containsKey(edges[i][1])) {
+                map.put(edges[i][1], new ArrayList<>());
+            }
+            map.get(edges[i][0]).add(edges[i][1]);
+            map.get(edges[i][1]).add(edges[i][0]);
+        }
+    }
+}

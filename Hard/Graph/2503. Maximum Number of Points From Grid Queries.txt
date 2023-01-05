@@ -1,0 +1,114 @@
+/**
+You are given an m x n integer matrix grid and an array queries of size k.
+Find an array answer of size k such that for each integer queres[i] you start in the top left cell of the matrix and repeat the following process:
+If queries[i] is strictly greater than the value of the current cell that you are in, then you get one point if it is your first time visiting this cell, and you can move to any adjacent cell in all 4 directions: up, down, left, and right.
+Otherwise, you do not get any points, and you end this process.
+After the process, answer[i] is the maximum number of points you can get. Note that for each query you are allowed to visit the same cell multiple times.
+Return the resulting array answer.
+
+Example 1:
+Input: grid = [[1,2,3],[2,5,7],[3,5,1]], queries = [5,6,2]
+Output: [5,8,1]
+Explanation: The diagrams above show which cells we visit to get points for each query.
+
+Example 2:
+Input: grid = [[5,2,1],[1,1,2]], queries = [3]
+Output: [0]
+Explanation: We can not get any points because the value of the top left cell is already greater than or equal to 3.
+ */
+class Solution {
+    int[][] DIR = new int[][]{{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+
+    public int[] maxPoints(int[][] grid, int[] queries) {
+
+        int[] resTmp = new int[queries.length];
+        int[] res = new int[queries.length];
+        
+        Map<Integer,List<Integer>> map = new HashMap<>();
+
+        buildMappingBetweenOrgQueryAndSortQuery(queries, map);
+
+        Arrays.sort(queries);
+        // we could run one time bfs to solve all queries
+        BFS(grid, queries, resTmp);
+        
+        buildResult(queries, map, res, resTmp);
+
+        return res;
+    }
+    
+    private void BFS(int[][] grid, int[] queries, int[] res) {
+        int cnt = 0;
+        int queryIdx = 0;
+
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> (a[2] - b[2]));
+        boolean[][] seen = new boolean[grid.length][grid[0].length];
+        
+        pq.add(new int[]{0 , 0, grid[0][0]});
+        seen[0][0] = true;
+        
+        while(!pq.isEmpty()) {
+            int[] curLoc = pq.poll();
+            // this is threshold, if othes queries do not bigger than current value.
+            // we can directly assign the last "cnt" for it. 
+            while(queryIdx < queries.length && curLoc[2] >= queries[queryIdx]) {
+                res[queryIdx] = cnt;
+                queryIdx++;
+            }
+            // if out of bound break the while loop
+            if(queryIdx >= queries.length ) {
+                return;
+            }
+      
+            cnt++;
+            
+            for(int[] dir: DIR) {
+                int newRow = curLoc[0] + dir[0];
+                int newCol = curLoc[1] + dir[1];
+                if(!isValid(grid.length, grid[0].length, newRow, newCol) || seen[newRow][newCol] == true) {
+                    continue;
+                }
+                pq.add(new int[]{newRow, newCol, grid[newRow][newCol]});
+                seen[newRow][newCol] = true;
+            }
+            
+        }
+        // this line is very important, do not forget
+        // the situation os that you finish the grid traverse, but there still have unprocess queries
+        // so we put rest of queries equal to last value
+        while(queryIdx < queries.length ) {
+            res[queryIdx] = cnt;
+            queryIdx++;
+        }
+        
+    }
+    
+    private void buildResult(int[] queries, Map<Integer, List<Integer>> map, int[] res, int[] resTmp) {
+        for(int i = 0; i <queries.length; i++) {
+            if(!map.containsKey(queries[i])) {
+                continue;
+            }
+            List<Integer> curQueryIdxs = map.get(queries[i]);
+            for(int idx : curQueryIdxs) {
+                res[idx] = resTmp[i];
+            }
+            map.remove(queries[i]);
+        }
+    }
+
+    private void buildMappingBetweenOrgQueryAndSortQuery(int[] queries, Map<Integer, List<Integer>> map) {
+        for(int i = 0; i < queries.length; i++) {
+            if(!map.containsKey(queries[i]) ) {
+                map.put(queries[i], new ArrayList<>());
+            }
+            map.get(queries[i]).add(i);
+        }
+    }
+
+    private boolean isValid(int gridRow, int gridCol, int nextRow, int nextCol) {
+        if(nextRow < 0 || nextRow >= gridRow || nextCol < 0 || nextCol >= gridCol) {
+            return false;
+        }
+        return true;
+    }
+}

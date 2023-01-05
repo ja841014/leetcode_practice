@@ -1,0 +1,71 @@
+/**
+A permutation perm of n integers of all the integers in the range [1, n] can be represented as a string s of length n - 1 where:
+
+s[i] == 'I' if perm[i] < perm[i + 1], and
+s[i] == 'D' if perm[i] > perm[i + 1].
+Given a string s, reconstruct the lexicographically smallest permutation perm and return it.
+
+Example 1:
+Input: s = "I"
+Output: [1,2]
+Explanation: [1,2] is the only legal permutation that can represented by s, where the number 1 and 2 construct an increasing relationship.
+
+Example 2:
+Input: s = "DI"
+Output: [2,1,3]
+Explanation: Both [2,1,3] and [3,1,2] can be represented as "DI", but since we want to find the smallest lexicographical permutation, you should return [2,1,3]
+ */
+class Solution {
+    /**
+    "DDDI"  arrIdx  val stack
+              0      1   ""
+              1      1   "0"
+              2      1   "01"
+              3      1   "012"
+    "***1"    4      2   "012"
+    "**21"    4      3   "01"
+    "*321"    4      4   "0" 
+    "4321"    4      5   ""  
+    "43215"   5      6   ""
+     */
+    public int[] findPermutation(String s) {
+        int size = s.length();
+        int[] res = new int[size + 1];
+        char[] arr = s.toCharArray();
+        Deque<Integer> st = new ArrayDeque<>();
+
+        int arrIdx = 0;
+        int val = 1;
+
+        while(arrIdx < size) {
+            if(arr[arrIdx] == 'D') {
+                st.push(arrIdx);
+                arrIdx++;
+                continue;
+            }
+            // if arr[arrIdx] == 'I'
+            res[arrIdx] = val;
+            arrIdx++;
+            val++;
+
+            if(!st.isEmpty()) {
+                while(!st.isEmpty()) {
+                    res[st.poll()] = val;
+                    val++;
+                }
+            }
+        }
+        if(arrIdx < res.length) {
+            res[arrIdx] = val;
+            arrIdx++;
+            val++;
+        }
+        while(!st.isEmpty()){
+            res[st.pop()] = val++;
+        }
+        
+
+        return res;
+    }
+}
+

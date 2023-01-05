@@ -1,0 +1,118 @@
+/*
+There is a long table with a line of plates and candles arranged on top of it. You are given a 0-indexed string s consisting of characters '*' and '|' only, where a '*' represents a plate and a '|' represents a candle.
+You are also given a 0-indexed 2D integer array queries where queries[i] = [lefti, righti] denotes the substring s[lefti...righti] (inclusive). For each query, you need to find the number of plates between candles that are in the substring. A plate is considered between candles if there is at least one candle to its left and at least one candle to its right in the substring.
+For example, s = "||**||**|*", and a query [3, 8] denotes the substring "*||**|". The number of plates between candles in this substring is 2, as each of the two plates has at least one candle in the substring to its left and right.
+Return an integer array answer where answer[i] is the answer to the ith query.
+
+Exmpale 1:
+Input: s = "**|**|***|", queries = [[2,5],[5,9]]
+Output: [2,3]
+Explanation:
+- queries[0] has two plates between candles.
+- queries[1] has three plates between candles.
+
+Example 2:
+ex-2
+Input: s = "***|**|*****|**||**|*", queries = [[1,17],[4,5],[14,17],[5,11],[15,16]]
+Output: [9,0,0,0,0]
+Explanation:
+- queries[0] has nine plates between candles.
+- The other queries have zero plates between candles.
+*/
+
+/*
+Corner case:
+"||*"
+[[2,2]]
+"*|*"
+[[2,2]]
+"*||*"
+[[0,0],[1,1],[2,2]]
+"**|**|***|"
+[[3,4],[4,6],[2,8],[2,9]]
+"***|**|*****|**||**|*"
+[[1,17],[4,5],[14,17],[5,11],[15,16],[0,3],[0,1],[0,20]]
+*/
+class Solution {
+    public int[] platesBetweenCandles(String s, int[][] queries) {
+        int[] res = new int[queries.length];
+        Node[] prefixSum = new Node[s.length() + 1];
+        List<Integer> candlesPos = new ArrayList<>();
+        candlesPos.add(-1);
+        
+        prefixSum[0] = new Node(0, 0, false);
+        for(int i = 0; i < s.length(); i++) {
+            if(s.charAt(i) == '*') {
+                // if current object is plate, candle number stay same, plates number + 1
+                prefixSum[i + 1] = new Node(prefixSum[i].accumCandle, prefixSum[i].accumulatePlates + 1,false);
+            }
+            else {
+                // if current object is candle, candle number + 1, plates number stay same
+                prefixSum[i + 1] = new Node(prefixSum[i].accumCandle + 1, prefixSum[i].accumulatePlates, true);
+                candlesPos.add(i);
+            }
+        }
+        candlesPos.add(-1);
+        
+        List<Integer>  ls = new ArrayList<>();
+        for(int i = 0; i < queries.length; i++) {
+            int[] curQuery = queries[i];
+            int start = curQuery[0] + 1;
+            int end = curQuery[1]  + 1;
+            
+            int satrtPlate = findStartPlate(prefixSum, candlesPos, start);
+            if(satrtPlate  == -1) {
+                res[i] = 0;
+                continue;
+            }
+            
+            int endPlate = findEndPlate(prefixSum, candlesPos, end);
+            
+            if(endPlate - satrtPlate < 0) {
+                res[i] = 0;
+                continue;
+            }
+            
+            res[i] = endPlate - satrtPlate;
+            
+        }
+        return res;
+    }
+    
+    private int findEndPlate(Node[] prefixSum, List<Integer> candlesPos, int end) {
+        if(prefixSum[end].isCandle == false) {
+            int endCandleNum = prefixSum[end].accumCandle;
+            // this +1 is used to avoid -1, because , when "endCandleNum" = 0, means we do not meet the candle yet.
+            // then candlePosition take 0 as input will return -1
+            int endCandlePos = candlesPos.get(endCandleNum) + 1;
+            return prefixSum[endCandlePos].accumulatePlates;
+        }
+        return prefixSum[end].accumulatePlates;
+        
+    }
+    
+    private int findStartPlate(Node[] prefixSum, List<Integer> candlesPos, int start) {
+        if(prefixSum[start].isCandle == false ) {
+            int preCandleNum = prefixSum[start].accumCandle;
+            int startCandlePos = candlesPos.get(preCandleNum + 1);
+            if(candlesPos.get(preCandleNum + 1) == -1) {
+                return -1;
+            }
+            return prefixSum[startCandlePos].accumulatePlates;
+        }
+        
+        return prefixSum[start].accumulatePlates;
+        
+    }
+    public class Node {
+        int accumCandle;
+        int accumulatePlates;
+        boolean isCandle;
+        
+        public Node(int accumCandle, int accumulatePlates, boolean isCandle) {
+            this.accumCandle = accumCandle;
+            this.isCandle = isCandle;
+            this.accumulatePlates = accumulatePlates;
+        }
+    }
+}

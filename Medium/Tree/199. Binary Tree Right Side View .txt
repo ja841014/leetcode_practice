@@ -29,10 +29,41 @@ Explanation:
  */
 class Solution {
     public List<Integer> rightSideView(TreeNode root) {
+
+
+	List<Integer> ls = new ArrayList<>();
+        Queue<TreeNode> q = new LinkedList<>();
+        
+        if(root == null) {
+            return ls;
+        }
+        
+        q.add(root);
+        
+        while(!q.isEmpty()) {
+            int size = q.size();
+            
+            for(int i = 0; i < size; i++) {
+                TreeNode curNode = q.poll();
+                if(i == size - 1) {
+                    ls.add(curNode.val);
+                }
+                if(curNode.left != null) {
+                    q.add(curNode.left);
+                }
+                if(curNode.right != null) {
+                    q.add(curNode.right);
+                }
+            }
+            
+        }
+        return ls;
+	
         // List<Integer> ls = new ArrayList<>();
         // dfs(root, ls, 1);
         // return ls;
-        List<Integer> ls = new ArrayList<>();
+        /*
+	List<Integer> ls = new ArrayList<>();
         if(root == null) {
             return ls;
         }
@@ -69,7 +100,7 @@ class Solution {
             
         }
         
-        return ls;
+        return ls; */
     }
     
     
