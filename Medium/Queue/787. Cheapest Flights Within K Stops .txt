@@ -1,3 +1,110 @@
+/*
+There are n cities connected by some number of flights. You are given an array flights where flights[i] = [fromi, toi, pricei] indicates that there is a flight from city fromi to city toi with cost pricei.
+You are also given three integers src, dst, and k, return the cheapest price from src to dst with at most k stops. If there is no such route, return -1.
+
+Example 1:
+Input: n = 4, flights = [[0,1,100],[1,2,100],[2,0,100],[1,3,600],[2,3,200]], src = 0, dst = 3, k = 1
+Output: 700
+Explanation:
+The graph is shown above.
+The optimal path with at most 1 stop from city 0 to 3 is marked in red and has cost 100 + 600 = 700.
+Note that the path through cities [0,1,2,3] is cheaper but is invalid because it uses 2 stops.
+
+Example 2:
+Input: n = 3, flights = [[0,1,100],[1,2,100],[0,2,500]], src = 0, dst = 2, k = 1
+Output: 200
+Explanation:
+The graph is shown above.
+The optimal path with at most 1 stop from city 0 to 2 is marked in red and has cost 100 + 100 = 200.
+
+Example 3:
+Input: n = 3, flights = [[0,1,100],[1,2,100],[0,2,500]], src = 0, dst = 2, k = 0
+Output: 500
+Explanation:
+The graph is shown above.
+The optimal path with no stops from city 0 to 2 is marked in red and has cost 500.
+
+*/
+/**
+5
+[[4,1,1],[1,2,3],[0,3,2],[0,4,10],[3,1,1],[1,4,3]]
+2
+1
+1
+ */
+
+class Solution {
+    public int findCheapestPrice(int n, int[][] flights, int src, int dst, int k) {
+        Map<Integer, List<Node>> map = new HashMap<>();
+        buildMap(flights, map);
+
+        return Dijkstra(n, src, dst, map, k);
+    }
+
+    private void buildMap(int[][] flights, Map<Integer, List<Node>> map) {
+        for(int i = 0; i < flights.length; i++) {
+            if(!map.containsKey(flights[i][0])) {
+                map.put(flights[i][0], new ArrayList<>());
+            }
+            map.get(flights[i][0]).add(new Node(flights[i][1], flights[i][2]));
+        }
+    }
+
+    private int Dijkstra(int n, int src, int dst, Map<Integer, List<Node>> map, int stops) {
+        PriorityQueue<Flights> pq = new PriorityQueue<>((a, b) -> a.price - b.price);
+        int[] stopsNum = new int[n];
+        Arrays.fill(stopsNum, Integer.MAX_VALUE);
+        // source Loc, price, stopNum
+        pq.add(new Flights(src, 0, 0));
+         
+        while(!pq.isEmpty()) {
+            Flights curFlight = pq.poll();
+            // We have already encountered a path with a lower cost and fewer stops,
+            // or the number of stops exceeds the limit.
+            if(stopsNum[curFlight.start] < curFlight.steps || curFlight.steps > stops + 1) {
+                continue;
+            }
+
+            if(curFlight.start == dst) {
+                return curFlight.price;
+            }
+            
+            stopsNum[curFlight.start] = curFlight.steps;
+            
+            List<Node> nextFlights = map.get(curFlight.start);
+
+            if(nextFlights == null) {
+                continue;
+            }
+
+            for(Node nextFlight : nextFlights) {
+                pq.add(new Flights(nextFlight.end, nextFlight.price + curFlight.price, curFlight.steps + 1));
+            }
+        }
+        return -1;
+    }
+
+    public class Node {
+        int end;
+        int price;
+        public Node(int end, int price) {
+            this.end = end;
+            this.price = price;
+        }
+    }
+
+    public class Flights {
+        int start;
+        int price;
+        int steps;
+        public Flights(int start, int price, int steps) {
+            this.start = start;
+            this.price = price;
+            this.steps = steps;
+        }
+    }
+}
+
 // dijkstra
 class lesscompare implements Comparator<int[]> {
     public int compare(int[] a, int[] b) {

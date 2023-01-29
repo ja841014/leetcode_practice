@@ -1,0 +1,62 @@
+/**
+Given an integer array nums and an integer k, return the number of non-empty subarrays that have a sum divisible by k.
+A subarray is a contiguous part of an array.
+
+Example 1:
+Input: nums = [4,5,0,-2,-3,1], k = 5
+Output: 7
+Explanation: There are 7 subarrays with a sum divisible by k = 5:
+[4, 5, 0, -2, -3, 1], [5], [5, 0], [5, 0, -2, -3], [0], [0, -2, -3], [-2, -3]
+
+Example 2:
+Input: nums = [5], k = 9
+Output: 0
+ */
+/**
+remain
+    sum
+        4   5   0   -2  -3  1       k = 5
+4   4   .
+4   9   .   .
+4   9   .   .   .
+2   7   .   .   .   .
+4   4   .   .   .   .   .
+0   5   .   .   .   .   .   .
+
+Take remain = 4 as an exmpale,
+meet 4: count = 0 cache 1
+meet 5: count = 1 cache 2
+meet 0: count = 2 cache 3
+meet -3: count = 3 cache 4
+Therefore, 0 + 1 + 2 + 3 = 6
+C4 choose 2 = 4! / (2! * 2!) = 6
+
+We can get every combination by substract the prefix sum.
+ */
+class Solution {
+    public int subarraysDivByK(int[] nums, int k) {
+        Map<Integer, Integer> cache = new HashMap<>();
+        int sum = 0;
+        int res = 0;
+        // why we need this?
+        // because if the remainder is 0, then it can be counted by itself.
+        // it do not need to combine with other.
+        cache.put(0, 1);
+        for(int i = 0; i < nums.length; i++) {
+            sum += nums[i];
+            // [-1,2,9] will cause negative remainder. such as, -1
+            // if "sum" < 0 then sum % k will < 0, which is not we want.
+            // res += cache.getOrDefault(sum % k, 0);
+            // https://stackoverflow.com/questions/4412179/best-way-to-make-javas-modulus-behave-like-it-should-with-negative-numbers/4412200#4412200
+            int remain = (sum % k + k ) % k;
+            
+            res += cache.getOrDefault(remain, 0);
+            
+            cache.put(remain, cache.getOrDefault(remain, 0) + 1);
+        }
+        
+        return res;
+    }
+}
+
+
