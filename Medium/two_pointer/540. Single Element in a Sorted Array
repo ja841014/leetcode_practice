@@ -1,7 +1,63 @@
 /*
 You are given a sorted array consisting of only integers where every element appears exactly twice, except for one element which appears exactly once. Find this single element that appears only once.
 
- 
+O(logN) 
+class Solution {
+
+    public int singleNonDuplicate(int[] nums) {
+        return binarySearch(nums);
+
+    }
+
+    private int binarySearch(int[] nums) {
+        int right = nums.length - 1;
+        int left = 0;
+        
+        while(left < right) {
+            int mid = (right - left) / 2 + left;
+            // partner is on its right
+            // ..oooo44ooo..
+            //       x 
+            if(nums[mid] == nums[mid + 1]) {
+                
+                if(mid % 2 == 0) {
+                    // oooo44ooo
+                    //     x 
+                    // ex : (9 - 0) / 2 + 0 = (int)4
+                    left = mid + 2;
+                }
+                else {
+                    //ooooo44oooo
+                    //     x
+                    // ex: (11 - 0) / 2 + 0 = (int)5
+                    right = mid - 1;
+                }
+            }
+            else if(nums[mid] == nums[mid - 1]) {
+                // partner is on its left
+                // ..ooo44oooo..
+                //       x 
+                if(mid % 2 == 0) {
+                    // ooo44oooo
+                    //     x 
+                    // ex : (9 - 0) / 2 + 0 = (int)4
+                    right = mid - 2;
+                }
+                else {
+                    // oooo44ooooo
+                    //      x 
+                    // ex : (11 - 0) / 2 + 0 = (int)5
+                    left = mid + 1;
+                }
+            }
+            else {
+                return nums[mid];
+            }
+        }
+        return nums[left];
+    }
+}
+
 
 Example 1:
 
