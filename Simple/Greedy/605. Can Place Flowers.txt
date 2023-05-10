@@ -1,0 +1,83 @@
+/**
+You have a long flowerbed in which some of the plots are planted, and some are not. However, flowers cannot be planted in adjacent plots.
+Given an integer array flowerbed containing 0's and 1's, where 0 means empty and 1 means not empty, and an integer n, return if n new flowers can be planted in the flowerbed without violating the no-adjacent-flowers rule.
+
+Example 1:
+Input: flowerbed = [1,0,0,0,1], n = 1
+Output: true
+
+Example 2:
+Input: flowerbed = [1,0,0,0,1], n = 2
+Output: false
+ 
+Constraints:
+1 <= flowerbed.length <= 2 * 104
+flowerbed[i] is 0 or 1.
+There are no two adjacent flowers in flowerbed.
+0 <= n <= flowerbed.length
+ */
+class Solution {
+    public boolean canPlaceFlowers(int[] flowerbed, int n) {
+        Cell leftCell = new Cell(0, flowerbed[0]);
+        int res = 0;
+        int size = flowerbed.length;
+        for(int i = 0; i < size; i++) {
+            // is empty
+            if(flowerbed[i] == 0) {
+                continue;
+            }
+            Cell rightCell = new Cell(i, flowerbed[i]);
+            res += plantCalculate(leftCell, rightCell);
+            leftCell = rightCell;
+
+            if(res >= n) {
+                return true;
+            }
+
+        }
+        Cell rightCell = new Cell(size - 1, flowerbed[size - 1]);
+        res += plantCalculate(leftCell, rightCell);
+
+        return res < n ? false : true;
+    }
+    private int plantCalculate(Cell leftCell, Cell rightCell) {
+        int val = 0;
+        if(leftCell.planted == 0) {
+            val++;
+        }
+        if(rightCell.planted == 0) {
+            val++;
+        }
+        val += (rightCell.index - leftCell.index) / 2 - 1;
+        // System.out.println(val);
+        return val <= 0 ? 0 : val;
+    }
+
+    public class Cell {
+        int index;
+        int planted;
+        public Cell(int index, int planted) {
+            this.index = index;
+            this.planted = planted;
+        }
+    }
+}
+
+/**
+
+oox, xoo => 2 => 1
+ooox, xooo => 3 => 1
+oooox, xoooo => 4 => 2
+ooooox, xooooo => 5 => 2
+oooooox, xoooooo => 6 => 3
+ooooooox, xooooooo => 7 => 3
+
+/////////////
+xox => 2 => 0
+xoox => 3 => 0
+xooox => 4 => 1
+xoooox => 5 => 1
+xooooox => 6 => 2
+xoooooox => 7 => 2
+
+ */

@@ -1,0 +1,94 @@
+/**
+You are given an integer n. There is an undirected graph with n nodes, numbered from 0 to n - 1. You are given a 2D integer array edges where edges[i] = [ai, bi] denotes that there exists an undirected edge connecting nodes ai and bi.
+Return the number of pairs of different nodes that are unreachable from each other.
+
+Example 1:
+Input: n = 3, edges = [[0,1],[0,2],[1,2]]
+Output: 0
+Explanation: There are no pairs of nodes that are unreachable from each other. Therefore, we return 0.
+
+Example 2:
+Input: n = 7, edges = [[0,2],[0,5],[2,4],[1,6],[5,4]]
+Output: 14
+Explanation: There are 14 pairs of nodes that are unreachable from each other:
+[[0,1],[0,3],[0,6],[1,2],[1,3],[1,4],[1,5],[2,3],[2,6],[3,4],[3,5],[3,6],[4,6],[5,6]].
+Therefore, we return 14.
+ */
+class Solution {
+    public long countPairs(int n, int[][] edges) {
+        // All we want is to count how many group.
+        // 1. build the graph
+        Map<Integer, List<Integer>> graph = new HashMap<>(); 
+        buildGrpah(graph, edges);
+        // 2. traverse all the node to mark the group
+        List<Long> groupNum = countGroupNum(graph, n);
+        // count answer
+        return countPairs(groupNum, n);
+    }
+
+    private long countPairs(List<Long> groupNum, int totalNode) {
+        long res = 0;
+        long remainNode = totalNode;
+        for(long curGroup: groupNum) {
+            // System.out.println(curGroup);
+            res += curGroup * (remainNode - curGroup);
+            // System.out.println(res);
+            remainNode -= curGroup;
+        }
+        return res;
+    }
+
+    private List<Long> countGroupNum(Map<Integer, List<Integer>> graph, int totalNode) {
+        Queue<Integer> q = new LinkedList<>();
+        boolean[] seen = new boolean[totalNode];
+        List<Long> res = new ArrayList<>();
+
+        for(Map.Entry<Integer, List<Integer>> entry : graph.entrySet()) {
+            if(seen[entry.getKey()]) {
+                continue;
+            }
+            
+            q.offer(entry.getKey());
+            seen[entry.getKey()] = true;
+            long cnt = 1;
+            while(!q.isEmpty()) {
+                int size = q.size();
+                for(int i = 0; i < size; i++) {
+                    int curNode = q.poll();
+                    for(int nextNode: graph.get(curNode)) {
+                        if(seen[nextNode]) {
+                            continue;
+                        }
+                        q.offer(nextNode);
+                        seen[nextNode] = true;
+                        cnt++;
+                    }
+                }
+            }
+            res.add(cnt);
+        }
+
+        for(int i = 0; i < totalNode; i++) {
+            if(seen[i]) {
+                continue;
+            }
+            res.add((long)1);
+        }
+
+
+        return res;
+    }
+
+    private void buildGrpah(Map<Integer, List<Integer>> graph, int[][] edges) {
+        for(int[] edge : edges) {
+            if(!graph.containsKey(edge[0])) {
+                graph.put(edge[0], new ArrayList<>());
+            }
+            if(!graph.containsKey(edge[1])) {
+                graph.put(edge[1], new ArrayList<>());
+            }
+            graph.get(edge[0]).add(edge[1]);
+            graph.get(edge[1]).add(edge[0]);
+        }        
+    }
+}

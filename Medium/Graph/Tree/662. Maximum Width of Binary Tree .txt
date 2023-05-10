@@ -62,3 +62,29 @@ class Solution {
     }
     
 }
+
+class Solution {
+    Map<Integer, Integer> cacheMap;
+    int maxWidth;
+    public int widthOfBinaryTree(TreeNode root) {
+        cacheMap = new HashMap<>();
+        maxWidth = 0;
+        findDepth(root, 0, 0);
+        return maxWidth;
+    }
+
+    private void findDepth(TreeNode root, int depth, int colIdx) {
+        if(root == null) {
+            return;
+        }
+        if(!cacheMap.containsKey(depth)) {
+            cacheMap.put(depth, colIdx);
+        }
+        int curLevelFirstIdx = cacheMap.get(depth);
+        maxWidth = Math.max(maxWidth, colIdx - curLevelFirstIdx + 1);
+
+        findDepth(root.left, depth + 1, 2 * colIdx);
+        findDepth(root.right, depth + 1, 2 * colIdx + 1);
+
+    }
+}
