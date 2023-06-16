@@ -1,0 +1,79 @@
+/** same as 1383
+You are given two 0-indexed integer arrays nums1 and nums2 of equal length n and a positive integer k. You must choose a subsequence of indices from nums1 of length k.
+For chosen indices i0, i1, ..., ik - 1, your score is defined as:
+The sum of the selected elements from nums1 multiplied with the minimum of the selected elements from nums2.
+It can defined simply as: (nums1[i0] + nums1[i1] +...+ nums1[ik - 1]) * min(nums2[i0] , nums2[i1], ... ,nums2[ik - 1]).
+Return the maximum possible score.
+A subsequence of indices of an array is a set that can be derived from the set {0, 1, ..., n-1} by deleting some or no elements. 
+
+Example 1:
+Input: nums1 = [1,3,3,2], nums2 = [2,1,3,4], k = 3
+Output: 12
+Explanation: 
+The four possible subsequence scores are:
+- We choose the indices 0, 1, and 2 with score = (1+3+3) * min(2,1,3) = 7.
+- We choose the indices 0, 1, and 3 with score = (1+3+2) * min(2,1,4) = 6. 
+- We choose the indices 0, 2, and 3 with score = (1+3+2) * min(2,3,4) = 12. 
+- We choose the indices 1, 2, and 3 with score = (3+3+2) * min(1,3,4) = 8.
+Therefore, we return the max score, which is 12.
+
+Example 2:
+Input: nums1 = [4,2,3,1,1], nums2 = [7,5,10,9,6], k = 1
+Output: 30
+Explanation: 
+Choosing index 2 is optimal: nums1[2] * nums2[2] = 3 * 10 = 30 is the maximum possible score.
+ */
+class Solution {
+    public long maxScore(int[] nums1, int[] nums2, int k) {
+        List<Node> ls = new ArrayList<>();
+        int size = nums1.length;
+        long sum = 0;
+        long res = 0;
+
+        for(int i = 0; i < size; i++) {
+            ls.add(new Node(nums1[i], nums2[i]));
+        }
+        // sort nums2 in descending order, so when we process, the new object always has a the minimum scale.
+        ls.sort((a, b) -> b.val2 - a.val2);
+        // sort by the value1, so when we pop out the vlaue, it will always be the smaller value one, we do not care what is the scale value right know, because the scale value always lower than before.
+        PriorityQueue<Integer> pq = new PriorityQueue<>(k, (a, b) -> a - b);
+
+        for(int i = 0; i < k; i++) {
+            Node n = ls.get(i);
+            sum = sum + n.val1;
+            pq.offer(n.val1);
+        }
+        
+        res = sum * ls.get(k - 1).val2;
+
+        for(int i = k; i < size; i++) {
+            Node curNode = ls.get(i);
+            int curSmallVal = pq.poll();
+            sum = sum - curSmallVal + curNode.val1;
+
+            res = Math.max(res, sum * curNode.val2);
+            pq.offer(curNode.val1);
+
+        }
+
+        return res;
+    }
+
+    
+    public class Node {
+        private int val1;
+        private int val2;
+        public Node(int val1, int val2) {
+            this.val1 = val1;
+            this.val2 = val2;
+        }
+    }
+}
+
+/**
+
+prove:
+{ (a) + (a + 1) + (a + 2) } * b = x
+{ (c) + (a + 1) + (a + 2) } * (b - 1) = z
+
+ */
