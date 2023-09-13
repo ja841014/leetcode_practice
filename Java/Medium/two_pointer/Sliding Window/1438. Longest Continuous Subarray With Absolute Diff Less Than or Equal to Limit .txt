@@ -1,4 +1,4 @@
-/*
+/* Same as 2762
 Given an array of integers nums and an integer limit, return the size of the longest non-empty subarray such that the absolute difference between any two elements of this subarray is less than or equal to limit.
 Example 1:
 Input: nums = [8,2,4,7], limit = 4
@@ -24,6 +24,45 @@ Explanation: The subarray [2,4,7,2] is the longest since the maximum absolute di
 Example 3:
 Input: nums = [4,2,2,2,4,4,2,2], limit = 0
 Output: 3
+class Solution {
+    public int longestSubarray(int[] nums, int limit) {
+        // in this question, we need to track the most recent maximum val and minimum val
+        int size = nums.length;
+        Deque<Integer> maxQ = new ArrayDeque<>();
+        Deque<Integer> minQ = new ArrayDeque<>();
+        int l = 0;
+        int res = 0;
+
+        for(int r = 0; r < size; r++) {
+            int curVal = nums[r];
+            while(!maxQ.isEmpty() && curVal > nums[maxQ.peekLast()]) {
+                maxQ.pollLast();
+            }
+            while(!minQ.isEmpty() && curVal < nums[minQ.peekLast()]) {
+                minQ.pollLast();
+            }
+
+            maxQ.offerLast(r);
+            minQ.offerLast(r);
+
+            while(!maxQ.isEmpty() && !minQ.isEmpty() && Math.abs(nums[maxQ.peekFirst()] - nums[minQ.peekFirst()]) > limit) {
+                if(maxQ.peekFirst() > minQ.peekFirst()) {
+                    l = minQ.pollFirst() + 1;
+                }
+                else {
+                    l = maxQ.pollFirst() + 1;
+                }
+            }
+            res = Math.max(res, r - l + 1);
+
+
+        }
+
+        return res;
+    }
+}
+
+
 */
 class Solution {
     public int longestSubarray(int[] nums, int limit) {

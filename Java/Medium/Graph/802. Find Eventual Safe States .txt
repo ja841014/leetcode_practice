@@ -1,0 +1,92 @@
+class Solution {
+    public List<Integer> eventualSafeNodes(int[][] graph) {
+        /**
+        graph = [[1,2],[2,3],[5],[0],[5],[],[]]
+            0: 3
+            1: 0
+            2: 0, 1
+            3: 1
+            4: 
+            5: 2, 4
+            6:
+
+            // outdegree
+            0: 2
+            1: 2
+            2: 1
+            3: 1
+            4: 1
+            5: 0
+            6: 0
+        */
+        //  key: to(end point), val: from(star point)
+        // it's a indegree concept, but we know exact comming node
+        Map<Integer, List<Integer>> map = new HashMap<>();
+
+        List<Integer> res = new ArrayList<>();
+
+        Queue<Integer> q = new LinkedList<>();
+
+        int[] outDegree = buildMap(map, graph, q, res);
+
+        res = topoSort(q, map, outDegree, res);
+
+        Collections.sort(res);
+
+        return res;
+        
+    }
+
+    private List<Integer> topoSort(Queue<Integer> q, Map<Integer, List<Integer>> map, int[] outDegree, List<Integer> res) {
+        while(!q.isEmpty()) {
+            int size = q.size();
+
+            for(int i = 0; i < size; i++) {
+                int curNode = q.poll();
+
+                if(map.get(curNode).isEmpty()) {
+                    continue;
+                }
+                
+                for(Integer nextNode: map.get(curNode)) {
+                    if(nextNode == null) {
+                        continue;
+                    }
+
+                    outDegree[nextNode]--;
+
+                    if(outDegree[nextNode] == 0) {
+                        res.add(nextNode);
+                        q.offer(nextNode);
+                    }
+
+                }
+            }
+        }
+        return res;
+    }
+
+    
+    private int[] buildMap(Map<Integer, List<Integer>> map, int[][] graph, Queue<Integer> q, List<Integer> res) {
+        int[] outDegree = new int[graph.length];
+
+        for(int curNode = 0; curNode < graph.length; curNode++) {
+            map.put(curNode, new ArrayList<>());
+        }
+        for(int curNode = 0; curNode < graph.length; curNode++) {
+            outDegree[curNode] = graph[curNode].length;
+
+            if(outDegree[curNode] == 0) {
+                res.add(curNode);
+                q.offer(curNode);
+            }
+
+            for(int nextNode : graph[curNode]) {
+                map.get(nextNode).add(curNode);
+            }            
+        }
+
+        return outDegree;
+    } 
+}
+

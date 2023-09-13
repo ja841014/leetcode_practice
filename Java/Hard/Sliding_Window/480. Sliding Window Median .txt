@@ -22,55 +22,52 @@ Window position                Median
 Therefore, return the median sliding window as [1,-1,-1,3,5,6].
 */
 class Solution {
-    private PriorityQueue<Long> minPQ;
-    private PriorityQueue<Long> maxPQ;
-
     public double[] medianSlidingWindow(int[] nums, int k) {
-        minPQ = new PriorityQueue<>();
-        maxPQ = new PriorityQueue<>(Collections.reverseOrder());
-        double[] res = new double[nums.length - k + 1];
-        int i = 0;
-        while(i < nums.length) {
-            if(i < k) {
-                addNum(nums[i]);
-                if(i == k - 1) {
-                    res[i - k + 1] = getMid();
-                }
-                i++;
+        Comparator<Integer> comparator = (a, b) -> (nums[a] != nums[b] ? Integer.compare(nums[a], nums[b]) : Integer.compare(a, b));
+
+        // store the biggest part
+        TreeSet<Integer> minHeap = new TreeSet<>(comparator.reversed());
+        // store the smaller part
+        TreeSet<Integer> maxHeap = new TreeSet<>(comparator);
+        int size = nums.length;
+        double[] res = new double[size - k + 1];
+        
+        for(int i = 0; i < size; i++) {
+            if(i < k - 1) {
+                addNum(minHeap, maxHeap, i);
                 continue;
             }
+            addNum(minHeap, maxHeap, i);
+            res[i - k + 1] = getMid(minHeap, maxHeap, nums);
             
-            if(!minPQ.isEmpty() && minPQ.contains((long)nums[i - k]) ) {
-                minPQ.remove((long)nums[i - k]);
+
+            if(!minHeap.isEmpty() && minHeap.contains(i - k + 1)) {
+                minHeap.remove(i - k + 1);
             }
-            else if(!maxPQ.isEmpty() && maxPQ.contains((long)nums[i - k]) ) {
-                maxPQ.remove((long)nums[i - k]);
+            else if(!maxHeap.isEmpty() && maxHeap.contains(i - k + 1)) {
+                maxHeap.remove(i - k + 1);
             }
-            addNum(nums[i]);
-            res[i - k + 1] = getMid();
-            i++;
-            
+
         }
         return res;
-        
     }
-    
-    private double getMid() {
-        double midValue = 0;
-        if(maxPQ.size() == minPQ.size()) {
-            midValue = (double)(minPQ.peek() + maxPQ.peek()) / 2.0;
-        } else {
-            midValue = maxPQ.peek();
+
+    private double getMid(TreeSet<Integer> minHeap, TreeSet<Integer> maxHeap, int[] nums) {
+        double res = 0.0;
+        if(minHeap.size() == maxHeap.size()) {
+            res =  ((double)  nums[minHeap.first()] + nums[maxHeap.first()] ) / 2.0;
         }
-        return midValue;
+        else {
+            res =(double) nums[minHeap.first()];
+        }
+        return res;
     }
-    
-    private void addNum(int num) {
-        maxPQ.add((long)num);
-        minPQ.add((long)maxPQ.poll());
-        if (minPQ.size() > maxPQ.size()) {
-            maxPQ.add((long)minPQ.remove());
-        } 
+
+    private void addNum(TreeSet<Integer> minHeap, TreeSet<Integer> maxHeap, int idx) {
+        maxHeap.add(idx);
+        minHeap.add(maxHeap.pollFirst());
+        if(minHeap.size() - maxHeap.size() > 1) {
+            maxHeap.add(minHeap.pollFirst());
+        }
     }
-    
 }

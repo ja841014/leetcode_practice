@@ -1,0 +1,225 @@
+Warmup
+2D maze with R rows and C columns
+Each cell is either a wall(#) or a road cell(.)
+One cars with their individual start(a) and goal(A)
+The cars can move up/down/right/left for 1 step if the next step is not a wall 
+Is it possible to let the cars arrive at their goals
+
+2 cars a and b => A, B 
+takes turn
+
+
+R+C
+R*C
+
+private int[][] DIR = new int[][]{{0,1}, {0, -1}, {1, 0}, {-1, 0}};
+
+public boolean findDestination(int R, int C, char[][] Maze, int[] start, int[] goal) {
+  return BFS(Maze, start, goal, R, C);
+}
+
+private void BFS(char[][] Maze, int[] start, int[] goal, int R, int C) {
+  Queue<int[]> q = new LinkedList<>();
+  Set<String> seen = new HashSet<>();
+  q.offer(start);
+  seen.add(start[0] + "," + start[1]);
+  
+  while(!q.isEmpty()) {
+    int size = q.size();
+    for(int i = 0; i < size; i++) {
+      int[] curLoc = q.poll();
+      // traverse direction
+      for(int[] direction: DIR) {
+        int nextX = curLoc[0] + direction[0];
+        int nextY = curLoc[1] + direction[1];
+        String loc =  nextX+"," +nextY;
+        if(isValid(R, C, nextX, nextY) && !seen.contains(loc)) {
+          if(nextX == goal[0] && nextY == goal[1]) {
+            return true;
+          }
+          q.offer(new int[nextX, nextY]);
+        }
+      }
+    }
+    
+  }
+  return false;
+}
+
+private boolean isVlaid(char[][] maze, int R, int C, int x, int y) {   
+  if(x < 0 || x >= R || y < 0 || y >= C || maze[x][y] == '#') {
+    return false;
+  }
+  return true;
+}
+
+=============================
+2D maze with R rows and C columns
+Each cell is either a wall(#) or a road cell(.)
+Two cars with their individual start(a, b) and goal(A, B)
+The cars will take turns
+Move up/down/right/left for 1 step if the next step is not a wall nor another car.
+Don't move. Skip this turn.
+Is it possible to let the cars arrive at their goals
+
+
+
+======================
+Input 1
+3 3
+a.A
+###
+b.B
+
+Output 
+true
+
+=======================
+Input 2
+3 3
+a.b
+.#.
+A.B
+
+Output 2
+true
+
+======================
+Input 3
+1 4
+aBAb
+
+Output 3
+false
+
+======================
+Input 4
+2 4
+##.#
+aBAb
+state: 
+
+init
+....
+aBAb  
+
+posibility => store state
+a...
+.BAb
+posibility
+a..b
+.BA. => 64
+  
+R*R*C*C
+  2^(R*C)
+  2^8 = ...
+
+Output 4
+true
+
+======================
+Input 5
+3 4
+###.
+BaAb
+###.
+
+Output 5
+true
+
+======================
+Input 6
+1 10
+ab......BA
+
+Output 6
+false
+
+======================
+Input 7
+3 3
+a#b
+.##
+A#B
+
+Output 7
+false
+  
+private int[][] DIR = new int[][]{{0,1}, {0, -1}, {1, 0}, {-1, 0}};
+
+private HashSet<int[]> seenASet;
+private HashSet<int[]> seenBSet;
+  
+public boolean findDestination(char[][] maze, int[] carAStart, int[] carADestination, int[] carBStart, int[]carBDestination) {
+  
+  // evert time carA and carB can choose move or not move
+  // if move it can choose 4 direcitons
+  seenASet = new HahsSet<>();
+  seenBSet = new hashSet<>();
+  
+  
+  
+}
+
+
+private void findStates(char[][] Maze, int[] carAStart, int[] carADestination, int[] carBStart, int[]carBDestination,int R, int C) {
+   
+  if(isBothFindDestination(carAStart, carADestination, carBStart, icarBDestination,)) {
+    return true;
+  }
+  
+  
+   for(int[] direction: DIR) {
+   
+      int carANextX = carAStart[0] + direction[0];
+      int carANextY = carAStart[1] + direction[1];
+      int[] nextALoc = new int[]{carANextX, carANextY};
+      String AStr = carANextX+','+carANextY;
+     
+      int carBNextX = carBStart[0] + direction[0];
+      int carBNextY = carBStart[1] + direction[1];
+      int[] nextBLoc = new int[]{carBNextX, carBNextY};
+      String BStr = carBNextX+','+carBNextY;
+
+      String loc =  nextX+"," +nextY;      
+     
+      if(isValid(R, C, carANextX, carANextY) && isValid(R, C, carBNextX, carBNextY) &&!seen.contains(loc)) {
+        
+        seenASet.add(AStr);
+        // A Choose B Not choose
+        boolean result1 = findStates(char[][] Maze, int[] nextALoc, int[] carADestination, int[] carBStart, int[]carBDestination,int R, int C);
+        seenBSet.add(BStr);
+        // A Choose B choose
+        boolean result2 = findStates(char[][] Maze, int[] nextALoc, int[] carADestination, int[] nextBLoc, int[]carBDestination,int R, int C);
+        // A not Choose B Choose
+        seenASet.delete(AStr)
+        boolean result3 =  findStates(char[][] Maze, int[] carAStart, int[] carADestination, int[] nextBLoc, int[]carBDestination,int R, int C);
+        // A not choose B Not choose => not record
+        seenBSet.add(BStr);
+        
+        if(result1 || result2 || result3) {
+          return true;
+        }
+      }
+    }
+  
+  return false;
+}
+
+private isBothFindDestination(int[] carAStart, int[] carADestination, int[] carBStart, int[]carBDestination,) {
+  if(carAStart[0] == carADestination[0] && carAStart[1] == carADestination[1] && 
+    carBStart[0] == carBDestination[0] && carBStart[1] == carBDestination[1]) {
+    return true;
+  }
+  return false;
+}
+
+
+private boolean isVlaid(char[][] maze, int R, int C, int x, int y) {   
+  if(x < 0 || x >= R || y < 0 || y >= C || maze[x][y] == '#') {
+    return false;
+  }
+  return true;
+}
+
+

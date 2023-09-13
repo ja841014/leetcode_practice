@@ -19,7 +19,33 @@ Input: nums = [20,1,15,3,10,5,8]
 Output: 4
 Explanation: 
 The longest arithmetic subsequence is [20,15,10,5].
+
 */
+
+
+class Solution {
+    public int longestArithSeqLength(int[] nums) {
+        int MIN_DIFF = -500;
+        int size = nums.length;
+        int diffRange = 1001;
+        // row is input array length
+        // col is maximum diff range => it could be -500 ~ 500 = 1001
+        int[][] cacheTable = new int[size][diffRange];
+        int res = Integer.MIN_VALUE;
+        
+
+        for(int i = 0; i < size; i++) {
+            for(int j = 0; j < i; j++) {
+                
+                int diff = nums[i] - nums[j] - MIN_DIFF;
+                cacheTable[i][diff] = cacheTable[j][diff] + 1;
+                res = Math.max(res, cacheTable[i][diff]);
+            }
+        }
+        return res + 1;
+    }
+}
+
 class Solution {
     public int longestArithSeqLength(int[] nums) {
         int size = nums.length;

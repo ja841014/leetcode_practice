@@ -1,0 +1,128 @@
+/**
+You are given a 0-indexed 2D matrix grid of size n x n, where (r, c) represents:
+A cell containing a thief if grid[r][c] = 1
+An empty cell if grid[r][c] = 0
+You are initially positioned at cell (0, 0). In one move, you can move to any adjacent cell in the grid, including cells containing thieves.
+The safeness factor of a path on the grid is defined as the minimum manhattan distance from any cell in the path to any thief in the grid.
+Return the maximum safeness factor of all paths leading to cell (n - 1, n - 1).
+An adjacent cell of cell (r, c), is one of the cells (r, c + 1), (r, c - 1), (r + 1, c) and (r - 1, c) if it exists.
+The Manhattan distance between two cells (a, b) and (x, y) is equal to |a - x| + |b - y|, where |val| denotes the absolute value of val.
+
+Example 1:
+Input: grid = [[1,0,0],[0,0,0],[0,0,1]]
+Output: 0
+Explanation: All paths from (0, 0) to (n - 1, n - 1) go through the thieves in cells (0, 0) and (n - 1, n - 1).
+
+Example 2:
+Input: grid = [[0,0,1],[0,0,0],[0,0,0]]
+Output: 2
+Explanation: The path depicted in the picture above has a safeness factor of 2 since:
+- The closest cell of the path to the thief at cell (0, 2) is cell (0, 0). The distance between them is | 0 - 0 | + | 0 - 2 | = 2.
+It can be shown that there are no other paths with a higher safeness factor.
+
+Example 3:
+Input: grid = [[0,0,0,1],[0,0,0,0],[0,0,0,0],[1,0,0,0]]
+Output: 2
+Explanation: The path depicted in the picture above has a safeness factor of 2 since:
+- The closest cell of the path to the thief at cell (0, 3) is cell (1, 2). The distance between them is | 0 - 1 | + | 3 - 2 | = 2.
+- The closest cell of the path to the thief at cell (3, 0) is cell (3, 2). The distance between them is | 3 - 3 | + | 0 - 2 | = 2.
+It can be shown that there are no other paths with a higher safeness factor
+ */
+class Solution {
+    int[][] DIR = new int[][]{{-1, 0}, {1, 0}, {0, 1}, {0, -1}};
+    public int maximumSafenessFactor(List<List<Integer>> grid) {
+        int row = grid.size();
+        int col = grid.get(0).size();
+        LinkedList<int[]> q = new LinkedList<>();
+        boolean[][] visited = new boolean[row][col];
+        findTheif(grid, q, visited);
+        bfsSetUpGrid(grid, q, visited);
+        return bfsPq(grid);
+
+    }
+
+    private int bfsPq(List<List<Integer>> grid) {
+        int row = grid.size();
+        int col = grid.get(0).size();
+        boolean[][] seen = new boolean[row][col];
+        PriorityQueue<Cell> pq = new PriorityQueue<>((a, b) -> b.score - a.score);
+        int res = Integer.MAX_VALUE;
+        pq.add(new Cell(new int[]{0, 0}, grid.get(0).get(0)));
+        res = Math.min(res, grid.get(0).get(0) - 1);
+        seen[0][0] = true;
+
+        while(!pq.isEmpty()) {
+
+            Cell curCell = pq.poll();
+            res = Math.min(res, curCell.score);
+            if(curCell.loc[0] == row - 1 && curCell.loc[1] == col - 1) {
+                break;
+            }
+
+            for(int[] dir : DIR) {
+                int nextX = curCell.loc[0] + dir[0];
+                int nextY = curCell.loc[1] + dir[1];
+                
+                if(!isValid(nextX, nextY, row, col) || seen[nextX][nextY]) continue;
+
+                int[] newLoc = new int[]{nextX, nextY};
+                int score = grid.get(nextX).get(nextY) - 1;
+                pq.offer(new Cell(newLoc, score));
+                seen[nextX][nextY] = true;
+            }
+        }
+        return res;
+    }
+
+    public class Cell {
+        int[] loc;
+        int score;
+        public Cell(int[] loc, int score) {
+            this.loc = loc;
+            this.score = score;
+        }
+    }
+
+    private void findTheif(List<List<Integer>> grid, LinkedList<int[]> q, boolean[][] visited) {
+        for(int i = 0; i < grid.size(); i++) {
+            for(int j = 0; j < grid.get(0).size(); j++) {
+                if(grid.get(i).get(j) == 0) continue;
+                visited[i][j] = true;
+                q.offer(new int[]{i, j});
+            }
+        }
+    }
+
+    private void bfsSetUpGrid(List<List<Integer>> grid, LinkedList<int[]> q, boolean[][] visited) {
+
+        int row = grid.size();
+        int col = grid.get(0).size();
+        int level = 2;
+        while(!q.isEmpty()) {
+            int size = q.size();
+
+            for(int i = 0; i < size; i++) {
+                int[] curLoc = q.poll();
+                for(int[] dir : DIR) {
+                    int nextX = curLoc[0] + dir[0];
+                    int nextY = curLoc[1] + dir[1];
+                    if(!isValid(nextX, nextY, row, col) || visited[nextX][nextY]) continue;
+
+                    q.offer(new int[]{nextX, nextY});
+                    grid.get(nextX).set(nextY, level);
+                    visited[nextX][nextY] = true;
+                }
+            }
+
+            level++;
+        }
+        
+    }
+    
+    private boolean isValid(int x, int y, int girdX, int gridY) {
+        if(x < 0 || y < 0 || x >= girdX || y >= gridY) {
+            return false;
+        }
+        return true;
+    }
+}

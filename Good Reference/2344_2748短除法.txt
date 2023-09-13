@@ -1,0 +1,98 @@
+class Solution {
+    public int minOperations(int[] nums, int[] numsDivide) {
+        int g = numsDivide[0];
+        int tmp;
+        /*
+        gcd(3768, 1701)
+        g = a * x + tmp
+        3768 = 1701 * 2 + 366
+        1701 = 366 * 4 + 237
+        366 = 237 * 1 + 129
+        237 = 129 * 1 + 108
+        129 = 108 * 1 + 21
+        108 = 21 * 5 + 3
+        21 = 3 * 7 + 0
+        Therefore Greatest Common Divisor = 3
+        
+      2 | 3768 | 1701 | 4
+        | 3402 | 1464 |
+        ----------------
+      1 | 366. | 237. | 1
+        | 237. | 129. |
+        -----------------
+      1 | 129. | 108. | 5
+        | 108  | 105  |
+        -----------------
+      7 |  21  |  3.  |
+        |. 21. |
+        ----------------
+            0
+        */
+        for (int a : numsDivide) {
+            while (a > 0) { // g = gcd(g, a)
+                tmp = g % a;
+                g = a;
+                a = tmp;
+            }
+        }
+        Arrays.sort(nums);
+        // the greatest common divisor could not smaller than the element
+        for(int i = 0; i < nums.length && nums[i] <= g; i++) {
+            if(g % nums[i] == 0) {
+                return i; 
+            }
+        }
+        return -1;
+    }
+}
+
+/*
+
+3   | 15  210
+    ----------
+5    | 5   70
+     _________
+        1  14
+        
+*/
+
+class Solution {
+    public int countBeautifulPairs(int[] nums) {
+        int size = nums.length;
+        int res = 0;
+        for(int i = 0; i < size; i++) {
+            for (int j = i + 1; j < size; j++) {
+                // System.out.println(nums[i] + ", " + nums[j] );
+                int firstVal = firstDigitProcess(nums[i]);
+                int lastVal = nums[j] % 10;
+                if(calGCD(firstVal, lastVal) == 1 ) {
+                    // System.out.println(nums[i] + ", " + nums[j] + ", gcd = 1");
+                    res++;
+                }
+            }
+        }
+        return res;
+        
+    }
+    
+    private int firstDigitProcess(int val) {
+        int res = 0;
+        while(val / 10 != 0) {
+            val = val / 10;
+        }
+        return val % 10;
+    }
+    
+    
+    private int calGCD(int a, int b) {
+        // if b=0, a is the GCD
+        if (b == 0)
+            return a;
+        // call the gcd() method recursively by
+        // replacing a with b and b with
+        // difference(a,b) as long as b != 0
+        else
+            return calGCD(b, Math.abs(a - b));
+    
+    }
+}
