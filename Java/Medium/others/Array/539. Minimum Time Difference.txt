@@ -1,0 +1,31 @@
+/**
+Given a list of 24-hour clock time points in "HH:MM" format, return the minimum minutes difference between any two time-points in the list.
+
+Example 1:
+Input: timePoints = ["23:59","00:00"]
+Output: 1
+
+Example 2:
+Input: timePoints = ["00:00","23:59","00:00"]
+Output: 0
+ */
+class Solution {
+    public int findMinDifference(List<String> timePoints) {
+        List<Integer> ls = new ArrayList<>();
+        for(String s: timePoints) {
+            String[] arr = s.split(":");
+            int hour2Min = Integer.parseInt(arr[0]) * 60;
+            int sum = hour2Min + Integer.parseInt(arr[1]);
+            ls.add(sum);
+        }
+        ls.sort((a, b) -> a - b);
+        int min = Integer.MAX_VALUE;
+        for(int i = 1; i < ls.size(); i++) {
+            min = Math.min(min, ls.get(i) - ls.get(i - 1));
+        }
+
+        min = Math.min(min, ls.get(0) + 1440 - ls.get(ls.size() - 1));
+
+        return min;
+    }
+}
