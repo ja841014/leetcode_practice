@@ -1,0 +1,91 @@
+class NumArray {
+    Node root;
+
+    public NumArray(int[] nums) {
+        // create a tree using this array
+        this.root = constructTree(nums, 0, nums.length - 1);
+    }
+
+    // Create a Node class 
+    private static class Node {
+        int data;
+        int startInterval;
+        int endInterval;
+        Node left;
+        Node right;
+
+        public Node(int startInterval, int endInterval) {
+            this.startInterval = startInterval;
+            this.endInterval = endInterval;
+        }
+
+    }
+    
+    // Construct Tree 
+    private Node constructTree(int[] arr, int start, int end) {
+        if (start == end) {
+            Node leaf = new Node(start, end);
+            leaf.data = arr[start];
+            return leaf;
+        }
+
+        // create a new node with index you're at
+        Node node = new Node(start, end);
+        int mid = (start + end) / 2;
+
+        node.left = this.constructTree(arr, start, mid);
+        node.right = this.constructTree(arr, mid + 1, end);
+
+        // When you have data from left & right then only you can update the node data
+        node.data = node.left.data + node.right.data;
+        return node;
+    }
+
+    public void update(int index, int val) {
+        root.data = update(root, index, val);
+    }
+
+    // Helper function for update 
+    private int update(Node node, int index, int value) {
+        if (index >= node.startInterval && index <= node.endInterval) { // Means index lies inside the range
+            if (index == node.startInterval && index == node.endInterval) {
+                // We're at BASE condition
+                node.data = value;
+                return node.data;
+            } else {
+                int leftAns = update(node.left, index, value);
+                int rightAns = update(node.right, index, value);
+                node.data = leftAns + rightAns;
+                return node.data;
+            }
+        }
+
+        return node.data; // Means index doesn't lie inside the Range or Interval
+    }
+    
+    public int sumRange(int left, int right) {
+        return query(root, left, right);
+    }
+
+    // helper function for SumRange (query)
+     private int query(Node node, int queryStart, int queryEnd) {
+        if (node.startInterval >= queryStart && node.endInterval <= queryEnd) {
+            // Completely inside
+            return node.data;
+        } else if (node.startInterval > queryEnd || node.endInterval < queryStart) {
+            // Completely outside
+            return 0;
+        } else {
+            // Overlapping
+            // Calling the left & right
+            return query(node.left, queryStart, queryEnd) + query(node.right, queryStart, queryEnd);
+        }
+    }
+}
+
+/**
+ * Your NumArray object will be instantiated and called as such:
+ * NumArray obj = new NumArray(nums);
+ * obj.update(index,val);
+ * int param_2 = obj.sumRange(left,right);
+ */
